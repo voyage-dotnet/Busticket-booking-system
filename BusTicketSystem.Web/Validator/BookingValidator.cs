@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace BusTicketSystem.Web.Validator;
 
-public class BookingValidator : AbstractValidator<BookingRequestDto>
+public class BookingValidator : AbstractValidator<BookingRequestDTO>
 {
     public BookingValidator()
     {

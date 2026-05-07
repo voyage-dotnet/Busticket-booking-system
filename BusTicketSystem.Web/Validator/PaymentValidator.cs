@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace BusTicketSystem.Web.Validator;
 
-public class PaymentValidator : AbstractValidator<PaymentRequestDto>
+public class PaymentValidator : AbstractValidator<PaymentRequestDTO>
 {
     public PaymentValidator()
     {

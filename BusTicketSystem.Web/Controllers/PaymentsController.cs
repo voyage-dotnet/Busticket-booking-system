@@ -1,7 +1,7 @@
 using BusTicketSystem.Web.DTOs;
-using BusTicketSystem.Web.Models;
+using BusTicketSystem.Web.Services;
+using BusTicketSystem.Web.Wrapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BusTicketSystem.Web.Controllers;
 
@@ -9,155 +9,64 @@ namespace BusTicketSystem.Web.Controllers;
 [Route("api/payments")]
 public class PaymentsController : ControllerBase
 {
-    private readonly BusTicketDbContext _context;
+    private readonly IPaymentService _paymentService;
 
-    public PaymentsController(BusTicketDbContext context)
+    public PaymentsController(IPaymentService paymentService)
     {
-        _context = context;
+        _paymentService = paymentService;
     }
 
     // 1. POST /api/payments — Make a payment
     [HttpPost]
-    public async Task<IActionResult> CreatePayment([FromBody] PaymentRequestDto request)
+    public async Task<IActionResult> CreatePayment([FromBody] PaymentRequestDTO request)
     {
-        // Check booking exists and is Pending
-        var booking = await _context.Bookings
-            .FirstOrDefaultAsync(b => b.BookingId == request.BookingId
-                                   && b.Status == "Pending");
-
-        if (booking == null)
-            return NotFound(new { message = "Booking not found or not in Pending state" });
-
-        // Create payment record
-        var payment = new Payment
-        {
-            BookingId     = request.BookingId,
-            CustomerId    = request.CustomerId,
-            Amount        = request.Amount,
-            PaymentDate   = DateTime.Now,
-            PaymentStatus = "Success"
-        };
-
-        _context.Payments.Add(payment);
-
-        // Update booking to Confirmed
-        booking.Status = "Confirmed";
-
-        await _context.SaveChangesAsync();
-
-        return Ok(new PaymentResponseDto
-        {
-            PaymentId     = payment.PaymentId,
-            BookingId     = payment.BookingId,
-            CustomerId    = payment.CustomerId,
-            Amount        = payment.Amount,
-            PaymentDate   = payment.PaymentDate,
-            PaymentStatus = payment.PaymentStatus,
-            Message       = "Payment successful. Booking confirmed."
-        });
+        var result = await _paymentService.CreatePaymentAsync(request);
+        return Ok(ApiResponse<PaymentResponseDTO>.SuccessResponse(result,
+            "Payment successful. Booking confirmed."));
     }
 
     // 2. GET /api/payments/{id} — Get payment by ID
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPaymentById(int id)
     {
-        var payment = await _context.Payments
-            .FirstOrDefaultAsync(p => p.PaymentId == id);
-
-        if (payment == null)
-            return NotFound(new { message = "Payment not found" });
-
-        return Ok(new PaymentResponseDto
-        {
-            PaymentId     = payment.PaymentId,
-            BookingId     = payment.BookingId,
-            CustomerId    = payment.CustomerId,
-            Amount        = payment.Amount,
-            PaymentDate   = payment.PaymentDate,
-            PaymentStatus = payment.PaymentStatus,
-            Message       = "Payment fetched successfully"
-        });
+        var result = await _paymentService.GetPaymentByIdAsync(id);
+        return Ok(ApiResponse<PaymentResponseDTO>.SuccessResponse(result,
+            "Payment fetched successfully"));
     }
 
     // 3. GET /api/payments/my?customerId={id} — Get all payments by a customer
     [HttpGet("my")]
     public async Task<IActionResult> GetMyPayments([FromQuery] int customerId)
     {
-        var payments = await _context.Payments
-            .Where(p => p.CustomerId == customerId)
-            .Select(p => new PaymentResponseDto
-            {
-                PaymentId     = p.PaymentId,
-                BookingId     = p.BookingId,
-                CustomerId    = p.CustomerId,
-                Amount        = p.Amount,
-                PaymentDate   = p.PaymentDate,
-                PaymentStatus = p.PaymentStatus,
-                Message       = "OK"
-            })
-            .ToListAsync();
-
-        return Ok(payments);
+        var result = await _paymentService.GetMyPaymentsAsync(customerId);
+        return Ok(ApiResponse<List<PaymentResponseDTO>>.SuccessResponse(result,
+            "Payments fetched successfully"));
     }
 
     // 4. GET /api/payments/booking/{bookingId} — Get payment for a specific booking
     [HttpGet("booking/{bookingId}")]
     public async Task<IActionResult> GetPaymentByBooking(int bookingId)
     {
-        var payment = await _context.Payments
-            .FirstOrDefaultAsync(p => p.BookingId == bookingId);
-
-        if (payment == null)
-            return NotFound(new { message = "No payment found for this booking" });
-
-        return Ok(new PaymentResponseDto
-        {
-            PaymentId     = payment.PaymentId,
-            BookingId     = payment.BookingId,
-            CustomerId    = payment.CustomerId,
-            Amount        = payment.Amount,
-            PaymentDate   = payment.PaymentDate,
-            PaymentStatus = payment.PaymentStatus,
-            Message       = "Payment fetched successfully"
-        });
+        var result = await _paymentService.GetPaymentByBookingIdAsync(bookingId);
+        return Ok(ApiResponse<PaymentResponseDTO>.SuccessResponse(result,
+            "Payment fetched successfully"));
     }
-// 5. GET /api/payments/agency/revenue?agencyId={id} — Total revenue for agency
+
+    // 5. GET /api/payments/agency/revenue?agencyId={id} — Total revenue for agency
     [HttpGet("agency/revenue")]
     public async Task<IActionResult> GetAgencyRevenue([FromQuery] int agencyId)
     {
-        var revenue = await _context.Payments
-            .Where(p => p.PaymentStatus == "Success"
-                     && _context.Bookings
-                         .Any(b => b.BookingId == p.BookingId
-                                && _context.Trips
-                                    .Any(t => t.TripId == b.TripId
-                                           && _context.Buses
-                                               .Any(bus => bus.BusId == t.BusId
-                                                        && _context.AgencyOffices
-                                                            .Any(o => o.OfficeId == bus.OfficeId
-                                                                   && o.AgencyId == agencyId)))))
-            .SumAsync(p => p.Amount ?? 0);
-
-        return Ok(new { agencyId, totalRevenue = revenue });
+        var result = await _paymentService.GetAgencyRevenueAsync(agencyId);
+        return Ok(ApiResponse<object>.SuccessResponse(result,
+            "Revenue fetched successfully"));
     }
 
     // 6. GET /api/payments/agency/trip/{tripId}/revenue — Revenue for a specific trip
     [HttpGet("agency/trip/{tripId}/revenue")]
     public async Task<IActionResult> GetTripRevenue(int tripId)
     {
-        var revenue = await _context.Payments
-            .Where(p => p.PaymentStatus == "Success"
-                     && _context.Bookings
-                         .Any(b => b.BookingId == p.BookingId
-                                && b.TripId == tripId))
-            .SumAsync(p => p.Amount ?? 0);
-
-        var count = await _context.Payments
-            .CountAsync(p => p.PaymentStatus == "Success"
-                          && _context.Bookings
-                              .Any(b => b.BookingId == p.BookingId
-                                     && b.TripId == tripId));
-
-        return Ok(new { tripId, totalRevenue = revenue, totalBookings = count });
+        var result = await _paymentService.GetTripRevenueAsync(tripId);
+        return Ok(ApiResponse<object>.SuccessResponse(result,
+            "Trip revenue fetched successfully"));
     }
 }

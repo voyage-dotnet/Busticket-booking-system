@@ -1,7 +1,7 @@
 using BusTicketSystem.Web.DTOs;
-using BusTicketSystem.Web.Models;
+using BusTicketSystem.Web.Services;
+using BusTicketSystem.Web.Wrapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BusTicketSystem.Web.Controllers;
 
@@ -9,102 +9,56 @@ namespace BusTicketSystem.Web.Controllers;
 [Route("api/bookings")]
 public class BookingsController : ControllerBase
 {
-    private readonly BusTicketDbContext _context;
+    private readonly IBookingService _bookingService;
 
-    public BookingsController(BusTicketDbContext context)
+    public BookingsController(IBookingService bookingService)
     {
-        _context = context;
+        _bookingService = bookingService;
     }
 
+    // 1. POST /api/bookings — Book a seat
     [HttpPost]
-    public async Task<IActionResult> CreateBooking([FromBody] BookingRequestDto request)
+    public async Task<IActionResult> CreateBooking([FromBody] BookingRequestDTO request)
     {
-        var seat = await _context.Bookings
-            .FirstOrDefaultAsync(b => b.TripId == request.TripId
-                                   && b.SeatNumber == request.SeatNumber
-                                   && b.Status == "Available");
-
-        if (seat == null)
-            return Conflict(new { message = "Seat is not available" });
-
-        seat.Status = "Pending";
-        await _context.SaveChangesAsync();
-
-        return Ok(new BookingResponseDto
-        {
-            BookingId  = seat.BookingId,
-            TripId     = seat.TripId ?? 0,
-            SeatNumber = seat.SeatNumber,
-            Status     = seat.Status,
-            Message    = "Booking successful. Please complete payment within 10 minutes."
-        });
+        var result = await _bookingService.CreateBookingAsync(request);
+        return Ok(ApiResponse<BookingResponseDTO>.SuccessResponse(result,
+            "Booking successful. Please complete payment within 10 minutes."));
     }
 
+    // 2. GET /api/bookings/{id} — Get booking by ID
     [HttpGet("{id}")]
     public async Task<IActionResult> GetBookingById(int id)
     {
-        var booking = await _context.Bookings
-            .FirstOrDefaultAsync(b => b.BookingId == id);
-
-        if (booking == null)
-            return NotFound(new { message = "Booking not found" });
-
-        return Ok(new BookingResponseDto
-        {
-            BookingId  = booking.BookingId,
-            TripId     = booking.TripId ?? 0,
-            SeatNumber = booking.SeatNumber,
-            Status     = booking.Status,
-            Message    = "Booking fetched successfully"
-        });
+        var result = await _bookingService.GetBookingByIdAsync(id);
+        return Ok(ApiResponse<BookingResponseDTO>.SuccessResponse(result,
+            "Booking fetched successfully"));
     }
 
+    // 3. GET /api/bookings/my?customerId={id} — Get customer's own bookings
     [HttpGet("my")]
     public async Task<IActionResult> GetMyBookings([FromQuery] int customerId)
     {
-        var bookings = await _context.Bookings
-            .Where(b => _context.Payments
-                .Any(p => p.BookingId == b.BookingId
-                       && p.CustomerId == customerId))
-            .Select(b => new BookingResponseDto
-            {
-                BookingId  = b.BookingId,
-                TripId     = b.TripId ?? 0,
-                SeatNumber = b.SeatNumber,
-                Status     = b.Status,
-                Message    = "OK"
-            })
-            .ToListAsync();
-
-        return Ok(bookings);
+        var result = await _bookingService.GetMyBookingsAsync(customerId);
+        return Ok(ApiResponse<List<BookingResponseDTO>>.SuccessResponse(result,
+            "Bookings fetched successfully"));
     }
 
+    // 4. GET /api/bookings/trip/{tripId} — All bookings for a trip
     [HttpGet("trip/{tripId}")]
     public async Task<IActionResult> GetBookingsByTrip(int tripId)
     {
-        var bookings = await _context.Bookings
-            .Where(b => b.TripId == tripId)
-            .Select(b => new BookingResponseDto
-            {
-                BookingId  = b.BookingId,
-                TripId     = b.TripId ?? 0,
-                SeatNumber = b.SeatNumber,
-                Status     = b.Status,
-                Message    = "OK"
-            })
-            .ToListAsync();
-
-        return Ok(bookings);
+        var result = await _bookingService.GetBookingsByTripAsync(tripId);
+        return Ok(ApiResponse<List<BookingResponseDTO>>.SuccessResponse(result,
+            "Bookings fetched successfully"));
     }
 
+    // 5. GET /api/bookings/available-seats/{tripId} — Get available seats
     [HttpGet("available-seats/{tripId}")]
     public async Task<IActionResult> GetAvailableSeats(int tripId)
     {
-        var seats = await _context.Bookings
-            .Where(b => b.TripId == tripId && b.Status == "Available")
-            .Select(b => b.SeatNumber)
-            .ToListAsync();
-
-        return Ok(new { tripId, availableSeats = seats });
+        var result = await _bookingService.GetAvailableSeatsAsync(tripId);
+        return Ok(ApiResponse<object>.SuccessResponse(
+            new { tripId, availableSeats = result },
+            "Available seats fetched successfully"));
     }
 }
