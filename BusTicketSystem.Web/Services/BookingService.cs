@@ -1,3 +1,4 @@
+using BusTicketSystem.Web.ApiResponse;
 using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Exceptions;
 using BusTicketSystem.Web.Helper;
@@ -15,49 +16,58 @@ public class BookingService : IBookingService
         _bookingRepository = bookingRepository;
     }
 
-    public async Task<BookingResponseDTO> CreateBookingAsync(BookingRequestDTO request)
+    public async Task<ApiResponse<BookingResponseDTO>> CreateBookingAsync(BookingRequestDTO request)
     {
-        // Check if seat is available
         var seat = await _bookingRepository
             .GetAvailableSeatAsync(request.TripId, request.SeatNumber);
 
         if (seat == null)
-            throw new BadRequestException("Seat is not available");
+            return ApiResponse<BookingResponseDTO>.FailureResponse(
+                "Seat is not available", statusCode: 409);
 
-        // Hold the seat
         seat.Status = "Pending";
         await _bookingRepository.UpdateAsync(seat);
-
-        // Start tracking for 10 minute timeout
         BookingTimeoutHelper.TrackBooking(seat.BookingId);
 
-        return BookingMapper.ToDto(seat);
+        return ApiResponse<BookingResponseDTO>.SuccessResponse(
+            BookingMapper.ToDto(seat),
+            "Booking successful. Please complete payment within 10 minutes.");
     }
 
-    public async Task<BookingResponseDTO> GetBookingByIdAsync(int bookingId)
+    public async Task<ApiResponse<BookingResponseDTO>> GetBookingByIdAsync(int bookingId)
     {
         var booking = await _bookingRepository.GetByIdAsync(bookingId);
 
         if (booking == null)
-            throw new NotFoundException("Booking not found");
+            return ApiResponse<BookingResponseDTO>.FailureResponse(
+                "Booking not found", statusCode: 404);
 
-        return BookingMapper.ToDto(booking);
+        return ApiResponse<BookingResponseDTO>.SuccessResponse(
+            BookingMapper.ToDto(booking),
+            "Booking fetched successfully");
     }
 
-    public async Task<List<BookingResponseDTO>> GetMyBookingsAsync(int customerId)
+    public async Task<ApiResponse<List<BookingResponseDTO>>> GetMyBookingsAsync(int customerId)
     {
         var bookings = await _bookingRepository.GetByCustomerIdAsync(customerId);
-        return BookingMapper.ToDtoList(bookings);
+        return ApiResponse<List<BookingResponseDTO>>.SuccessResponse(
+            BookingMapper.ToDtoList(bookings),
+            "Bookings fetched successfully");
     }
 
-    public async Task<List<BookingResponseDTO>> GetBookingsByTripAsync(int tripId)
+    public async Task<ApiResponse<List<BookingResponseDTO>>> GetBookingsByTripAsync(int tripId)
     {
         var bookings = await _bookingRepository.GetByTripIdAsync(tripId);
-        return BookingMapper.ToDtoList(bookings);
+        return ApiResponse<List<BookingResponseDTO>>.SuccessResponse(
+            BookingMapper.ToDtoList(bookings),
+            "Bookings fetched successfully");
     }
 
-    public async Task<List<int>> GetAvailableSeatsAsync(int tripId)
+    public async Task<ApiResponse<List<int>>> GetAvailableSeatsAsync(int tripId)
     {
-        return await _bookingRepository.GetAvailableSeatNumbersAsync(tripId);
+        var seats = await _bookingRepository.GetAvailableSeatNumbersAsync(tripId);
+        return ApiResponse<List<int>>.SuccessResponse(
+            seats,
+            "Available seats fetched successfully");
     }
 }

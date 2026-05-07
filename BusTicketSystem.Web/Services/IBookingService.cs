@@ -1,12 +1,13 @@
+using BusTicketSystem.Web.ApiResponse;
 using BusTicketSystem.Web.DTOs;
 
 namespace BusTicketSystem.Web.Services;
 
 public interface IBookingService
 {
-    Task<BookingResponseDTO> CreateBookingAsync(BookingRequestDTO request);
-    Task<BookingResponseDTO> GetBookingByIdAsync(int bookingId);
-    Task<List<BookingResponseDTO>> GetMyBookingsAsync(int customerId);
-    Task<List<BookingResponseDTO>> GetBookingsByTripAsync(int tripId);
-    Task<List<int>> GetAvailableSeatsAsync(int tripId);
+    Task<ApiResponse<BookingResponseDTO>> CreateBookingAsync(BookingRequestDTO request);
+    Task<ApiResponse<BookingResponseDTO>> GetBookingByIdAsync(int bookingId);
+    Task<ApiResponse<List<BookingResponseDTO>>> GetMyBookingsAsync(int customerId);
+    Task<ApiResponse<List<BookingResponseDTO>>> GetBookingsByTripAsync(int tripId);
+    Task<ApiResponse<List<int>>> GetAvailableSeatsAsync(int tripId);
 }

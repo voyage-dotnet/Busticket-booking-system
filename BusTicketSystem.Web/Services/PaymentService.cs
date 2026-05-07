@@ -1,5 +1,5 @@
+using BusTicketSystem.Web.ApiResponse;
 using BusTicketSystem.Web.DTOs;
-using BusTicketSystem.Web.Exceptions;
 using BusTicketSystem.Web.Mapping;
 using BusTicketSystem.Web.Models;
 using BusTicketSystem.Web.Repositories;
@@ -19,18 +19,18 @@ public class PaymentService : IPaymentService
         _bookingRepository = bookingRepository;
     }
 
-    public async Task<PaymentResponseDTO> CreatePaymentAsync(PaymentRequestDTO request)
+    public async Task<ApiResponse<PaymentResponseDTO>> CreatePaymentAsync(PaymentRequestDTO request)
     {
-        // Check booking exists and is Pending
         var booking = await _bookingRepository.GetByIdAsync(request.BookingId);
 
         if (booking == null)
-            throw new NotFoundException("Booking not found");
+            return ApiResponse<PaymentResponseDTO>.FailureResponse(
+                "Booking not found", statusCode: 404);
 
         if (booking.Status != "Pending")
-            throw new BadRequestException("Booking is not in Pending state");
+            return ApiResponse<PaymentResponseDTO>.FailureResponse(
+                "Booking is not in Pending state", statusCode: 400);
 
-        // Create payment
         var payment = new Payment
         {
             BookingId     = request.BookingId,
@@ -41,50 +41,62 @@ public class PaymentService : IPaymentService
         };
 
         await _paymentRepository.AddAsync(payment);
-
-        // Confirm the booking
         booking.Status = "Confirmed";
         await _bookingRepository.UpdateAsync(booking);
 
-        return PaymentMapper.ToDto(payment);
+        return ApiResponse<PaymentResponseDTO>.SuccessResponse(
+            PaymentMapper.ToDto(payment),
+            "Payment successful. Booking confirmed.");
     }
 
-    public async Task<PaymentResponseDTO> GetPaymentByIdAsync(int paymentId)
+    public async Task<ApiResponse<PaymentResponseDTO>> GetPaymentByIdAsync(int paymentId)
     {
         var payment = await _paymentRepository.GetByIdAsync(paymentId);
 
         if (payment == null)
-            throw new NotFoundException("Payment not found");
+            return ApiResponse<PaymentResponseDTO>.FailureResponse(
+                "Payment not found", statusCode: 404);
 
-        return PaymentMapper.ToDto(payment);
+        return ApiResponse<PaymentResponseDTO>.SuccessResponse(
+            PaymentMapper.ToDto(payment),
+            "Payment fetched successfully");
     }
 
-    public async Task<PaymentResponseDTO> GetPaymentByBookingIdAsync(int bookingId)
+    public async Task<ApiResponse<PaymentResponseDTO>> GetPaymentByBookingIdAsync(int bookingId)
     {
         var payment = await _paymentRepository.GetByBookingIdAsync(bookingId);
 
         if (payment == null)
-            throw new NotFoundException("No payment found for this booking");
+            return ApiResponse<PaymentResponseDTO>.FailureResponse(
+                "No payment found for this booking", statusCode: 404);
 
-        return PaymentMapper.ToDto(payment);
+        return ApiResponse<PaymentResponseDTO>.SuccessResponse(
+            PaymentMapper.ToDto(payment),
+            "Payment fetched successfully");
     }
 
-    public async Task<List<PaymentResponseDTO>> GetMyPaymentsAsync(int customerId)
+    public async Task<ApiResponse<List<PaymentResponseDTO>>> GetMyPaymentsAsync(int customerId)
     {
         var payments = await _paymentRepository.GetByCustomerIdAsync(customerId);
-        return PaymentMapper.ToDtoList(payments);
+        return ApiResponse<List<PaymentResponseDTO>>.SuccessResponse(
+            PaymentMapper.ToDtoList(payments),
+            "Payments fetched successfully");
     }
 
-    public async Task<object> GetAgencyRevenueAsync(int agencyId)
+    public async Task<ApiResponse<object>> GetAgencyRevenueAsync(int agencyId)
     {
         var revenue = await _paymentRepository.GetTotalRevenueByAgencyAsync(agencyId);
-        return new { agencyId, totalRevenue = revenue };
+        return ApiResponse<object>.SuccessResponse(
+            new { agencyId, totalRevenue = revenue },
+            "Revenue fetched successfully");
     }
 
-    public async Task<object> GetTripRevenueAsync(int tripId)
+    public async Task<ApiResponse<object>> GetTripRevenueAsync(int tripId)
     {
         var revenue = await _paymentRepository.GetRevenueByTripAsync(tripId);
         var count   = await _paymentRepository.GetBookingCountByTripAsync(tripId);
-        return new { tripId, totalRevenue = revenue, totalBookings = count };
+        return ApiResponse<object>.SuccessResponse(
+            new { tripId, totalRevenue = revenue, totalBookings = count },
+            "Trip revenue fetched successfully");
     }
 }

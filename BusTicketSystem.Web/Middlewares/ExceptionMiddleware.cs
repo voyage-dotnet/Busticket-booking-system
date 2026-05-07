@@ -1,6 +1,5 @@
+using BusTicketSystem.Web.ApiResponse;
 using BusTicketSystem.Web.Exceptions;
-using BusTicketSystem.Web.Wrapper;
-using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
 
@@ -21,7 +20,6 @@ public class ExceptionMiddleware
         {
             await _next(context);
 
-            // Catch validation errors from FluentValidation (400 with ProblemDetails)
             if (context.Response.StatusCode == 400
                 && !context.Response.HasStarted)
             {
@@ -36,7 +34,7 @@ public class ExceptionMiddleware
         {
             await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await HandleExceptionAsync(context, HttpStatusCode.InternalServerError,
                 "Something went wrong. Please try again later.");
@@ -46,11 +44,9 @@ public class ExceptionMiddleware
     private static async Task HandleValidationErrorAsync(HttpContext context)
     {
         context.Response.ContentType = "application/json";
-
-        var response = ApiResponse<string>.FailResponse(
-            "Validation failed. Please check your input.");
+        var response = ApiResponse<string>.FailureResponse(
+            "Validation failed. Please check your input.", statusCode: 400);
         var json = JsonSerializer.Serialize(response);
-
         await context.Response.WriteAsync(json);
     }
 
@@ -59,10 +55,8 @@ public class ExceptionMiddleware
     {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode  = (int)statusCode;
-
-        var response = ApiResponse<string>.FailResponse(message);
+        var response = ApiResponse<string>.FailureResponse(message, statusCode: (int)statusCode);
         var json     = JsonSerializer.Serialize(response);
-
         await context.Response.WriteAsync(json);
     }
 }
