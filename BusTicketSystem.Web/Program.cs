@@ -2,10 +2,6 @@ using BusTicketSystem.Web.Filters;
 using BusTicketSystem.Web.Helper;
 using BusTicketSystem.Web.Mapping;
 using BusTicketSystem.Web.Middlewares;
-using BusTicketSystem.Web.Filters;
-using BusTicketSystem.Web.Helper;
-using BusTicketSystem.Web.Mapping;
-using BusTicketSystem.Web.Middlewares;
 using BusTicketSystem.Web.Models;
 using BusTicketSystem.Web.Repositories;
 using BusTicketSystem.Web.Services;
@@ -14,106 +10,112 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter JWT token like this: Bearer eyJhbGciOi..."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddDbContext<BusTicketDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Auth service registrations
+// Auth services
+builder.Services.AddScoped<GenerateJwtToken>();
+builder.Services.AddScoped<IAuthRepo, AuthRepo>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-using BusTicketSystem.Web.Repositories;
-using BusTicketSystem.Web.Services;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
+// Agency services
 builder.Services.AddScoped<IAgencyRepository, AgencyRepository>();
 builder.Services.AddScoped<IAgencyService, AgencyService>();
 
+// Common services
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
 builder.Services.AddScoped<ValidateModelAttribute>();
 
+// AutoMapper
 builder.Services.AddAutoMapper(typeof(AgencyMappingProfile));
 
+// FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<BusTicketSystem.Web.Validator.CreateBusRequestDTOValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // JWT Authentication
-var jwtKey = builder.Configuration["Jwt:Key"]
-             ?? builder.Configuration["JwtSettings:Key"]
-             ?? builder.Configuration["Jwt:Secret"]
-             ?? builder.Configuration["JwtSettings:Secret"];
+var jwtToken = builder.Configuration["Jwt:Token"];
 
-if (string.IsNullOrWhiteSpace(jwtKey))
+if (string.IsNullOrWhiteSpace(jwtToken))
 {
-    throw new InvalidOperationException("JWT key is missing in appsettings.json.");
-builder.Services.AddDbContext<BusTicketDbContext>(options =>
+    throw new InvalidOperationException("JWT token key is missing in appsettings.json.");
+}
 
-builder.Services.AddAuthentication(options =>
-builder.Services.AddScoped<IAgencyRepository, AgencyRepository>();
-builder.Services.AddScoped<IAgencyService, AgencyService>();
-
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-builder.Services.AddScoped<ValidateModelAttribute>();
-
-builder.Services.AddAutoMapper(typeof(AgencyMappingProfile));
-
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<BusTicketSystem.Web.Validator.CreateBusRequestDTOValidator>();
-
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtToken)
+            )
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+// Exception middleware should come before authentication/controllers
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-// Keep these in this order. Auth configuration can be added by Auth dev later.
 app.UseAuthentication();
 app.UseAuthorization();
-    };
+
 app.MapControllers();
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-app.UseMiddleware<GlobalExceptionMiddleware>();
-
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
 app.Run();

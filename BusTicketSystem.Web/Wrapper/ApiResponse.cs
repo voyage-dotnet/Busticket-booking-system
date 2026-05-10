@@ -25,7 +25,7 @@
 
         public static ApiResponse<T> ErrorResponse(
             string message,
-            int statusCode,
+            int statusCode = 400,
             object? errors = null)
         {
             return new ApiResponse<T>
@@ -36,6 +36,23 @@
                 Data = default,
                 Errors = errors
             };
+        }
+
+        // Used by your Agency code if you call FailureResponse(message, statusCode)
+        public static ApiResponse<T> FailureResponse(
+            string message,
+            int statusCode = 400)
+        {
+            return ErrorResponse(message, statusCode);
+        }
+
+        // Used by AuthService: FailureResponse(message, errors, statusCode)
+        public static ApiResponse<T> FailureResponse(
+            string message,
+            object? errors,
+            int statusCode = 400)
+        {
+            return ErrorResponse(message, statusCode, errors);
         }
     }
 }
