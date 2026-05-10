@@ -6,9 +6,9 @@ using BusTicketSystem.Web.Models;
 
 namespace BusTicketSystem.Web.Mapping;
 
-public class MappingProfile : Profile
+public class TripMappingProfile : Profile
 {
-    public MappingProfile()
+    public TripMappingProfile()
     {
         CreateMap<Models.Route, RouteResponseDTO>()
             .ForMember(dest => dest.EstimatedDurationMinutes, opt => opt.MapFrom(src => src.Duration))
