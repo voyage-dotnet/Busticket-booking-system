@@ -36,6 +36,12 @@ namespace BusTicketSystem.Web.Repositories
   
         }
 
+        public async Task UpdateCustomerEmailAsync(Customer request)
+        {
+            _context.Customers.Update(request);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Agency?> GetAgencyByEmailAysnc(string Email)
         {
             return await _context.Agencies.FirstOrDefaultAsync(a => a.Email.ToLower() == Email.ToLower());
@@ -54,7 +60,10 @@ namespace BusTicketSystem.Web.Repositories
             await _context.SaveChangesAsync();
         }
 
-        
-
+        public async Task UpadateAgencyEmailAsync (Agency request)
+        {
+            _context.Agencies.Update(request);
+            await _context.SaveChangesAsync();
+        }
     }
 }

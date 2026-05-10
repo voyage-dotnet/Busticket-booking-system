@@ -1,23 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+
 using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Models;
 using BusTicketSystem.Web.Repositories;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using BusTicketSystem.Web.Helper;
-using Microsoft.IdentityModel.Tokens;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.ValueGeneration;
-using Microsoft.CodeAnalysis.Differencing;
+
 
 namespace BusTicketSystem.Web.Services
 {
@@ -97,11 +85,11 @@ namespace BusTicketSystem.Web.Services
             return ApiResponse<LoginResponseDTO?>.SuccessResponse(response,"Login Successfully");
         } 
 
-        public async Task<ApiResponse<Object>> ForgetCustomerPasswordAsync (LoginRequestDTO request)
+        public async Task<ApiResponse<Object>> ForgetCustomerPasswordAsync (string Email, UpdatePasswordDTO request)
         {
             // check if customer have an account
             
-            var existCustomer = await _repo.GetCustomerByEmailAsync(request.Email);
+            var existCustomer = await _repo.GetCustomerByEmailAsync(Email);
 
             if(existCustomer is null)
             {
@@ -113,6 +101,26 @@ namespace BusTicketSystem.Web.Services
 
             await _repo.UpdateCustomerPasswordAsync(existCustomer);
             return ApiResponse<Object>.SuccessResponse(null, "Password Update Successfully", 200);
+        }
+
+        public async Task<ApiResponse<Object>> UpdateCustomerEmailAsync(string Email, UpdateEmailDTO request)
+        {
+            var ExistCustomer = await _repo.GetCustomerByEmailAsync(Email);
+
+            if(ExistCustomer is null)
+            {
+                return ApiResponse<Object>.FailureResponse("Customer not registered", new List<string> {$""}, 400);
+            }
+
+             if(await _repo.GetCustomerByEmailAsync(request.Email) != null)
+            {
+                return ApiResponse<Object>.FailureResponse("This Email Already exist. Please enter new Email", new List<string> {$""}, 400); 
+            }
+
+            ExistCustomer.Email = request.Email;
+            await _repo.UpdateCustomerEmailAsync(ExistCustomer);
+            return ApiResponse<Object>.SuccessResponse(null, "Email Updated Successfully",200);
+
         }
 
         public async Task<ApiResponse<RegisterResponseDTO?>> RegisterAgencyAsync (AgencyRegisterDTO request)
@@ -178,9 +186,9 @@ namespace BusTicketSystem.Web.Services
             return ApiResponse<LoginResponseDTO?>.SuccessResponse(response, "Agency Login Successfully");
         }
 
-        public async Task<ApiResponse<Object>> ForgetAgencyPasswordAsync (LoginRequestDTO request)
+        public async Task<ApiResponse<Object>> ForgetAgencyPasswordAsync (string Email, UpdatePasswordDTO request)
         {
-            var existAgency = await _repo.GetAgencyByEmailAysnc(request.Email);
+            var existAgency = await _repo.GetAgencyByEmailAysnc(Email);
 
             if(existAgency is null)
             {
@@ -192,6 +200,25 @@ namespace BusTicketSystem.Web.Services
 
             await _repo.UpdateAgencyPasswordAsync(existAgency);
             return ApiResponse<Object>.SuccessResponse(null, "Password Updated Successfully", 200);
+        }
+
+        public async Task<ApiResponse<Object>> UpdateAgencyEmailAsync (string Email, UpdateEmailDTO request)
+        {
+            var existAgency = await _repo.GetAgencyByEmailAysnc(Email);
+
+            if(existAgency is null)
+            {
+                return ApiResponse<Object>.FailureResponse("Agency not registered", new List<string> {$""}, 400); 
+            }
+
+            if(await _repo.GetAgencyByEmailAysnc(request.Email) != null)
+            {
+                return ApiResponse<Object>.FailureResponse("This Email Already exist. Please enter new Email", new List<string> {$""}, 400); 
+            }
+
+            existAgency.Email = request.Email;
+            await _repo.UpadateAgencyEmailAsync(existAgency);
+            return ApiResponse<Object>.SuccessResponse(null, "Email Updated Successfully", 200);
         }
     }
 }

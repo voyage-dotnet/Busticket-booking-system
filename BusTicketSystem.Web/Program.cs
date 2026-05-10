@@ -26,6 +26,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddScoped<GenerateJwtToken>();
 builder.Services.AddScoped<IAuthRepo, AuthRepo>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProfileRepo, ProfileRepo>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 
 builder.Services.AddDbContext<BusTicketDbContext>(options => 

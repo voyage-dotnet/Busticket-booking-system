@@ -12,10 +12,12 @@ namespace BusTicketSystem.Web.Repositories
         Task<Customer?> GetCustomerByEmailAsync(string Email);
         Task<Customer?> RegisterCustomerAsync(Customer request);
         Task UpdateCustomerPasswordAsync(Customer request);
+        Task UpdateCustomerEmailAsync(Customer request);
 
         Task<Agency?> GetAgencyByEmailAysnc(string Email);
-        Task<Agency?> RegisterAgencyAsync (Agency request);
-        Task UpdateAgencyPasswordAsync (Agency agency);
+        Task<Agency?> RegisterAgencyAsync(Agency request);
+        Task UpdateAgencyPasswordAsync(Agency request);
+        Task UpadateAgencyEmailAsync(Agency request);
         
 
     }
