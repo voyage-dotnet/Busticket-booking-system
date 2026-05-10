@@ -15,7 +15,7 @@ public partial class Review
 
     public string? Comment { get; set; }
 
-    public DateTime? ReviewDate { get; set; }
+    public DateTime? ReviewDate { get; set; } = DateTime.Now;
 
     public virtual Customer Customer { get; set; } = null!;
 
