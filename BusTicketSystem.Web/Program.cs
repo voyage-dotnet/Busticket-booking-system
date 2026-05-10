@@ -6,6 +6,7 @@ using BusTicketSystem.Web.Models;
 using BusTicketSystem.Web.Repositories;
 using BusTicketSystem.Web.Services;
 using BusTicketSystem.Web.ApiResponse;
+using BusTicketSystem.Web.Validator;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -69,13 +70,22 @@ builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddScoped<IRouteService, RouteService>();
 builder.Services.AddScoped<ITripService, TripService>();
 
+// Booking and Payment services
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+// Hosted Service (Booking Timeout)
+builder.Services.AddHostedService<BookingTimeoutHelper>();
+
 // Common services
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ValidateModelAttribute>();
 
 // AutoMapper
-builder.Services.AddAutoMapper(typeof(AgencyMappingProfile));
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
@@ -129,4 +139,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
