@@ -5,6 +5,7 @@ using BusTicketSystem.Web.Middlewares;
 using BusTicketSystem.Web.Models;
 using BusTicketSystem.Web.Repositories;
 using BusTicketSystem.Web.Services;
+using BusTicketSystem.Web.ApiResponse;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -50,10 +51,6 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<BusTicketDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Auth services
-builder.Services.AddScoped<GenerateJwtToken>();
-builder.Services.AddScoped<IAuthRepo, AuthRepo>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Agency services
 builder.Services.AddScoped<IAgencyRepository, AgencyRepository>();
