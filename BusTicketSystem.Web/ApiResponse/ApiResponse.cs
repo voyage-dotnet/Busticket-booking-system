@@ -1,4 +1,5 @@
-namespace BusTicketSystem.Web.ApiResponse;
+using BusTicketSystem.Web.ResponseWrapper;
+namespace BusTicketSystem.Web.ResponseWrapper;
 
 public class ApiResponse<T>
 {

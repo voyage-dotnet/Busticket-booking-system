@@ -1,6 +1,5 @@
 using BusTicketSystem.Web.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TextTemplating;
 using BusTicketSystem.Web.DTOs;
 
 namespace BusTicketSystem.Web.Repositories

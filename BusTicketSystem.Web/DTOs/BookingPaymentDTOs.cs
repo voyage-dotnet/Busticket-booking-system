@@ -1,4 +1,4 @@
-﻿namespace BusTicketSystem.Web.DTOs;
+namespace BusTicketSystem.Web.DTOs;
 
 public class BookingRequestDTO
 {
@@ -32,4 +32,3 @@ public class PaymentResponseDTO
     public string? PaymentStatus { get; set; }
 }
 
-}

@@ -1,4 +1,4 @@
-using BusTicketSystem.Web.ApiResponse;
+using BusTicketSystem.Web.ResponseWrapper;
 using BusTicketSystem.Web.DTOs;
 
 namespace BusTicketSystem.Web.Services;

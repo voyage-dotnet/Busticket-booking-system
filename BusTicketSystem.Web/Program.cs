@@ -5,7 +5,6 @@ using BusTicketSystem.Web.Middlewares;
 using BusTicketSystem.Web.Models;
 using BusTicketSystem.Web.Repositories;
 using BusTicketSystem.Web.Services;
-using BusTicketSystem.Web.ApiResponse;
 using BusTicketSystem.Web.Validator;
 using FluentValidation;
 using FluentValidation.AspNetCore;

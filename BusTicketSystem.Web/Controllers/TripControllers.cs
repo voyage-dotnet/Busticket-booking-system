@@ -1,8 +1,8 @@
+using BusTicketSystem.Web.ResponseWrapper;
 using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Helper;
 using BusTicketSystem.Web.Services;
 using Microsoft.AspNetCore.Authorization;
-using BusTicketSystem.Web.ApiResponse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +10,12 @@ namespace BusTicketSystem.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TripControllers : ControllerBase
+    public class TripController : ControllerBase
     {
         private readonly ITripService _service;
         private readonly IUserHelper _helper;
 
-        public TripControllers(ITripService service, IUserHelper helper)
+        public TripController(ITripService service, IUserHelper helper)
         {
             _service = service;
             _helper = helper;

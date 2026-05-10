@@ -1,4 +1,4 @@
-﻿using BusTicketSystem.Web.DTOs;
+using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Exceptions;
 using BusTicketSystem.Web.Mapping;
 using BusTicketSystem.Web.Models;
@@ -100,7 +100,7 @@ namespace BusTicketSystem.Web.Services
                 throw new BadRequestException(string.Join(" | ", errors));
 
             var review = await _reviewRepo.GetByIdAsync(reviewId)
-                ?? throw new NotFoundException("Review", reviewId);
+                ?? throw new NotFoundException($"Review with ID {reviewId} not found.");
 
             if (review.CustomerId != customerId)
                 throw new ForbiddenException("You are not authorized to edit this review.");

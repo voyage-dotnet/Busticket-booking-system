@@ -1,9 +1,9 @@
+using BusTicketSystem.Web.ResponseWrapper;
 using System;
 using System.ComponentModel.Design.Serialization;
 using System.Text.Json;
 using Azure;
 using BusTicketSystem.Web.Exceptions;
-using BusTicketSystem.Web.ApiResponse;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace BusTicketSystem.Web.Middlewares;
