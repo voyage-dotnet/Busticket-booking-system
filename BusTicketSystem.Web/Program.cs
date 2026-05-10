@@ -20,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpClient();
 
 // Swagger configuration with JWT support
 builder.Services.AddSwaggerGen(options =>
@@ -76,6 +77,12 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 
+// Review and Dashboard services
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+
 // Hosted Service (Booking Timeout)
 builder.Services.AddHostedService<BookingTimeoutHelper>();
 
@@ -114,7 +121,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtToken)
-            )
+            ),
+            NameClaimType = "sub",   // Support for GetCustomerId()
+            RoleClaimType = "role"   // Support for [Authorize(Roles="...")]
         };
     });
 
@@ -139,3 +148,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

@@ -12,6 +12,7 @@ public class SubmitReviewDTO
 
 public class ReviewResponseDTO
 {
+    public int ReviewId { get; set; }
     public int TripId { get; set; }
     public string TripName { get; set; } = string.Empty;
     public int CustomerId { get; set; }
