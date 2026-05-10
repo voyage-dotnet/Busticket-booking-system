@@ -1,4 +1,5 @@
-﻿namespace BusTicketSystem.Web.DTOs;
+namespace BusTicketSystem.Web.DTOs;
+
 
 public class BusResponseDTO
 {
