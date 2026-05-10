@@ -1,6 +1,8 @@
 using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Helper;
 using BusTicketSystem.Web.Services;
+using Microsoft.AspNetCore.Authorization;
+using BusTicketSystem.Web.ApiResponse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +22,7 @@ namespace BusTicketSystem.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Agency")]
         public async Task<IActionResult> GetAgencyTrips()
         {
             int agencyId = _helper.GetUserId();
@@ -41,24 +44,28 @@ namespace BusTicketSystem.Web.Controllers
             return Ok(ApiResponse<IEnumerable<TripSearchResultDTO>>.SuccessResponse(trips));
         }
         [HttpGet("{tripId}/seats")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetSeatLayout(int tripId)
         {
             var layout = await _service.GetSeatLayoutAsync(tripId);
             return Ok(ApiResponse<SeatLayoutDTO>.SuccessResponse(layout));
         }
         [HttpPost]
+        [Authorize(Roles = "Agency")]
         public async Task<IActionResult> CreateTrip([FromBody] CreateTripRequestDTO request)
         {
             var trip = await _service.CreateTripAsync(request);
             return CreatedAtAction(nameof(GetTripById), new { id = trip.TripId }, ApiResponse<TripSummaryDTO>.SuccessResponse(trip, "Trip scheduled successfully", 201));
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Agency")]
         public async Task<IActionResult> UpdateTrip(int id, [FromBody] UpdateTripRequestDTO request)
         {
             var trip = await _service.UpdateTripAsync(id, request);
             return Ok(ApiResponse<TripSummaryDTO>.SuccessResponse(trip, "Trip updated successfully"));
         }
         [HttpGet("agency/my-trips")]
+        [Authorize(Roles = "Agency")]
         public async Task<IActionResult> GetMyTripsWithOccupancy()
         {
             int agencyId = _helper.GetUserId();

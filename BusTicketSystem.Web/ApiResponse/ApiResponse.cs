@@ -1,3 +1,5 @@
+namespace BusTicketSystem.Web.ApiResponse;
+
 public class ApiResponse<T>
 {
     public bool Success { get; set; }

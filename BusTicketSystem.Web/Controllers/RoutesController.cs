@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using BusTicketSystem.Web.Services;
 using BusTicketSystem.Web.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using BusTicketSystem.Web.ApiResponse;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,7 +24,7 @@ public class RoutesController : ControllerBase
         var route = await _service.GetAllRoutesAsync();
         return Ok(ApiResponse<IEnumerable<RouteResponseDTO>>.SuccessResponse(route));
     }
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetRouteById(int id)
     {
         var route = await _service.GetRouteByIdAsync(id);
@@ -35,12 +37,14 @@ public class RoutesController : ControllerBase
         return Ok(ApiResponse<IEnumerable<RouteSearchResultDTO>>.SuccessResponse(route));
     }
     [HttpPost]
+    [Authorize(Roles = "Agency")]
     public async Task<IActionResult> CreateRoute([FromBody] CreateRouteRequestDTO request)
     {
         var route = await _service.CreateRouteAsync(request);
         return CreatedAtAction(nameof(GetRouteById), new { id = route.RouteId }, ApiResponse<RouteResponseDTO>.SuccessResponse(route, "Created Successfully", 201));
     }
     [HttpPut("{id}")]
+    [Authorize(Roles = "Agency")]
     public async Task<IActionResult> UpdateRoutes(int id, [FromBody] UpdateRouteRequestDTO request)
     {
         var route = await _service.UpdateRouteAsync(id, request);
