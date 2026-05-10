@@ -68,7 +68,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Global exception handler — must be first
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
