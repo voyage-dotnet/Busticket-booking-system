@@ -5,18 +5,16 @@ namespace BusTicketSystem.Web.Validator;
 
 public class BookingValidator : AbstractValidator<BookingRequestDTO>
 {
-    public BookingValidator()
+    public static List<string> Validate(BookingRequestDTO dto)
     {
-        RuleFor(x => x.TripId)
-            .GreaterThan(0)
-            .WithMessage("TripId must be a positive number");
+        var errors = new List<string>();
 
-        RuleFor(x => x.SeatNumber)
-            .GreaterThan(0)
-            .WithMessage("SeatNumber must be a positive number");
+        if (dto.TripId <= 0)
+            errors.Add("TripId must be a valid positive number.");
 
-        RuleFor(x => x.CustomerId)
-            .GreaterThan(0)
-            .WithMessage("CustomerId must be a positive number");
+        if (dto.SeatNumber <= 0)
+            errors.Add("SeatNumber must be a valid positive number.");
+
+        return errors;
     }
 }

@@ -33,17 +33,6 @@ namespace BusTicketSystem.Web.Services
             var nextId = await _reviewRepo.GetNextReviewIdAsync();
             var review = ReviewMapper.ToEntity(dto, customerId, nextId);
 
-
-            //var review = new Review
-            //{
-            //    ReviewId = await _reviewRepo.GetNextReviewIdAsync(),
-            //    CustomerId = customerId,
-            //    TripId = dto.TripId,
-            //    Rating = dto.Rating,
-            //    Comment = dto.Comment,
-            //    ReviewDate = DateTime.UtcNow
-            //};
-
             var created = await _reviewRepo.AddAsync(review);
 
             // Re-fetch with navigations to build full response
@@ -63,22 +52,6 @@ namespace BusTicketSystem.Web.Services
 
         public async Task<AgencyReviewSummaryDTO> GetReviewsByAgencyAsync(int agencyId)
         {
-            //var reviews = await _reviewRepo.GetByAgencyIdAsync(agencyId);
-            //var dtos = reviews.Select(MapToDto).ToList();
-
-            //// Agency name comes from the first review's trip navigation
-            //var agencyName = reviews.FirstOrDefault()?.Trip?.Bus.Office.Agency?.Name ?? string.Empty;
-
-            //return new AgencyReviewSummaryDto
-            //{
-            //    AgencyId = agencyId,
-            //    AgencyName = agencyName,
-            //    TotalReviews = dtos.Count,
-            //    AverageRating = dtos.Count > 0
-            //                        ? Math.Round(dtos.Average(r => r.Rating), 2)
-            //                        : 0,
-            //    Reviews = dtos
-            //};
             var reviews = await _reviewRepo.GetByAgencyIdAsync(agencyId);
             return ReviewMapper.ToAgencySummaryDTO(agencyId, reviews);
         }
