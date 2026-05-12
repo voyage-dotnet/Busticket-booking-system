@@ -31,13 +31,6 @@ namespace BusTicketSystem.Web.Controllers
             return int.Parse(value);
         }
 
-        //[HttpGet("debug-claims")]
-        //[Authorize]
-        //public IActionResult DebugClaims()
-        //{
-        //    var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-        //    return Ok(claims);
-        //}
 
         // POST /api/reviews
         // Role: Customer  — Submit review (requires completed booking)
@@ -48,8 +41,6 @@ namespace BusTicketSystem.Web.Controllers
             try
             {
                 var result = await _reviewService.SubmitReviewAsync(GetCustomerId(), dto);
-                //return CreatedAtAction(nameof(GetReviewsByTrip),
-                //    new { tripId = result.TripId }, result);
                 return StatusCode(201, ApiResponse<ReviewResponseDTO>.SuccessResponse(
                 result, "Review submitted successfully.", 201));
             }

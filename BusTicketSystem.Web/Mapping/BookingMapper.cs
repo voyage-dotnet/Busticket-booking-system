@@ -9,15 +9,16 @@ public static class BookingMapper
     {
         return new BookingResponseDTO
         {
-            BookingId  = booking.BookingId,
-            TripId     = booking.TripId ?? 0,
+            BookingId = booking.BookingId,
+            TripId = booking.TripId ?? 0,
+            RouteName = $"{booking.Trip?.Route?.FromCity} -> {booking.Trip?.Route?.ToCity}",
+            DepartureTime = booking.Trip?.DepartureTime ?? DateTime.MinValue,
+            Fare = booking.Trip?.Fare ?? 0m,
             SeatNumber = booking.SeatNumber,
-            Status     = booking.Status
+            Status = booking.Status
         };
     }
 
     public static List<BookingResponseDTO> ToDtoList(List<Booking> bookings)
-    {
-        return bookings.Select(ToDto).ToList();
-    }
+        => bookings.Select(ToDto).ToList();
 }

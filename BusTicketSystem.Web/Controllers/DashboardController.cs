@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using BusTicketSystem.Web.Helper;
 
 namespace BusTicketSystem.Web.Controllers
 {
@@ -13,15 +14,16 @@ namespace BusTicketSystem.Web.Controllers
     public class DashboardController : ControllerBase
     {
         private readonly IDashboardService _dashboardService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public DashboardController(IDashboardService dashboardService)
+        public DashboardController(IDashboardService dashboardService, ICurrentUserService currentUserService)
         {
             _dashboardService = dashboardService;
+            _currentUserService = currentUserService;
         }
 
-        // ⚠️ TEMP: Hardcoded for testing — swap back when JWT is confirmed working
         private int GetCustomerId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        private int GetAgencyId() => int.Parse(User.FindFirstValue("agencyId")!);
+        private int GetAgencyId() => _currentUserService.GetAgencyId();
 
 
         // GET /api/dashboard/agency/overview
@@ -49,7 +51,7 @@ namespace BusTicketSystem.Web.Controllers
         // GET /api/dashboard/agency/top-routes
         // Role: Agency — Top routes by booking count
         [HttpGet("agency/top-routes")]
-        //[Authorize(Roles = "Agency")]
+        [Authorize(Roles = "Agency")]
         public async Task<IActionResult> GetAgencyTopRoutes()
         {
             var routes = await _dashboardService.GetAgencyTopRoutesAsync(GetAgencyId());

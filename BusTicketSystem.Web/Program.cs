@@ -55,6 +55,7 @@ builder.Services.AddDbContext<BusTicketDbContext>(options =>
 
 // Auth services
 builder.Services.AddScoped<GenerateJwtToken>();
+builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddScoped<IAuthRepo, AuthRepo>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProfileRepo, ProfileRepo>();
@@ -121,8 +122,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtToken)
             ),
-            NameClaimType = "sub",   // Support for GetCustomerId()
-            RoleClaimType = "role"   // Support for [Authorize(Roles="...")]
+            //NameClaimType = "sub",   // Support for GetCustomerId()
+            //RoleClaimType = "role"   // Support for [Authorize(Roles="...")]
         };
     });
 
