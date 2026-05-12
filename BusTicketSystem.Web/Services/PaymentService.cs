@@ -27,53 +27,31 @@ public class PaymentService : IPaymentService
         _config = config;
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  POST /api/payments
-    //  PaymentMethod used ONLY to decide flow — never assigned to Payment entity
-    //  DB columns used: PaymentId, BookingId, CustomerId, Amount,
-    //                   PaymentDate, PaymentStatus
-    // ════════════════════════════════════════════════════════════════════════
-
     public async Task<object> ProcessPaymentAsync(int customerId, PaymentRequestDTO dto)
     {
-        // 1. Validate
         var errors = PaymentRequestValidator.Validate(dto);
         if (errors.Any())
             throw new BadRequestException(string.Join(" | ", errors));
-
-        // 2. Check booking exists
         var booking = await _repo.GetBookingByIdAsync(dto.BookingId)
             ?? throw new NotFoundException($"Booking {dto.BookingId}");
-
-        // 3. Check not already paid
         var existing = await _repo.GetByBookingIdAsync(dto.BookingId);
         if (existing != null && existing.PaymentStatus == "Success")
             throw new BadRequestException("This booking has already been paid.");
-
-        // 4. Check not cancelled
         if (booking.Status == "Cancelled")
             throw new BadRequestException("Cannot pay for a cancelled booking.");
-
-        // 5. Validate amount matches trip fare
         if (dto.Amount != booking.Trip!.Fare)
             throw new BadRequestException(
                 $"Amount must match the trip fare of {booking.Trip.Fare}.");
-
-        // 6. Build Payment — only DB columns, NO PaymentMethod property
-        //var nextId = await _repo.GetNextPaymentIdAsync();
         var payment = new Models.Payment
         {
-            //PaymentId = nextId,
             BookingId = dto.BookingId,
             CustomerId = customerId,
             Amount = dto.Amount,
             PaymentDate = DateTime.UtcNow,
-            PaymentStatus = "Success"           // will update to "Success" for CARD below
+            PaymentStatus = "Success"           
         };
 
         await _repo.AddAsync(payment);
-
-        // ── UPI: generate QR, status stays Pending until ConfirmUPI called ───
         if (dto.PaymentMethod!.Equals("UPI", StringComparison.OrdinalIgnoreCase))
         {
             string upiUrl =
@@ -102,13 +80,11 @@ public class PaymentService : IPaymentService
                 UpiUrl = upiUrl
             };
         }
-
-        // ── CARD: validate and mark Success immediately ────────────────────────
         if (dto.PaymentMethod.Equals("CARD", StringComparison.OrdinalIgnoreCase))
         {
             if (!string.IsNullOrEmpty(dto.CardNumber) && dto.CardNumber.Length == 16)
             {
-                payment.PaymentStatus = "Success";   // only DB field updated
+                payment.PaymentStatus = "Success";   
                 await _repo.UpdateAsync(payment);
 
                 await _repo.UpdateBookingStatusAsync(dto.BookingId, "Confirmed");
@@ -128,10 +104,6 @@ public class PaymentService : IPaymentService
         throw new BadRequestException("Invalid Payment Method. Use 'UPI' or 'CARD'.");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  POST /api/payments/confirm/{bookingId} — Confirm UPI after QR scan
-    // ════════════════════════════════════════════════════════════════════════
-
     public async Task<string> ConfirmUPIPaymentAsync(int bookingId)
     {
         var payment = await _repo.GetByBookingIdAsync(bookingId)
@@ -147,10 +119,6 @@ public class PaymentService : IPaymentService
 
         return "UPI Payment Confirmed Successfully.";
     }
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  RAZORPAY — Step 1: Create Order
-    // ════════════════════════════════════════════════════════════════════════
 
     public async Task<object> CreateRazorpayOrderAsync(int customerId, CreateOrderDTO dto)
     {
@@ -168,12 +136,8 @@ public class PaymentService : IPaymentService
 
         var order = client.Order.Create(options);
         string orderId = order["id"].ToString()!;
-
-        // Save Pending payment — only DB columns, NO PaymentMethod
-        //var nextId = await _repo.GetNextPaymentIdAsync();
         var payment = new Models.Payment
         {
-            //PaymentId = nextId,
             BookingId = dto.BookingId,
             CustomerId = customerId,
             Amount = dto.Amount,
@@ -191,10 +155,6 @@ public class PaymentService : IPaymentService
             PaymentId = payment.PaymentId
         };
     }
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  RAZORPAY — Step 2: Verify & Save
-    // ════════════════════════════════════════════════════════════════════════
 
     public async Task<object> VerifyAndSavePaymentAsync(VerifyPaymentDTO dto)
     {
@@ -225,10 +185,6 @@ public class PaymentService : IPaymentService
         };
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  GET /api/payments/{id}
-    // ════════════════════════════════════════════════════════════════════════
-
     public async Task<PaymentResponseDTO?> GetPaymentByIdAsync(int customerId, int paymentId)
     {
         var payment = await _repo.GetByIdAsync(paymentId)
@@ -239,10 +195,6 @@ public class PaymentService : IPaymentService
 
         return PaymentMapper.ToPaymentResponseDTO(payment);
     }
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  GET /api/payments/booking/{bookingId}
-    // ════════════════════════════════════════════════════════════════════════
 
     public async Task<PaymentResponseDTO?> GetPaymentByBookingIdAsync(int customerId, int bookingId)
     {
@@ -255,19 +207,11 @@ public class PaymentService : IPaymentService
         return PaymentMapper.ToPaymentResponseDTO(payment);
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  GET /api/payments/my
-    // ════════════════════════════════════════════════════════════════════════
-
     public async Task<List<PaymentHistoryDTO>> GetMyPaymentHistoryAsync(int customerId)
     {
         var payments = await _repo.GetAllByCustomerIdAsync(customerId);
         return payments.Select(PaymentMapper.ToPaymentHistoryDTO).ToList();
     }
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  GET /api/payments/agency/revenue
-    // ════════════════════════════════════════════════════════════════════════
 
     public async Task<AgencyRevenueDTO> GetAgencyRevenueAsync(int agencyId)
     {
@@ -284,10 +228,6 @@ public class PaymentService : IPaymentService
             TotalPayments = payments.Count
         };
     }
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  GET /api/payments/agency/trip/{tripId}/revenue
-    // ════════════════════════════════════════════════════════════════════════
 
     public async Task<TripRevenueDTO> GetTripRevenueAsync(int agencyId, int tripId)
     {

@@ -13,11 +13,6 @@ namespace BusTicketSystem.Web.Repositories
             _db = db;
         }
 
-        // ════════════════════════════════════════════════════════════════════════════
-        //  AGENCY
-        //  Chain: Trip → Bus (BusId) → AgencyOffice (OfficeId) → Agency (AgencyId)
-        // ════════════════════════════════════════════════════════════════════════════
-
         public async Task<List<int>> GetTripIdsByAgencyAsync(int agencyId)
         {
             return await _db.Trips
@@ -81,8 +76,6 @@ namespace BusTicketSystem.Web.Repositories
                          && p.PaymentStatus == "Success")
                 .SumAsync(p => p.Amount ?? 0m);
         }
-
-        // Projects directly into TopRouteDTO — no Raw class needed
         public async Task<List<TopRouteDTO>> GetTopRoutesByAgencyAsync(int agencyId)
         {
             return await _db.Payments
@@ -108,11 +101,6 @@ namespace BusTicketSystem.Web.Repositories
                 .ToListAsync();
         }
 
-        // ════════════════════════════════════════════════════════════════════════════
-        //  CUSTOMER
-        //  Chain: Payment → CustomerId, Booking → TripId → Route
-        // ════════════════════════════════════════════════════════════════════════════
-
         public async Task<int> GetCompletedTripCountByCustomerAsync(int customerId)
         {
             return await _db.Payments
@@ -134,8 +122,6 @@ namespace BusTicketSystem.Web.Repositories
             return await _db.Reviews
                 .CountAsync(r => r.CustomerId == customerId);
         }
-
-        // Projects directly into RecentBookingDTO — no Raw class needed
         public async Task<List<RecentBookingDTO>> GetRecentBookingsByCustomerAsync(int customerId)
         {
             return await _db.Payments
@@ -152,10 +138,6 @@ namespace BusTicketSystem.Web.Repositories
                 })
                 .ToListAsync();
         }
-
-        // ════════════════════════════════════════════════════════════════════════════
-        //  PUBLIC
-        // ════════════════════════════════════════════════════════════════════════════
 
         public async Task<int> GetTotalRoutesAsync()
             => await _db.Routes.CountAsync();

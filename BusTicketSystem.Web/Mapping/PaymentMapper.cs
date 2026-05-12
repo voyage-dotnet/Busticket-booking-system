@@ -19,13 +19,10 @@ public static class PaymentMapper
             Amount = p.Amount ?? 0m,
             PaymentDate = p.PaymentDate ?? DateTime.UtcNow,
             PaymentStatus = p.PaymentStatus ?? string.Empty,
-            QRCode = qrCode,   // only for UPI — generated at runtime
-            UpiUrl = upiUrl    // only for UPI — generated at runtime
+            QRCode = qrCode,   
+            UpiUrl = upiUrl    
         };
     }
-
-    // ─── Payment → PaymentHistoryDTO ──────────────────────────────────────────
-    // PaymentMethod NOT included — not in DB schema
     public static PaymentHistoryDTO ToPaymentHistoryDTO(Payment p)
     {
         return new PaymentHistoryDTO

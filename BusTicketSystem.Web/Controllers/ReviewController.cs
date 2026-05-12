@@ -19,10 +19,6 @@ namespace BusTicketSystem.Web.Controllers
         {
             _reviewService = reviewService;
         }
-
-        // ─── Helper to extract CustomerId from JWT ───────────────────────────────
-        //private int GetCustomerId() =>
-        //    int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         private int GetCustomerId()
         {
             var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -30,10 +26,6 @@ namespace BusTicketSystem.Web.Controllers
                 throw new BadRequestException("Customer ID not found in token.");
             return int.Parse(value);
         }
-
-
-        // POST /api/reviews
-        // Role: Customer  — Submit review (requires completed booking)
         [HttpPost]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> SubmitReview([FromBody] SubmitReviewDTO dto)
@@ -49,21 +41,14 @@ namespace BusTicketSystem.Web.Controllers
                 return BadRequest(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 400));
             }
         }
-
-        // GET /api/reviews/trip/{tripId}
-        // Role: Public  — All reviews for a specific trip
         [HttpGet("trip/{tripId:int}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetReviewsByTrip(int tripId)
         {
             var reviews = await _reviewService.GetReviewsByTripAsync(tripId);
-            //return Ok(reviews);
             return Ok(ApiResponse<List<ReviewResponseDTO>>.SuccessResponse(
             reviews, $"Reviews for trip {tripId}."));
         }
-
-        // GET /api/reviews/agency/{agencyId}
-        // Role: Public  — Agency reviews with avg rating
         [HttpGet("agency/{agencyId:int}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetReviewsByAgency(int agencyId)
@@ -71,7 +56,6 @@ namespace BusTicketSystem.Web.Controllers
             try
             {
                 var summary = await _reviewService.GetReviewsByAgencyAsync(agencyId);
-                //return Ok(summary);
                 return Ok(ApiResponse<AgencyReviewSummaryDTO>.SuccessResponse(
                 summary, "Agency review summary fetched."));
             }
@@ -80,9 +64,6 @@ namespace BusTicketSystem.Web.Controllers
                 return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404)); 
             }
         }
-
-        // GET /api/reviews/my
-        // Role: Customer  — Reviews by the logged-in customer
         [HttpGet("my")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetMyReviews()
@@ -91,9 +72,6 @@ namespace BusTicketSystem.Web.Controllers
             return Ok(ApiResponse<List<ReviewResponseDTO>>.SuccessResponse(
            reviews, "Your reviews fetched successfully."));
         }
-
-        // PUT /api/reviews/{id}
-        // Role: Customer  — Edit own review (rating / comment)
         [HttpPut("{id:int}")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateReview(int id, [FromBody] UpdateReviewDTO dto)

@@ -12,10 +12,6 @@ public class PaymentRepository : IPaymentRepository
         _db = db;
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  PAYMENT
-    // ════════════════════════════════════════════════════════════════════════
-
     public async Task AddAsync(Payment payment)
     {
         _db.Payments.Add(payment);
@@ -51,8 +47,6 @@ public class PaymentRepository : IPaymentRepository
             .OrderByDescending(p => p.PaymentDate)
             .ToListAsync();
     }
-
-    // Chain: Payment → Booking → Trip → Bus → AgencyOffice → Agency
     public async Task<List<Payment>> GetAllByAgencyAsync(int agencyId)
     {
         return await _db.Payments
@@ -89,16 +83,6 @@ public class PaymentRepository : IPaymentRepository
         await _db.SaveChangesAsync();
     }
 
-    //public async Task<int> GetNextPaymentIdAsync()
-    //{
-    //    var maxId = await _db.Payments.MaxAsync(p => (int?)p.PaymentId) ?? 0;
-    //    return maxId + 1;
-    //}
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  BOOKING — Read-only (owned by Booking Service dev)
-    // ════════════════════════════════════════════════════════════════════════
-
     public async Task<Booking?> GetBookingByIdAsync(int bookingId)
     {
         return await _db.Bookings
@@ -127,10 +111,6 @@ public class PaymentRepository : IPaymentRepository
                         && b.SeatNumber == seatNumber
                         && b.Status == "Booked");
     }
-
-    // ════════════════════════════════════════════════════════════════════════
-    //  TRIP — Read-only (owned by Trip Service dev)
-    // ════════════════════════════════════════════════════════════════════════
 
     public async Task<Trip?> GetTripByIdAsync(int tripId)
     {

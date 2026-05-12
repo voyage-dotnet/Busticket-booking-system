@@ -16,8 +16,6 @@ namespace BusTicketSystem.Web.Services
             _reviewRepo = reviewRepo;
         }
 
-        // ─── SUBMIT REVIEW ───────────────────────────────────────────────────────
-
         public async Task<ReviewResponseDTO> SubmitReviewAsync(int customerId, SubmitReviewDTO dto)
         {
             var errors = SubmitReviewValidator.Validate(dto);
@@ -34,13 +32,9 @@ namespace BusTicketSystem.Web.Services
             var review = ReviewMapper.ToEntity(dto, customerId, nextId);
 
             var created = await _reviewRepo.AddAsync(review);
-
-            // Re-fetch with navigations to build full response
             var saved = await _reviewRepo.GetByIdAsync(created.ReviewId);
             return ReviewMapper.ToResponseDTO(saved!);
         }
-
-        // ─── GET REVIEWS BY TRIP ─────────────────────────────────────────────────
 
         public async Task<List<ReviewResponseDTO>> GetReviewsByTripAsync(int tripId)
         {
@@ -48,23 +42,17 @@ namespace BusTicketSystem.Web.Services
             return ReviewMapper.ToResponseDTOList(reviews);
         }
 
-        // ─── GET REVIEWS BY AGENCY ───────────────────────────────────────────────
-
         public async Task<AgencyReviewSummaryDTO> GetReviewsByAgencyAsync(int agencyId)
         {
             var reviews = await _reviewRepo.GetByAgencyIdAsync(agencyId);
             return ReviewMapper.ToAgencySummaryDTO(agencyId, reviews);
         }
 
-        // ─── GET MY REVIEWS ──────────────────────────────────────────────────────
-
         public async Task<List<ReviewResponseDTO>> GetMyReviewsAsync(int customerId)
         {
             var reviews = await _reviewRepo.GetByCustomerIdAsync(customerId);
             return ReviewMapper.ToResponseDTOList(reviews);
         }
-
-        // ─── UPDATE REVIEW ───────────────────────────────────────────────────────
 
         public async Task<ReviewResponseDTO> UpdateReviewAsync(int reviewId, int customerId, UpdateReviewDTO dto)
         {

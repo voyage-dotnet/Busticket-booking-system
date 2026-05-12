@@ -27,15 +27,12 @@ namespace BusTicketSystem.Web.Services
 
         public async Task<ApiResponse<RegisterResponseDTO?>> RegisterCustomerAsync(RegisterRequestDTO request)
         {
-            // check if customer already exist
             var customer = await _repo.GetCustomerByEmailAsync(request.Email);
 
             if(customer != null)
             {
                 return ApiResponse<RegisterResponseDTO?>.FailureResponse("User Already Exist", new List<string>{"Email is already register"}, 400);
             }
-
-            // this is new customer
             var NewCustomer = new Customer();
 
             NewCustomer.Name = request.Name;
@@ -61,15 +58,12 @@ namespace BusTicketSystem.Web.Services
 
         public async Task<ApiResponse<LoginResponseDTO?>> LoginCustomerAsync(LoginRequestDTO request)
         {
-            // check if new customer without register
             var customer = await _repo.GetCustomerByEmailAsync(request.Email);
 
             if(customer is null)
             {
                 return ApiResponse<LoginResponseDTO?>.FailureResponse("User not exist", new List<string>{$"{customer}"}, 401);
             }
-
-            // check password is correct or not
             var result = new PasswordHasher<Customer>().VerifyHashedPassword(customer, customer.PasswordHash, request.Password);
 
             if(result == PasswordVerificationResult.Failed)
@@ -88,7 +82,6 @@ namespace BusTicketSystem.Web.Services
 
         public async Task<ApiResponse<Object>> ForgetCustomerPasswordAsync (string Email, UpdatePasswordDTO request)
         {
-            // check if customer have an account
             
             var existCustomer = await _repo.GetCustomerByEmailAsync(Email);
 
@@ -126,15 +119,12 @@ namespace BusTicketSystem.Web.Services
 
         public async Task<ApiResponse<RegisterResponseDTO?>> RegisterAgencyAsync (AgencyRegisterDTO request)
         {
-             // check if customer already exist
             var agency = await _repo.GetAgencyByEmailAysnc(request.Email);
 
             if(agency != null)
             {
                 return ApiResponse<RegisterResponseDTO?>.FailureResponse("Agency Already Exist", new List<string>{"Agency is already register"}, 400);
             }
-
-            // this is new customer
             var NewAgency = new Agency();
 
             NewAgency.Name = request.Name;
@@ -161,15 +151,12 @@ namespace BusTicketSystem.Web.Services
 
         public async Task<ApiResponse<LoginResponseDTO?>> LoginAgencyAsync (LoginRequestDTO request)
         {
-            // check is agency is not registered
             var agency = await _repo.GetAgencyByEmailAysnc(request.Email);
 
             if(agency is null)
             {
                 return ApiResponse<LoginResponseDTO?>.FailureResponse("Agency not registered", new List<string>{$"{agency}"}, 400);
             }
-
-            // check hash password
             var result = new PasswordHasher<Agency>().VerifyHashedPassword(agency, agency.PasswordHash, request.Password);
 
             if(result ==  PasswordVerificationResult.Failed)

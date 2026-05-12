@@ -20,10 +20,6 @@ public class BookingRepository : IBookingRepository
             .Include(b => b.Payments)
             .FirstOrDefaultAsync(b => b.BookingId == bookingId);
     }
-
-    // ─── Create a brand new booking row ──────────────────────────────────────
-    // FIX: Old code tried to find an existing "Available" row and update it.
-    // Your schema has no pre-seeded seat rows — bookings are CREATED on demand.
     public async Task<Booking> CreateAsync(Booking booking)
     {
         _context.Bookings.Add(booking);
@@ -39,8 +35,6 @@ public class BookingRepository : IBookingRepository
                 .ThenInclude(t => t!.Route)
             .ToListAsync();
     }
-
-    // FIX: Old code filtered by Payments.CustomerId — correct approach
     public async Task<List<Booking>> GetByCustomerIdAsync(int customerId)
     {
         return await _context.Bookings
@@ -51,8 +45,6 @@ public class BookingRepository : IBookingRepository
                 .ThenInclude(t => t!.Route)
             .ToListAsync();
     }
-
-    // Returns seat numbers already booked for a trip
     public async Task<List<int>> GetBookedSeatNumbersAsync(int tripId)
     {
         return await _context.Bookings
@@ -61,8 +53,6 @@ public class BookingRepository : IBookingRepository
             .Select(b => b.SeatNumber)
             .ToListAsync();
     }
-
-    // Returns available seat numbers (total seats minus booked ones)
     public async Task<List<int>> GetAvailableSeatNumbersAsync(int tripId)
     {
         var trip = await _context.Trips
@@ -78,8 +68,6 @@ public class BookingRepository : IBookingRepository
             .Where(s => !bookedSeats.Contains(s))
             .ToList();
     }
-
-    // Check if a specific seat is already booked
     public async Task<bool> IsSeatAlreadyBookedAsync(int tripId, int seatNumber)
     {
         return await _context.Bookings

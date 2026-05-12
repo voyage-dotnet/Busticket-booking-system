@@ -69,7 +69,7 @@ namespace BusTicketSystem.Web.Controllers
         public async Task<IActionResult> GetMyTripsWithOccupancy()
         {
             int agencyId = _helper.GetUserId();
-            if (agencyId == 0) agencyId = 1; // Default for testing
+            if (agencyId == 0) agencyId = 1; 
 
             var trips = await _service.GetMyTripsWithOccupancyAsync(agencyId);
             return Ok(ApiResponse<IEnumerable<MyTripWithOccupancyDTO>>.SuccessResponse(trips));

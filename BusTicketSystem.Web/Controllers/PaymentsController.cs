@@ -24,11 +24,6 @@ public class PaymentsController : ControllerBase
 
     private int GetAgencyId() =>
         int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-    // ── POST /api/payments ───────────────────────────────────────────────────
-    // Role: Customer — Process payment (UPI / CARD)
-    // UPI   → returns QR code (base64) + UPI URL
-    // CARD  → returns Success immediately
     [HttpPost]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> ProcessPayment([FromBody] PaymentRequestDTO dto)
@@ -52,31 +47,6 @@ public class PaymentsController : ControllerBase
             return StatusCode(402, ApiResponse<string>.FailureResponse(ex.Message, statusCode: 402));
         }
     }
-
-    //// ── POST /api/payments/confirm/{bookingId} ───────────────────────────────
-    //// Role: Customer — Confirm UPI payment after scanning QR
-    //// (Same as Cruise confirm endpoint)
-    //[HttpPost("confirm/{bookingId:int}")]
-    //[Authorize(Roles = "Customer")]
-    //public async Task<IActionResult> ConfirmUPIPayment(int bookingId)
-    //{
-    //    try
-    //    {
-    //        var result = await _service.ConfirmUPIPaymentAsync(bookingId);
-    //        return Ok(ApiResponse<string>.SuccessResponse(result, result));
-    //    }
-    //    catch (NotFoundException ex)
-    //    {
-    //        return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404));
-    //    }
-    //    catch (BadRequestException ex)
-    //    {
-    //        return BadRequest(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 400));
-    //    }
-    //}
-
-    // ── POST /api/payments/razorpay/create-order ─────────────────────────────
-    // Role: Customer — Step 1: Create Razorpay order
     [HttpPost("razorpay/create-order")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> CreateRazorpayOrder([FromBody] CreateOrderDTO dto)
@@ -91,9 +61,6 @@ public class PaymentsController : ControllerBase
             return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404));
         }
     }
-
-    // ── POST /api/payments/razorpay/verify ───────────────────────────────────
-    // Role: Customer — Step 2: Verify Razorpay signature → sets booking Confirmed
     [HttpPost("razorpay/verify")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> VerifyRazorpayPayment([FromBody] VerifyPaymentDTO dto)
@@ -112,9 +79,6 @@ public class PaymentsController : ControllerBase
             return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404));
         }
     }
-
-    // ── GET /api/payments/{id} ───────────────────────────────────────────────
-    // Role: Customer/Agency — Payment details by ID
     [HttpGet("{id:int}")]
     [Authorize]
     public async Task<IActionResult> GetPaymentById(int id)
@@ -134,9 +98,6 @@ public class PaymentsController : ControllerBase
             return StatusCode(403, ApiResponse<string>.FailureResponse(ex.Message, statusCode: 403));
         }
     }
-
-    // ── GET /api/payments/booking/{bookingId} ────────────────────────────────
-    // Role: Customer/Agency — Get payment for specific booking
     [HttpGet("booking/{bookingId:int}")]
     [Authorize]
     public async Task<IActionResult> GetPaymentByBookingId(int bookingId)
@@ -156,9 +117,6 @@ public class PaymentsController : ControllerBase
             return StatusCode(403, ApiResponse<string>.FailureResponse(ex.Message, statusCode: 403));
         }
     }
-
-    // ── GET /api/payments/my ─────────────────────────────────────────────────
-    // Role: Customer — Own full payment history
     [HttpGet("my")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> GetMyPaymentHistory()
@@ -167,9 +125,6 @@ public class PaymentsController : ControllerBase
         return Ok(ApiResponse<List<PaymentHistoryDTO>>.SuccessResponse(
             history, "Payment history fetched successfully."));
     }
-
-    // ── GET /api/payments/agency/revenue ─────────────────────────────────────
-    // Role: Agency — Total revenue from all trips
     [HttpGet("agency/revenue")]
     [Authorize(Roles = "Agency")]
     public async Task<IActionResult> GetAgencyRevenue()
@@ -178,9 +133,6 @@ public class PaymentsController : ControllerBase
         return Ok(ApiResponse<AgencyRevenueDTO>.SuccessResponse(
             revenue, "Agency revenue fetched successfully."));
     }
-
-    // ── GET /api/payments/agency/trip/{tripId}/revenue ───────────────────────
-    // Role: Agency — Revenue breakdown per trip
     [HttpGet("agency/trip/{tripId:int}/revenue")]
     [Authorize(Roles = "Agency")]
     public async Task<IActionResult> GetTripRevenue(int tripId)
