@@ -1,0 +1,74 @@
+@model BusTicketSystem.MVC.ViewModels.CreateTripViewModel
+@{
+    ViewData["Title"] = "Schedule New Trip";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="vb-content-box p-4">
+                <div class="mb-4 d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                        <i class="bi bi-calendar-plus h4 mb-0"></i>
+                    </div>
+                    <div>
+                        <h1 class="h3 fw-bold mb-1">Schedule New Trip</h1>
+                        <p class="vb-muted mb-0">Assign resources and timing for a new departure.</p>
+                    </div>
+                </div>
+
+                <form asp-action="Create" method="post">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="vb-form-label">Select Route</label>
+                            <select asp-for="Request.RouteId" asp-items="@Model.Routes" class="vb-form-control">
+                                <option value="">-- Choose a predefined route --</option>
+                            </select>
+                            <span asp-validation-for="Request.RouteId" class="text-danger extra-small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="vb-form-label">Bus ID</label>
+                            <input asp-for="Request.BusId" type="number" class="vb-form-control" placeholder="Enter assigned Bus ID">
+                            <span asp-validation-for="Request.BusId" class="text-danger extra-small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="vb-form-label">Driver ID</label>
+                            <input asp-for="Request.DriverId" type="number" class="vb-form-control" placeholder="Enter assigned Driver ID">
+                            <span asp-validation-for="Request.DriverId" class="text-danger extra-small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="vb-form-label">Boarding Terminal Address ID</label>
+                            <input asp-for="Request.BoardingAddressId" type="number" class="vb-form-control" placeholder="Address ID for terminal/bay">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="vb-form-label">Departure Time</label>
+                            <input asp-for="Request.DepartureTime" type="datetime-local" class="vb-form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="vb-form-label">Arrival Time</label>
+                            <input asp-for="Request.ArrivalTime" type="datetime-local" class="vb-form-control">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="vb-form-label">Fare Amount ($)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 text-muted">$</span>
+                                <input asp-for="Request.Fare" type="number" step="0.01" class="vb-form-control border-start-0" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mt-5">
+                        <button type="submit" class="vb-btn-primary px-5">Create Trip</button>
+                        <a asp-action="Manage" class="vb-btn-ghost">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
