@@ -1,8 +1,52 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Welcome to VoyaBus";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="vb-hero" style="min-height: 550px; align-items: center;">
+    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=2000" class="vb-hero-bg" alt="Bus background">
+    <div class="container text-center vb-hero-content">
+        <h1 class="display-3 fw-bold mb-4">Travel Better with VoyaBus</h1>
+        <p class="h5 mb-5 opacity-75 mx-auto" style="max-width: 600px;">Connecting you to hundreds of destinations with premium comfort, reliable service, and a seamless booking experience.</p>
+        
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-controller="Trips" asp-action="Index" class="vb-btn-primary px-5 py-3 h5 mb-0">
+                Book a Trip Now <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+            <a href="#" class="vb-btn-secondary px-5 py-3 h5 mb-0" style="border-color: rgba(255,255,255,0.5); color: #fff;">
+                Learn More
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5 mt-4">
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="vb-content-box h-100 p-5">
+                <div class="bg-primary bg-opacity-10 w-auto d-inline-block p-3 rounded-circle text-primary mb-4">
+                    <i class="bi bi-shield-check h2 mb-0"></i>
+                </div>
+                <h3 class="h5 fw-bold">Safe Travel</h3>
+                <p class="vb-muted">Our buses undergo rigorous safety checks and are driven by experienced professionals.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="vb-content-box h-100 p-5">
+                <div class="bg-primary bg-opacity-10 w-auto d-inline-block p-3 rounded-circle text-primary mb-4">
+                    <i class="bi bi-wifi h2 mb-0"></i>
+                </div>
+                <h3 class="h5 fw-bold">Free Wi-Fi</h3>
+                <p class="vb-muted">Stay connected throughout your journey with our high-speed onboard Wi-Fi services.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="vb-content-box h-100 p-5">
+                <div class="bg-primary bg-opacity-10 w-auto d-inline-block p-3 rounded-circle text-primary mb-4">
+                    <i class="bi bi-clock-history h2 mb-0"></i>
+                </div>
+                <h3 class="h5 fw-bold">On-Time Always</h3>
+                <p class="vb-muted">We pride ourselves on our punctuality, ensuring you reach your destination as scheduled.</p>
+            </div>
+        </div>
+    </div>
 </div>

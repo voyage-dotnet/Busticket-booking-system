@@ -1,9 +1,22 @@
+using BusTicketSystem.Web.Models;
+using Microsoft.EntityFrameworkCore;
 using BusTicketSystem.MVC.Services;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── MVC ──────────────────────────────────────────────────────────────────────
+Env.Load();
+
+
+
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient("BusApi", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5135/api/");
+});
+
+
+builder.Services.AddAutoMapper(typeof(BusTicketSystem.Web.Mapping.TripMappingProfile).Assembly);
 
 // ── Session (stores JWT token after login) ────────────────────────────────────
 builder.Services.AddDistributedMemoryCache();
