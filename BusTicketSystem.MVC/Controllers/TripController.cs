@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using BusTicketSystem.MVC.Models.Trip;
-
+using BusTicketSystem.MVC.ViewModels;
 namespace BusTicketSystem.MVC.Controllers;
 
 public class TripController : Controller
@@ -34,7 +34,7 @@ public class TripController : Controller
         if (response.IsSuccessStatusCode)
         {
             var json = await response.Content.ReadAsStringAsync();
-            var envelope = JsonSerializer.Deserialize<ApiEnvelope<List<TripSearchResultDto>>>(json, _json);
+            var envelope = JsonSerializer.Deserialize<ApiEnvelopeDto<List<TripSearchResultDto>>>(json, _json);
             results = envelope?.Data ?? new();
         }
 
@@ -49,10 +49,5 @@ public class TripController : Controller
         return View(vm);
     }
 
-    private sealed class ApiEnvelope<T>
-    {
-        public int StatusCode { get; set; }
-        public string? Message { get; set; }
-        public T? Data { get; set; }
-    }
+    
 }
