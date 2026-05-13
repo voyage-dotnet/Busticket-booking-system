@@ -35,6 +35,7 @@ namespace BusTicketSystem.Web.Controllers
         public async Task<IActionResult> GetTripById(int id)
         {
             var trip = await _service.GetTripDetailsAsync(id);
+            if (trip == null) return NotFound(ApiResponse<TripDetailDTO>.FailureResponse("Trip not found", null, 404));
             return Ok(ApiResponse<TripDetailDTO>.SuccessResponse(trip));
         }
         [HttpGet("search")]
@@ -48,6 +49,7 @@ namespace BusTicketSystem.Web.Controllers
         public async Task<IActionResult> GetSeatLayout(int tripId)
         {
             var layout = await _service.GetSeatLayoutAsync(tripId);
+            if (layout == null) return NotFound(ApiResponse<SeatLayoutDTO>.FailureResponse("Seat layout not found", null, 404));
             return Ok(ApiResponse<SeatLayoutDTO>.SuccessResponse(layout));
         }
         [HttpPost]

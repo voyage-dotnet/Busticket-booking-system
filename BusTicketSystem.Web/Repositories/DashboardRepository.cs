@@ -1,4 +1,4 @@
-﻿using BusTicketSystem.Web.DTOs;
+using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,7 +41,7 @@ namespace BusTicketSystem.Web.Repositories
         public async Task<(double AvgRating, int Count)> GetReviewStatsByTripIdsAsync(List<int> tripIds)
         {
             var stats = await _db.Reviews
-                .Where(r => r.TripId != null && tripIds.Contains((int)r.TripId))
+                .Where(r => tripIds.Contains(r.TripId))
                 .GroupBy(r => 1)
                 .Select(g => new
                 {

@@ -1,4 +1,4 @@
-﻿using BusTicketSystem.Web.DTOs;
+using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Exceptions;
 using BusTicketSystem.Web.Mapping;
 using BusTicketSystem.Web.Models;
@@ -29,7 +29,7 @@ public class PaymentService : IPaymentService
 
     public async Task<object> ProcessPaymentAsync(int customerId, PaymentRequestDTO dto)
     {
-        var errors = PaymentRequestValidator.Validate(dto);
+        var errors = PaymentRequestValidator.ManualValidate(dto);
         if (errors.Any())
             throw new BadRequestException(string.Join(" | ", errors));
         var booking = await _repo.GetBookingByIdAsync(dto.BookingId)

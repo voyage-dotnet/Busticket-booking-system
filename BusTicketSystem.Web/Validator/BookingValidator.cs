@@ -5,7 +5,7 @@ namespace BusTicketSystem.Web.Validator;
 
 public class BookingValidator : AbstractValidator<BookingRequestDTO>
 {
-    public static List<string> Validate(BookingRequestDTO dto)
+    public static List<string> ManualValidate(BookingRequestDTO dto)
     {
         var errors = new List<string>();
 

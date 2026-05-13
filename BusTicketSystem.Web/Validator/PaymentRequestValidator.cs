@@ -5,7 +5,7 @@ namespace BusTicketSystem.Web.Validator;
 
 public class PaymentRequestValidator : AbstractValidator<PaymentRequestDTO>
 {
-    public static List<string> Validate(PaymentRequestDTO dto)
+    public static List<string> ManualValidate(PaymentRequestDTO dto)
     {
         var errors = new List<string>();
 

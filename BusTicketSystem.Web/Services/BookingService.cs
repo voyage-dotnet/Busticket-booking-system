@@ -1,4 +1,4 @@
-﻿using BusTicketSystem.Web.DTOs;
+using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Exceptions;
 using BusTicketSystem.Web.Helper;
 using BusTicketSystem.Web.Mapping;
@@ -21,7 +21,7 @@ public class BookingService : IBookingService
     public async Task<ApiResponse<BookingResponseDTO>> CreateBookingAsync(
         int customerId, BookingRequestDTO request)
     {
-        var errors = BookingValidator.Validate(request);
+        var errors = BookingValidator.ManualValidate(request);
         if (errors.Any())
             return ApiResponse<BookingResponseDTO>.FailureResponse(
                 string.Join(" | ", errors), statusCode: 400);

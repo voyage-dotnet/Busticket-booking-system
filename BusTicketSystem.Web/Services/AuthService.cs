@@ -62,13 +62,13 @@ namespace BusTicketSystem.Web.Services
 
             if(customer is null)
             {
-                return ApiResponse<LoginResponseDTO?>.FailureResponse("User not exist", new List<string>{$"{customer}"}, 401);
+                return ApiResponse<LoginResponseDTO?>.FailureResponse("User not exist", new List<string>{"Email not found"}, 401);
             }
             var result = new PasswordHasher<Customer>().VerifyHashedPassword(customer, customer.PasswordHash, request.Password);
 
             if(result == PasswordVerificationResult.Failed)
             {
-                return ApiResponse<LoginResponseDTO?>.FailureResponse("Invalid Credential", new List<string> {$"{result}"}, 401);
+                return ApiResponse<LoginResponseDTO?>.FailureResponse("Invalid Credential", new List<string> {"Incorrect password"}, 401);
             }
 
             var token = _tokenhelper.GenerateToken(customer.Name, customer.Email, customer.CustomerId, "Customer");
@@ -87,7 +87,7 @@ namespace BusTicketSystem.Web.Services
 
             if(existCustomer is null)
             {
-                return ApiResponse<Object>.FailureResponse("Customer not registered", new List<string> {$"{existCustomer}"}, 400);
+                return ApiResponse<Object>.FailureResponse("Customer not registered", new List<string> {"Email not found"}, 400);
             }
 
             var passwardhash = new PasswordHasher<Customer>().HashPassword(existCustomer, request.Password);
@@ -155,13 +155,13 @@ namespace BusTicketSystem.Web.Services
 
             if(agency is null)
             {
-                return ApiResponse<LoginResponseDTO?>.FailureResponse("Agency not registered", new List<string>{$"{agency}"}, 400);
+                return ApiResponse<LoginResponseDTO?>.FailureResponse("Agency not registered", new List<string>{"Email not found"}, 400);
             }
             var result = new PasswordHasher<Agency>().VerifyHashedPassword(agency, agency.PasswordHash, request.Password);
 
             if(result ==  PasswordVerificationResult.Failed)
             {
-                return ApiResponse<LoginResponseDTO?>.FailureResponse("Invalid Credential", new List<string>{$"{agency}"}, 401);
+                return ApiResponse<LoginResponseDTO?>.FailureResponse("Invalid Credential", new List<string>{"Incorrect password"}, 401);
             }
 
             var token = _tokenhelper.GenerateToken(agency.Name, agency.Email, agency.AgencyId, "Agency");
@@ -180,7 +180,7 @@ namespace BusTicketSystem.Web.Services
 
             if(existAgency is null)
             {
-               return ApiResponse<Object>.FailureResponse("Agency not registered", new List<string> {$"{existAgency}"}, 400); 
+               return ApiResponse<Object>.FailureResponse("Agency not registered", new List<string> {"Email not found"}, 400); 
             }
 
             var passwardhash = new PasswordHasher<Agency>().HashPassword(existAgency, request.Password);

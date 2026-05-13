@@ -6,7 +6,7 @@ public class BaseException : Exception
 {
     public int StatusCode { get; }
     public List<string> Errors { get; }
-    public BaseException(string message, int StatusCodes = 500, List<string> errors = null) : base(message)
+    public BaseException(string message, int StatusCodes = 500, List<string>? errors = null) : base(message)
     {
         StatusCode = StatusCodes;
         Errors = errors ?? new List<string>();
@@ -30,7 +30,7 @@ public class UnauthorizedException : BaseException
 
 public class BadRequestException : BaseException
 {
-    public BadRequestException(string message, List<string> errors = null) : base(message, 400, errors)
+    public BadRequestException(string message, List<string>? errors = null) : base(message, 400, errors)
     {
 
     }

@@ -4,14 +4,13 @@ namespace BusTicketSystem.Web.ResponseWrapper;
 public class ApiResponse<T>
 {
     public bool Success { get; set; }
-    public string Message { get; set; }
-    public List<string> Errors { get; set; }
-    public T Data { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public List<string> Errors { get; set; } = new();
+    public T? Data { get; set; }
     public int StatusCode { get; set; }
 
     public ApiResponse()
     {
-        Errors = new List<string>();
     }
 
     public static ApiResponse<T> SuccessResponse(T data, string message = "Request Sucess", int statusCode = 200)
@@ -25,7 +24,7 @@ public class ApiResponse<T>
         };
     }
 
-    public static ApiResponse<T> FailureResponse(string message, List<string> error = null, int statusCode = 400)
+    public static ApiResponse<T> FailureResponse(string message, List<string>? error = null, int statusCode = 400)
     {
         return new ApiResponse<T>
         {
