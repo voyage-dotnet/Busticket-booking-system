@@ -1,73 +1,124 @@
-using BusTicketSystem.Web.ResponseWrapper;
-using BusTicketSystem.Web.DTOs;
+﻿using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Exceptions;
 using BusTicketSystem.Web.Helper;
 using BusTicketSystem.Web.Mapping;
+using BusTicketSystem.Web.Models;
 using BusTicketSystem.Web.Repositories;
+using BusTicketSystem.Web.ResponseWrapper;
+using BusTicketSystem.Web.Validator;
 
 namespace BusTicketSystem.Web.Services;
 
 public class BookingService : IBookingService
 {
-    private readonly IBookingRepository _bookingRepository;
+    private readonly IBookingRepository _bookingRepo;
 
-    public BookingService(IBookingRepository bookingRepository)
+    public BookingService(IBookingRepository bookingRepo)
     {
-        _bookingRepository = bookingRepository;
+        _bookingRepo = bookingRepo;
     }
 
-    public async Task<ApiResponse<BookingResponseDTO>> CreateBookingAsync(BookingRequestDTO request)
+    public async Task<ApiResponse<BookingResponseDTO>> CreateBookingAsync(
+        int customerId, BookingRequestDTO request)
     {
-        var seat = await _bookingRepository
-            .GetAvailableSeatAsync(request.TripId, request.SeatNumber);
-
-        if (seat == null)
+        var errors = BookingValidator.Validate(request);
+        if (errors.Any())
             return ApiResponse<BookingResponseDTO>.FailureResponse(
-                "Seat is not available", statusCode: 409);
+                string.Join(" | ", errors), statusCode: 400);
+        var trip = await _bookingRepo.GetTripByIdAsync(request.TripId);
+        if (trip == null)
+            return ApiResponse<BookingResponseDTO>.FailureResponse(
+                "Trip not found.", statusCode: 404);
+        if (request.SeatNumber < 1 || request.SeatNumber > trip.Bus.Capacity)
+            return ApiResponse<BookingResponseDTO>.FailureResponse(
+                $"Seat number must be between 1 and {trip.Bus.Capacity}.", statusCode: 400);
+        var isTaken = await _bookingRepo.IsSeatAlreadyBookedAsync(
+            request.TripId, request.SeatNumber);
+        if (isTaken)
+            return ApiResponse<BookingResponseDTO>.FailureResponse(
+                $"Seat {request.SeatNumber} is already booked.", statusCode: 409);
+        var booking = new Booking
+        {
+            TripId = request.TripId,
+            SeatNumber = request.SeatNumber,
+            Status = "Booked"
+        };
 
-        seat.Status = "Pending";
-        await _bookingRepository.UpdateAsync(seat);
-        BookingTimeoutHelper.TrackBooking(seat.BookingId);
+        var created = await _bookingRepo.CreateAsync(booking);
+        BookingTimeoutHelper.TrackBooking(created.BookingId);
+        var saved = await _bookingRepo.GetByIdAsync(created.BookingId);
 
         return ApiResponse<BookingResponseDTO>.SuccessResponse(
-            BookingMapper.ToDto(seat),
-            "Booking successful. Please complete payment within 10 minutes.");
+            BookingMapper.ToDto(saved!),
+            "Booking created. Please complete payment within 10 minutes.",
+            201);
     }
 
     public async Task<ApiResponse<BookingResponseDTO>> GetBookingByIdAsync(int bookingId)
     {
-        var booking = await _bookingRepository.GetByIdAsync(bookingId);
-
+        var booking = await _bookingRepo.GetByIdAsync(bookingId);
         if (booking == null)
             return ApiResponse<BookingResponseDTO>.FailureResponse(
-                "Booking not found", statusCode: 404);
+                "Booking not found.", statusCode: 404);
 
         return ApiResponse<BookingResponseDTO>.SuccessResponse(
             BookingMapper.ToDto(booking),
-            "Booking fetched successfully");
+            "Booking fetched successfully.");
     }
 
     public async Task<ApiResponse<List<BookingResponseDTO>>> GetMyBookingsAsync(int customerId)
     {
-        var bookings = await _bookingRepository.GetByCustomerIdAsync(customerId);
+        var bookings = await _bookingRepo.GetByCustomerIdAsync(customerId);
         return ApiResponse<List<BookingResponseDTO>>.SuccessResponse(
             BookingMapper.ToDtoList(bookings),
-            "Bookings fetched successfully");
+            "Bookings fetched successfully.");
     }
 
     public async Task<ApiResponse<List<BookingResponseDTO>>> GetBookingsByTripAsync(int tripId)
     {
-        var bookings = await _bookingRepository.GetByTripIdAsync(tripId);
+        var bookings = await _bookingRepo.GetByTripIdAsync(tripId);
         return ApiResponse<List<BookingResponseDTO>>.SuccessResponse(
             BookingMapper.ToDtoList(bookings),
-            "Bookings fetched successfully");
+            "Bookings fetched successfully.");
     }
 
     public async Task<ApiResponse<List<int>>> GetAvailableSeatsAsync(int tripId)
     {
-        var seats = await _bookingRepository.GetAvailableSeatNumbersAsync(tripId);
+        var trip = await _bookingRepo.GetTripByIdAsync(tripId);
+        if (trip == null)
+            return ApiResponse<List<int>>.FailureResponse(
+                "Trip not found.", statusCode: 404);
+
+        var seats = await _bookingRepo.GetAvailableSeatNumbersAsync(tripId);
         return ApiResponse<List<int>>.SuccessResponse(
             seats,
-            "Available seats fetched successfully");
+            $"{seats.Count} seat(s) available.");
+    }
+
+    public async Task<ApiResponse<string>> CancelBookingAsync(int customerId, int bookingId)
+    {
+        var booking = await _bookingRepo.GetByIdAsync(bookingId);
+        if (booking == null)
+            return ApiResponse<string>.FailureResponse(
+                "Booking not found.", statusCode: 404);
+        var isOwner = booking.Payments.Any(p => p.CustomerId == customerId);
+        if (!isOwner)
+            return ApiResponse<string>.FailureResponse(
+                "You are not authorized to cancel this booking.", statusCode: 403);
+
+        if (booking.Status == "Cancelled")
+            return ApiResponse<string>.FailureResponse(
+                "Booking is already cancelled.", statusCode: 400);
+
+        if (booking.Status == "Confirmed")
+            return ApiResponse<string>.FailureResponse(
+                "Confirmed bookings cannot be cancelled.", statusCode: 400);
+
+        booking.Status = "Cancelled";
+        await _bookingRepo.UpdateAsync(booking);
+
+        return ApiResponse<string>.SuccessResponse(
+            "Booking cancelled successfully.",
+            "Booking cancelled. Seat is now available.");
     }
 }

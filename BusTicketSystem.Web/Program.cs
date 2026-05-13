@@ -6,6 +6,7 @@ using BusTicketSystem.Web.Models;
 using BusTicketSystem.Web.Repositories;
 using BusTicketSystem.Web.Services;
 using BusTicketSystem.Web.Validator;
+using DotNetEnv;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,12 +17,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+Env.TraversePath().Load();
+builder.Configuration["ConnectionStrings:DefaultConnection"] = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+builder.Configuration["Jwt:Token"] = Environment.GetEnvironmentVariable("JWT_TOKEN");
+builder.Configuration["Jwt:Audience"] = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+builder.Configuration["Jwt:Issuer"] = Environment.GetEnvironmentVariable("JWT_ISSUER");
+builder.Configuration["Razorpay:KeyId"] = Environment.GetEnvironmentVariable("RAZORPAY_KEY_ID");
+builder.Configuration["Razorpay:KeySecret"] = Environment.GetEnvironmentVariable("RAZORPAY_KEY_SECRET");
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpClient();
-
-// Swagger configuration with JWT support
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -52,52 +58,33 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<BusTicketDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Auth services
 builder.Services.AddScoped<GenerateJwtToken>();
+builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddScoped<IAuthRepo, AuthRepo>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProfileRepo, ProfileRepo>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-
-// Agency services
 builder.Services.AddScoped<IAgencyRepository, AgencyRepository>();
 builder.Services.AddScoped<IAgencyService, AgencyService>();
-
-// Route and Trip services
 builder.Services.AddScoped<IRouteRepository, RouteRepository>();
 builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddScoped<IRouteService, RouteService>();
 builder.Services.AddScoped<ITripService, TripService>();
-
-// Booking and Payment services
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
-
-// Review and Dashboard services
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
-
-// Hosted Service (Booking Timeout)
 builder.Services.AddHostedService<BookingTimeoutHelper>();
-
-// Common services
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ValidateModelAttribute>();
-
-// AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
-// FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
-// JWT Authentication
 var jwtToken = builder.Configuration["Jwt:Token"];
 
 if (string.IsNullOrWhiteSpace(jwtToken))
@@ -123,6 +110,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ),
             NameClaimType = "sub",   // Support for GetCustomerId()
             RoleClaimType = System.Security.Claims.ClaimTypes.Role   // Match GenerateJwtToken
+
         };
     });
 
@@ -137,8 +125,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// Exception middleware should come before authentication/controllers
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseAuthentication();

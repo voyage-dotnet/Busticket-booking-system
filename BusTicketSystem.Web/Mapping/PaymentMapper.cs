@@ -1,25 +1,39 @@
-using BusTicketSystem.Web.DTOs;
+﻿using BusTicketSystem.Web.DTOs;
 using BusTicketSystem.Web.Models;
 
 namespace BusTicketSystem.Web.Mapping;
 
 public static class PaymentMapper
 {
-    public static PaymentResponseDTO ToDto(Payment payment)
+   
+    public static PaymentResponseDTO ToPaymentResponseDTO(
+        Payment p,
+        string? qrCode = null,
+        string? upiUrl = null)
     {
         return new PaymentResponseDTO
         {
-            PaymentId     = payment.PaymentId,
-            BookingId     = payment.BookingId,
-            CustomerId    = payment.CustomerId,
-            Amount        = payment.Amount,
-            PaymentDate   = payment.PaymentDate,
-            PaymentStatus = payment.PaymentStatus
+            PaymentId = p.PaymentId,
+            BookingId = p.BookingId,
+            RouteName = $"{p.Booking?.Trip?.Route?.FromCity} -> {p.Booking?.Trip?.Route?.ToCity}",
+            Amount = p.Amount ?? 0m,
+            PaymentDate = p.PaymentDate ?? DateTime.UtcNow,
+            PaymentStatus = p.PaymentStatus ?? string.Empty,
+            QRCode = qrCode,   
+            UpiUrl = upiUrl    
         };
     }
-
-    public static List<PaymentResponseDTO> ToDtoList(List<Payment> payments)
+    public static PaymentHistoryDTO ToPaymentHistoryDTO(Payment p)
     {
-        return payments.Select(ToDto).ToList();
+        return new PaymentHistoryDTO
+        {
+            PaymentId = p.PaymentId,
+            BookingId = p.BookingId,
+            RouteName = $"{p.Booking?.Trip?.Route?.FromCity} -> {p.Booking?.Trip?.Route?.ToCity}",
+            Amount = p.Amount ?? 0m,
+            PaymentDate = p.PaymentDate ?? DateTime.UtcNow,
+            PaymentStatus = p.PaymentStatus ?? string.Empty,
+            BookingStatus = p.Booking?.Status ?? string.Empty
+        };
     }
 }

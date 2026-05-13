@@ -1,0 +1,47 @@
+@model BusTicketSystem.MVC.ViewModels.CreateRouteViewModel
+@{
+    ViewData["Title"] = "Create New Route";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="vb-content-box p-4">
+                <div class="mb-4">
+                    <h1 class="h3 fw-bold mb-1">Create New Route</h1>
+                    <p class="vb-muted">Define a new connection between two cities.</p>
+                </div>
+
+                <form asp-action="Create" method="post">
+                    <div class="vb-form-group mb-3">
+                        <label class="vb-form-label">Source City</label>
+                        <input asp-for="Request.FromCity" class="vb-form-control" placeholder="e.g. New York">
+                        <span asp-validation-for="Request.FromCity" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div class="vb-form-group mb-3">
+                        <label class="vb-form-label">Destination City</label>
+                        <input asp-for="Request.ToCity" class="vb-form-control" placeholder="e.g. Boston">
+                        <span asp-validation-for="Request.ToCity" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div class="vb-form-group mb-3">
+                        <label class="vb-form-label">Break Points</label>
+                        <input asp-for="Request.BreakPoints" class="vb-form-control" placeholder="City A, City B (Optional)">
+                    </div>
+
+                    <div class="vb-form-group mb-4">
+                        <label class="vb-form-label">Estimated Duration (Minutes)</label>
+                        <input asp-for="Request.EstimatedDurationMinutes" type="number" class="vb-form-control" placeholder="0">
+                        <span asp-validation-for="Request.EstimatedDurationMinutes" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="vb-btn-primary justify-content-center">Create Route</button>
+                        <a asp-action="Index" class="vb-btn-ghost text-center">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

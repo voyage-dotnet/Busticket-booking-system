@@ -1,0 +1,120 @@
+@model BusTicketSystem.MVC.ViewModels.TripSearchPageViewModel
+@{
+    ViewData["Title"] = "Find Your Next Journey";
+}
+
+<div class="vb-hero">
+    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=2000" class="vb-hero-bg" alt="Bus background">
+    <div class="container vb-hero-content">
+        <h1 class="vb-hero-title">Find Your Next Journey</h1>
+        <p class="vb-hero-subtitle">Book your bus tickets with ease and travel across the country with comfort.</p>
+        
+        <form asp-action="Index" method="get" class="vb-search-bar mt-4">
+            <div class="vb-search-field">
+                <label>From</label>
+                <input type="text" name="from" value="@Model.From" class="vb-search-input" placeholder="Enter City" required>
+            </div>
+            <div class="vb-search-field">
+                <label>To</label>
+                <input type="text" name="to" value="@Model.To" class="vb-search-input" placeholder="Enter City" required>
+            </div>
+            <div class="vb-search-field">
+                <label>Date</label>
+                <input type="date" name="date" value="@Model.Date" class="vb-search-input" required>
+            </div>
+            <button type="submit" class="vb-btn-primary py-2 px-4 h-auto" style="height: 46px !important;">Find Trips</button>
+        </form>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="vb-filters">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="vb-filter-title">Filters</span>
+                    <button class="vb-filter-reset">Reset All</button>
+                </div>
+
+                <div class="vb-filter-section">
+                    <span class="vb-filter-label">Bus Type</span>
+                    <label class="vb-check">
+                        <input type="checkbox" checked> AC Sleeper
+                    </label>
+                    <label class="vb-check">
+                        <input type="checkbox"> Non-AC
+                    </label>
+                </div>
+
+                <div class="vb-filter-section border-0">
+                    <span class="vb-filter-label">Departure Time</span>
+                    <label class="vb-check">
+                        <input type="checkbox"> Morning (6am - 12pm)
+                    </label>
+                    <label class="vb-check">
+                        <input type="checkbox"> Evening (6pm - 12am)
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-9">
+            <div class="vb-results-bar">
+                <div>Showing <span class="vb-results-count">@(Model.Trips?.Count() ?? 0)</span> trips found</div>
+                <select class="vb-sort-select">
+                    <option>Cheapest First</option>
+                    <option>Earliest First</option>
+                </select>
+            </div>
+
+            @if (Model.Trips != null && Model.Trips.Any())
+            {
+                foreach (var trip in Model.Trips)
+                {
+                    <div class="vb-trip-card d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-5 flex-grow-1">
+                            <div style="min-width: 100px;">
+                                <div class="vb-trip-time">@trip.DepartureTime.ToString("HH:mm")</div>
+                                <div class="vb-trip-station">@trip.FromCity</div>
+                            </div>
+                            
+                            <div class="flex-grow-1 px-4 text-center">
+                                <div class="vb-trip-duration">@trip.BusType</div>
+                                <div class="position-relative my-2">
+                                    <div class="border-bottom w-100" style="border-bottom: 2px solid var(--vb-border) !important;"></div>
+                                    <div class="position-absolute top-50 start-0 translate-middle-y bg-white p-1 rounded-circle border border-2 border-secondary" style="width:10px; height:10px;"></div>
+                                    <div class="position-absolute top-50 end-0 translate-middle-y bg-primary p-1 rounded-circle border border-2 border-primary" style="width:10px; height:10px;"></div>
+                                </div>
+                                <div class="vb-trip-stops">Direct Trip</div>
+                            </div>
+
+                            <div style="min-width: 100px;">
+                                <div class="vb-trip-time">@trip.ArrivalTime.ToString("HH:mm")</div>
+                                <div class="vb-trip-station">@trip.ToCity</div>
+                            </div>
+                        </div>
+
+                        <div class="ms-5 ps-5 border-start" style="border-left: 1px solid var(--vb-border) !important; min-width: 180px;">
+                            <div class="vb-trip-badge-premium mb-1">@trip.AgencyName</div>
+                            <div class="vb-trip-price">
+                                <span class="vb-trip-price-label">Price from</span>
+                                <span class="vb-trip-price-amount h4 mb-0">$@trip.Fare.ToString("F2")</span>
+                            </div>
+                            <a asp-action="SelectSeat" asp-route-id="@trip.TripId" class="vb-btn-select mt-2 d-inline-block text-center w-100">Select Seats</a>
+                        </div>
+                    </div>
+                }
+            }
+            else if (!string.IsNullOrEmpty(Model.From))
+            {
+                <div class="vb-content-box text-center py-5">
+                    <i class="bi bi-search h1 text-muted mb-3 d-block"></i>
+                    <h3 class="h4">No trips found</h3>
+                    <p class="vb-muted">Try adjusting your search criteria or choosing a different date.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

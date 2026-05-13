@@ -14,8 +14,6 @@ public class TripMappingProfile : Profile
             .ForMember(dest => dest.EstimatedDurationMinutes, opt => opt.MapFrom(src => src.Duration))
             .ForMember(dest => dest.BreakPoints, opt => opt.MapFrom(src => src.BreakPoints.HasValue ? src.BreakPoints.Value.ToString() : null));
 
-        CreateMap<Models.Route, RouteSearchResultDTO>()
-            .ForMember(dest => dest.EstimatedDurationMinutes, opt => opt.MapFrom(src => src.Duration));
 
         CreateMap<CreateRouteRequestDTO, Models.Route>()
             .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.EstimatedDurationMinutes))
@@ -32,23 +30,18 @@ public class TripMappingProfile : Profile
             .ForMember(dest => dest.TotalSeats, opt => opt.MapFrom(src => src.Bus.Capacity));
 
         CreateMap<Trip, TripDetailDTO>()
-            .ForMember(dest => dest.FromCity, opt => opt.MapFrom(src => src.Route.FromCity))
-            .ForMember(dest => dest.ToCity, opt => opt.MapFrom(src => src.Route.ToCity))
+            .IncludeBase<Trip, TripSummaryDTO>()
             .ForMember(dest => dest.BreakPoints, opt => opt.MapFrom(src => src.Route.BreakPoints.HasValue ? src.Route.BreakPoints.Value.ToString() : null))
             .ForMember(dest => dest.EstimatedDurationMinutes, opt => opt.MapFrom(src => src.Route.Duration))
-            .ForMember(dest => dest.TotalSeats, opt => opt.MapFrom(src => src.Bus.Capacity))
             .ForMember(dest => dest.Driver, opt => opt.MapFrom(src => src.Driver1Driver));
 
         CreateMap<Trip, TripSearchResultDTO>()
             .ForMember(dest => dest.FromCity, opt => opt.MapFrom(src => src.Route.FromCity))
             .ForMember(dest => dest.ToCity, opt => opt.MapFrom(src => src.Route.ToCity))
-            .ForMember(dest => dest.BusType, opt => opt.MapFrom(src => src.Bus.Type))
             .ForMember(dest => dest.AgencyName, opt => opt.MapFrom(src => src.Bus.Office.Agency.Name));
 
         CreateMap<Trip, MyTripWithOccupancyDTO>()
-            .ForMember(dest => dest.FromCity, opt => opt.MapFrom(src => src.Route.FromCity))
-            .ForMember(dest => dest.ToCity, opt => opt.MapFrom(src => src.Route.ToCity))
-            .ForMember(dest => dest.TotalSeats, opt => opt.MapFrom(src => src.Bus.Capacity));
+            .IncludeBase<Trip, TripSummaryDTO>();
 
         CreateMap<CreateTripRequestDTO, Trip>()
             .ForMember(dest => dest.Driver1DriverId, opt => opt.MapFrom(src => src.DriverId))

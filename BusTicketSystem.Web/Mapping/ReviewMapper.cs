@@ -19,14 +19,10 @@ namespace BusTicketSystem.Web.Mapping
                 ReviewDate = r.ReviewDate ?? DateTime.UtcNow
             };
         }
-
-        // ─── List<Review> → List<ReviewResponseDTO> ──────────────────────────────────
         public static List<ReviewResponseDTO> ToResponseDTOList(List<Review> reviews)
         {
             return reviews.Select(ToResponseDTO).ToList();
         }
-
-        // ─── SubmitReviewDTO + customerId + nextId → Review entity ───────────────────
         public static Review ToEntity(SubmitReviewDTO dto, int customerId, int nextId)
         {
             return new Review
@@ -39,8 +35,6 @@ namespace BusTicketSystem.Web.Mapping
                 ReviewDate = DateTime.UtcNow
             };
         }
-
-        // ─── Build AgencyReviewSummaryDTO from a list of reviews ────────────────────
         public static AgencyReviewSummaryDTO ToAgencySummaryDTO(int agencyId, List<Review> reviews)
         {
             var dtos = ToResponseDTOList(reviews);

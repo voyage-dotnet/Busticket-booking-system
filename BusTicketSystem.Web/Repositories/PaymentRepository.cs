@@ -1,74 +1,124 @@
-using BusTicketSystem.Web.Models;
+﻿using BusTicketSystem.Web.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusTicketSystem.Web.Repositories;
 
 public class PaymentRepository : IPaymentRepository
 {
-    private readonly BusTicketDbContext _context;
+    private readonly BusTicketDbContext _db;
 
-    public PaymentRepository(BusTicketDbContext context)
+    public PaymentRepository(BusTicketDbContext db)
     {
-        _context = context;
+        _db = db;
+    }
+
+    public async Task AddAsync(Payment payment)
+    {
+        _db.Payments.Add(payment);
+        await _db.SaveChangesAsync();
     }
 
     public async Task<Payment?> GetByIdAsync(int paymentId)
     {
-        return await _context.Payments
+        return await _db.Payments
+            .Include(p => p.Booking)
+                .ThenInclude(b => b.Trip)
+                    .ThenInclude(t => t!.Route)
+            .Include(p => p.Customer)
             .FirstOrDefaultAsync(p => p.PaymentId == paymentId);
     }
 
     public async Task<Payment?> GetByBookingIdAsync(int bookingId)
     {
-        return await _context.Payments
+        return await _db.Payments
+            .Include(p => p.Booking)
+                .ThenInclude(b => b.Trip)
+                    .ThenInclude(t => t!.Route)
             .FirstOrDefaultAsync(p => p.BookingId == bookingId);
     }
 
-    public async Task<List<Payment>> GetByCustomerIdAsync(int customerId)
+    public async Task<List<Payment>> GetAllByCustomerIdAsync(int customerId)
     {
-        return await _context.Payments
+        return await _db.Payments
             .Where(p => p.CustomerId == customerId)
+            .Include(p => p.Booking)
+                .ThenInclude(b => b.Trip)
+                    .ThenInclude(t => t!.Route)
+            .OrderByDescending(p => p.PaymentDate)
+            .ToListAsync();
+    }
+    public async Task<List<Payment>> GetAllByAgencyAsync(int agencyId)
+    {
+        return await _db.Payments
+            .Where(p => p.PaymentStatus == "Success"
+                     && p.Booking.Trip!.Bus.Office.AgencyId == agencyId)
+            .Include(p => p.Booking)
+                .ThenInclude(b => b.Trip)
+                    .ThenInclude(t => t!.Route)
+            .Include(p => p.Booking)
+                .ThenInclude(b => b.Trip)
+                    .ThenInclude(t => t!.Bus)
+                        .ThenInclude(b => b.Office)
+                            .ThenInclude(o => o.Agency)
+            .OrderByDescending(p => p.PaymentDate)
             .ToListAsync();
     }
 
-    public async Task<decimal> GetTotalRevenueByAgencyAsync(int agencyId)
+    public async Task<List<Payment>> GetAllByTripAsync(int tripId)
     {
-        return await _context.Payments
+        return await _db.Payments
             .Where(p => p.PaymentStatus == "Success"
-                     && _context.Bookings
-                         .Any(b => b.BookingId == p.BookingId
-                                && _context.Trips
-                                    .Any(t => t.TripId == b.TripId
-                                           && _context.Buses
-                                               .Any(bus => bus.BusId == t.BusId
-                                                        && _context.AgencyOffices
-                                                            .Any(o => o.OfficeId == bus.OfficeId
-                                                                   && o.AgencyId == agencyId)))))
-            .SumAsync(p => p.Amount ?? 0);
+                     && p.Booking.TripId == tripId)
+            .Include(p => p.Booking)
+                .ThenInclude(b => b.Trip)
+                    .ThenInclude(t => t!.Route)
+            .Include(p => p.Customer)
+            .OrderByDescending(p => p.PaymentDate)
+            .ToListAsync();
     }
 
-    public async Task<decimal> GetRevenueByTripAsync(int tripId)
+    public async Task UpdateAsync(Payment payment)
     {
-        return await _context.Payments
-            .Where(p => p.PaymentStatus == "Success"
-                     && _context.Bookings
-                         .Any(b => b.BookingId == p.BookingId
-                                && b.TripId == tripId))
-            .SumAsync(p => p.Amount ?? 0);
+        _db.Payments.Update(payment);
+        await _db.SaveChangesAsync();
     }
 
-    public async Task<int> GetBookingCountByTripAsync(int tripId)
+    public async Task<Booking?> GetBookingByIdAsync(int bookingId)
     {
-        return await _context.Payments
-            .CountAsync(p => p.PaymentStatus == "Success"
-                          && _context.Bookings
-                              .Any(b => b.BookingId == p.BookingId
-                                     && b.TripId == tripId));
+        return await _db.Bookings
+            .Include(b => b.Trip)
+                .ThenInclude(t => t!.Route)
+            .Include(b => b.Trip)
+                .ThenInclude(t => t!.Bus)
+            .Include(b => b.Payments)
+            .FirstOrDefaultAsync(b => b.BookingId == bookingId);
     }
 
-    public async Task AddAsync(Payment payment)
+    public async Task UpdateBookingStatusAsync(int bookingId, string status)
     {
-        _context.Payments.Add(payment);
-        await _context.SaveChangesAsync();
+        var booking = await _db.Bookings.FindAsync(bookingId);
+        if (booking != null)
+        {
+            booking.Status = status;
+            await _db.SaveChangesAsync();
+        }
+    }
+
+    public async Task<bool> IsSeatAlreadyBookedAsync(int tripId, int seatNumber)
+    {
+        return await _db.Bookings
+            .AnyAsync(b => b.TripId == tripId
+                        && b.SeatNumber == seatNumber
+                        && b.Status == "Booked");
+    }
+
+    public async Task<Trip?> GetTripByIdAsync(int tripId)
+    {
+        return await _db.Trips
+            .Include(t => t.Route)
+            .Include(t => t.Bus)
+                .ThenInclude(b => b.Office)
+                    .ThenInclude(o => o.Agency)
+            .FirstOrDefaultAsync(t => t.TripId == tripId);
     }
 }

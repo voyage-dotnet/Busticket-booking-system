@@ -9,14 +9,9 @@ public class DriverCreateDTO
     public int AddressId { get; set; }
 }
 
-public class DriverResponseDTO
+public class DriverResponseDTO : DriverCreateDTO
 {
     public int DriverId { get; set; }
-    public string LicenseNumber { get; set; } = null!;
-    public string Name { get; set; } = null!;
-    public string Phone { get; set; } = null!;
-    public int OfficeId { get; set; }
-    public int AddressId { get; set; }
 }
 
 public class DriverUpdateDTO

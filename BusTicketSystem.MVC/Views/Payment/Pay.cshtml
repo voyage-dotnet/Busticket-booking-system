@@ -1,0 +1,302 @@
+@model BusTicketSystem.MVC.ViewModels.PayViewModel
+@{
+    ViewData["Title"] = "Confirm & Pay";
+    var showUpiQR  = TempData["ShowUpiQR"] as bool? ?? false;
+    var upiQR      = TempData["UpiQR"]  as string ?? "";
+    var upiUrl     = TempData["UpiUrl"] as string ?? "";
+}
+
+<div class="vb-page">
+    <h1 style="font-size:var(--vb-font-size-xl); font-weight:700;
+               color:var(--vb-text-primary); margin-bottom:2rem;">
+        🚌 Review Your Journey
+    </h1>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div style="background:#fee2e2; border:1px solid #fca5a5; color:#991b1b;
+                    border-radius:var(--vb-radius-sm); padding:0.75rem 1rem;
+                    margin-bottom:1rem; font-size:var(--vb-font-size-sm);">
+            @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>✕ @err.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <!-- ── LEFT COLUMN ───────────────────────────────────────────────── -->
+        <div class="col-lg-8">
+
+            <!-- Trip Summary -->
+            <div class="vb-card mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <span class="vb-badge vb-badge-route mb-1">
+                            BUS @Model.BookingId.ToString("D3") • EXPRESS
+                        </span>
+                        <div class="vb-muted" style="font-size:var(--vb-font-size-sm);">
+                            @Model.DepartureTime.ToString("dddd, MMM dd, yyyy")
+                        </div>
+                    </div>
+                    <a asp-controller="Home" asp-action="Index"
+                       style="font-size:var(--vb-font-size-sm); color:var(--vb-primary);">
+                        Change Trip
+                    </a>
+                </div>
+
+                <div class="vb-journey">
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon"></div>
+                        <div class="vb-journey-line"></div>
+                        <div>
+                            <div class="vb-journey-time">
+                                @Model.DepartureTime.ToString("hh:mm tt")
+                            </div>
+                            <div class="vb-journey-place">
+                                @(Model.RouteName.Contains("->")
+                                    ? Model.RouteName.Split("->")[0].Trim()
+                                    : Model.RouteName)
+                            </div>
+                            <div class="vb-journey-sub">Seat @Model.SeatNumber • Main Level</div>
+                        </div>
+                    </div>
+                    <div class="vb-journey-gap"></div>
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon destination"></div>
+                        <div>
+                            <div class="vb-journey-place">
+                                @(Model.RouteName.Contains("->")
+                                    ? Model.RouteName.Split("->")[1].Trim()
+                                    : "—")
+                            </div>
+                            <div class="vb-journey-sub">Main Entrance</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passenger Information -->
+            <div class="vb-card mb-4">
+                <div class="vb-section-title">Passenger Information</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="vb-form-group">
+                            <label class="vb-form-label">Full Name</label>
+                            <input type="text" class="vb-form-control"
+                                   value="@User.Identity?.Name" readonly />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="vb-form-group">
+                            <label class="vb-form-label">Seat Preference</label>
+                            <div class="vb-select-wrapper">
+                                <input type="text" class="vb-form-control"
+                                       value="Window (@Model.SeatNumber A)" readonly />
+                                <span class="vb-select-icon">🪑</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method Tabs -->
+            <div class="vb-card mb-4">
+                <div class="vb-section-title">Payment Method</div>
+
+                <!-- Method selector tiles -->
+                <div class="vb-payment-tiles mb-4" id="methodTiles">
+                    <div class="vb-payment-tile @(Model.SelectedMethod == "CARD" ? "selected" : "")"
+                         onclick="switchMethod('CARD')" style="cursor:pointer;">
+                        <div class="vb-payment-icon">💳</div>
+                        <div class="vb-payment-name">Credit / Debit Card</div>
+                    </div>
+                    <div class="vb-payment-tile @(Model.SelectedMethod == "UPI" ? "selected" : "")"
+                         onclick="switchMethod('UPI')" style="cursor:pointer;">
+                        <div class="vb-payment-icon">🏦</div>
+                        <div class="vb-payment-name">UPI</div>
+                    </div>
+                </div>
+
+                <!-- ── CARD FORM ── -->
+                <div id="cardSection"
+                     style="display:@(Model.SelectedMethod == "UPI" ? "none" : "block")">
+                    <form asp-action="ProcessCard" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="BookingId"     value="@Model.BookingId" />
+                        <input type="hidden" name="RouteName"     value="@Model.RouteName" />
+                        <input type="hidden" name="DepartureTime" value="@Model.DepartureTime" />
+                        <input type="hidden" name="SeatNumber"    value="@Model.SeatNumber" />
+                        <input type="hidden" name="Fare"          value="@Model.Fare" />
+                        <input type="hidden" name="SelectedMethod" value="CARD" />
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="vb-form-group">
+                                    <label class="vb-form-label">Cardholder Name</label>
+                                    <input type="text" name="CardHolderName"
+                                           class="vb-form-control"
+                                           placeholder="Alexander Thompson"
+                                           value="@Model.CardHolderName" />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="vb-form-group">
+                                    <label class="vb-form-label">Card Number</label>
+                                    <input type="text" name="CardNumber"
+                                           class="vb-form-control"
+                                           placeholder="1234 5678 9012 3456"
+                                           maxlength="16"
+                                           value="@Model.CardNumber" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="vb-form-group">
+                                    <label class="vb-form-label">Expiry (MM/YY)</label>
+                                    <input type="text" name="Expiry"
+                                           class="vb-form-control"
+                                           placeholder="12/26"
+                                           value="@Model.Expiry" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="vb-form-group">
+                                    <label class="vb-form-label">CVV</label>
+                                    <input type="password" name="CVV"
+                                           class="vb-form-control"
+                                           placeholder="•••"
+                                           maxlength="4"
+                                           value="@Model.CVV" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="vb-btn-primary w-100 justify-content-center mt-4">
+                            Confirm &amp; Pay →
+                        </button>
+                        <p class="vb-muted text-center mt-2" style="font-size:var(--vb-font-size-xs);">
+                            By clicking pay, you agree to our <a href="#">Terms of Service</a>.
+                        </p>
+                    </form>
+                </div>
+
+                <!-- ── UPI SECTION ── -->
+                <div id="upiSection"
+                     style="display:@(Model.SelectedMethod == "UPI" ? "block" : "none")">
+
+                    @if (showUpiQR && !string.IsNullOrEmpty(upiQR))
+                    {
+                        <!-- QR Code returned from API -->
+                        <div class="text-center my-4">
+                            <p class="vb-muted mb-3">Scan this QR code with any UPI app to pay</p>
+                            <img src="data:image/png;base64,@upiQR"
+                                 alt="UPI QR Code"
+                                 style="width:200px; height:200px; border:1px solid var(--vb-border);" />
+                            @if (!string.IsNullOrEmpty(upiUrl))
+                            {
+                                <div class="mt-3">
+                                    <a href="@upiUrl" class="vb-btn-primary">
+                                        Open UPI App
+                                    </a>
+                                </div>
+                            }
+                            <p class="vb-muted mt-3" style="font-size:var(--vb-font-size-xs);">
+                                Waiting for payment confirmation...
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Trigger UPI flow -->
+                        <form asp-action="ProcessUpi" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="BookingId"     value="@Model.BookingId" />
+                            <input type="hidden" name="RouteName"     value="@Model.RouteName" />
+                            <input type="hidden" name="DepartureTime" value="@Model.DepartureTime" />
+                            <input type="hidden" name="SeatNumber"    value="@Model.SeatNumber" />
+                            <input type="hidden" name="Fare"          value="@Model.Fare" />
+                            <input type="hidden" name="SelectedMethod" value="UPI" />
+
+                            <div class="text-center my-4">
+                                <div style="font-size:3rem;">🏦</div>
+                                <p class="vb-muted mt-2">
+                                    Click below to generate a UPI QR code for
+                                    ₹@Model.TotalAmount.ToString("F2")
+                                </p>
+                            </div>
+
+                            <button type="submit"
+                                    class="vb-btn-primary w-100 justify-content-center">
+                                Generate UPI QR Code →
+                            </button>
+                        </form>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── RIGHT COLUMN: Fare Breakdown ──────────────────────────────── -->
+        <div class="col-lg-4">
+            <div class="vb-card mb-3">
+                <div class="vb-section-title">Fare Breakdown</div>
+                <div class="vb-summary-row">
+                    <span class="label">Base Fare (x1)</span>
+                    <span class="value">₹@Model.BaseFare.ToString("F2")</span>
+                </div>
+                <div class="vb-summary-row">
+                    <span class="label">Seat Selection</span>
+                    <span class="value">₹@Model.SeatSelectionFee.ToString("F2")</span>
+                </div>
+                <div class="vb-summary-row">
+                    <span class="label">Booking Fee</span>
+                    <span class="value">₹@Model.BookingFee.ToString("F2")</span>
+                </div>
+                <div class="vb-summary-total">
+                    <span>Total Amount</span>
+                    <span class="total-amount">₹@Model.TotalAmount.ToString("F2")</span>
+                </div>
+            </div>
+
+            <div class="vb-secure-badge mb-3">
+                <span>🔒</span>
+                <div>
+                    <strong>Secure SSL Payment</strong><br />
+                    256-bit encryption active
+                </div>
+            </div>
+
+            <div class="vb-card-notice mb-3">
+                <span class="vb-notice-icon">ℹ</span>
+                <div>
+                    <strong>Cancellation Policy</strong><br />
+                    Full refund if cancelled at least 24 hours before departure.
+                </div>
+            </div>
+
+            <div>
+                <a asp-controller="Booking" asp-action="Detail"
+                   asp-route-id="@Model.BookingId"
+                   style="font-size:var(--vb-font-size-sm); color:var(--vb-text-secondary);">
+                    ← Back to Booking
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function switchMethod(method) {
+        // Update tile highlight
+        document.querySelectorAll('.vb-payment-tile').forEach(t => t.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+
+        // Show/hide sections
+        document.getElementById('cardSection').style.display = method === 'CARD' ? 'block' : 'none';
+        document.getElementById('upiSection').style.display  = method === 'UPI'  ? 'block' : 'none';
+    }
+</script>
+}

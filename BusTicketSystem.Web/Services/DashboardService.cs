@@ -13,8 +13,6 @@ namespace BusTicketSystem.Web.Services
             _dashRepo = dashRepo;
         }
 
-        // ─── AGENCY: KPIs ─────────────────────────────────────────────────────────
-
         public async Task<AgencyOverviewDTO> GetAgencyOverviewAsync(int agencyId)
         {
             var tripIds = await _dashRepo.GetTripIdsByAgencyAsync(agencyId);
@@ -32,8 +30,6 @@ namespace BusTicketSystem.Web.Services
             };
         }
 
-        // ─── AGENCY: Trip occupancy % + revenue per trip ──────────────────────────
-
         public async Task<List<AgencyTripStatsDTO>> GetAgencyTripStatsAsync(int agencyId)
         {
             var trips = await _dashRepo.GetTripsByAgencyAsync(agencyId);
@@ -49,16 +45,10 @@ namespace BusTicketSystem.Web.Services
             return result;
         }
 
-        // ─── AGENCY: Top routes by booking count ─────────────────────────────────
-        // Repo returns List<TopRouteDTO> directly — no mapping needed
-
         public async Task<List<TopRouteDTO>> GetAgencyTopRoutesAsync(int agencyId)
         {
             return await _dashRepo.GetTopRoutesByAgencyAsync(agencyId);
         }
-
-        // ─── CUSTOMER: Trips taken, amount spent, reviews given ──────────────────
-        // Repo returns List<RecentBookingDTO> directly — no mapping needed
 
         public async Task<CustomerOverviewDTO> GetCustomerOverviewAsync(int customerId)
         {
@@ -72,11 +62,9 @@ namespace BusTicketSystem.Web.Services
                 TotalTripsTaken = totalTrips,
                 TotalAmountSpent = totalSpent,
                 TotalReviewsGiven = totalReviews,
-                RecentBookings = recentBookings   // already List<RecentBookingDTO>
+                RecentBookings = recentBookings   
             };
         }
-
-        // ─── PUBLIC: Platform stats ───────────────────────────────────────────────
 
         public async Task<PublicStatsDTO> GetPublicStatsAsync()
         {

@@ -18,7 +18,6 @@ namespace BusTicketSystem.Web.Services
 
         public async Task<ApiResponse<Object>> AddCustomerAddress(string Email, CustomerAddressRegisterDTO request)
         {
-            // find the customer first 
             var customer = await _authRepo.GetCustomerByEmailAsync(Email);
 
             if(customer is null)

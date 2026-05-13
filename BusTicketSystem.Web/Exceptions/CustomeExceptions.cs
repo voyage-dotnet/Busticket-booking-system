@@ -42,3 +42,7 @@ public class ForbiddenException : BaseException
 
     }
 }
+public class PaymentFailedException : Exception
+{
+    public PaymentFailedException(string message) : base(message) { }
+}

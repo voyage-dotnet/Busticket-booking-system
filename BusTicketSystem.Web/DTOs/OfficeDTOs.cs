@@ -8,14 +8,10 @@ public class OfficeCreateDTO
     public int OfficeAddressId { get; set; }
 }
 
-public class OfficeResponseDTO
+public class OfficeResponseDTO : OfficeCreateDTO
 {
     public int OfficeId { get; set; }
     public int AgencyId { get; set; }
-    public string OfficeMail { get; set; } = null!;
-    public string OfficeContactPersonName { get; set; } = null!;
-    public string OfficeContactNumber { get; set; } = null!;
-    public int OfficeAddressId { get; set; }
     public string FullAddress { get; set; } = string.Empty;
 }
 

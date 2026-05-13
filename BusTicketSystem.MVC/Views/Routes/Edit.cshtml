@@ -1,0 +1,36 @@
+@model BusTicketSystem.MVC.ViewModels.EditRouteViewModel
+@{
+    ViewData["Title"] = "Edit Route";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="vb-content-box p-4">
+                <div class="mb-4">
+                    <h1 class="h3 fw-bold mb-1">Edit Route</h1>
+                    <p class="vb-muted">Updating route from <strong>@Model.FromCity</strong> to <strong>@Model.ToCity</strong></p>
+                </div>
+
+                <form asp-action="Edit" asp-route-id="@Model.RouteId" method="post">
+                    <div class="vb-form-group mb-3">
+                        <label class="vb-form-label">Break Points</label>
+                        <input asp-for="Request.BreakPoints" class="vb-form-control" placeholder="e.g. City A, City B">
+                        <span asp-validation-for="Request.BreakPoints" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div class="vb-form-group mb-4">
+                        <label class="vb-form-label">Estimated Duration (Minutes)</label>
+                        <input asp-for="Request.EstimatedDurationMinutes" type="number" class="vb-form-control">
+                        <span asp-validation-for="Request.EstimatedDurationMinutes" class="text-danger extra-small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="vb-btn-primary justify-content-center">Save Changes</button>
+                        <a asp-action="Index" class="vb-btn-ghost text-center">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

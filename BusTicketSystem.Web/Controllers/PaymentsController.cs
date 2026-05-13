@@ -1,6 +1,10 @@
-using BusTicketSystem.Web.DTOs;
+﻿using BusTicketSystem.Web.DTOs;
+using BusTicketSystem.Web.Exceptions;
+using BusTicketSystem.Web.ResponseWrapper;
 using BusTicketSystem.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BusTicketSystem.Web.Controllers;
 
@@ -8,52 +12,144 @@ namespace BusTicketSystem.Web.Controllers;
 [Route("api/payments")]
 public class PaymentsController : ControllerBase
 {
-    private readonly IPaymentService _paymentService;
+    private readonly IPaymentService _service;
 
-    public PaymentsController(IPaymentService paymentService)
+    public PaymentsController(IPaymentService service)
     {
-        _paymentService = paymentService;
+        _service = service;
     }
 
+    private int GetCustomerId() =>
+        int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    private int GetAgencyId() =>
+        int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     [HttpPost]
-    public async Task<IActionResult> CreatePayment([FromBody] PaymentRequestDTO request)
+    [Authorize(Roles = "Customer")]
+    public async Task<IActionResult> ProcessPayment([FromBody] PaymentRequestDTO dto)
     {
-        var result = await _paymentService.CreatePaymentAsync(request);
-        return StatusCode(result.StatusCode, result);
+        try
+        {
+            var result = await _service.ProcessPaymentAsync(GetCustomerId(), dto);
+            return StatusCode(201, ApiResponse<object>.SuccessResponse(
+                result, "Payment processed successfully.", 201));
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 400));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404));
+        }
+        catch (PaymentFailedException ex)
+        {
+            return StatusCode(402, ApiResponse<string>.FailureResponse(ex.Message, statusCode: 402));
+        }
     }
-
-    [HttpGet("{id}")]
+    [HttpPost("razorpay/create-order")]
+    [Authorize(Roles = "Customer")]
+    public async Task<IActionResult> CreateRazorpayOrder([FromBody] CreateOrderDTO dto)
+    {
+        try
+        {
+            var result = await _service.CreateRazorpayOrderAsync(GetCustomerId(), dto);
+            return Ok(ApiResponse<object>.SuccessResponse(result, "Razorpay order created."));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404));
+        }
+    }
+    [HttpPost("razorpay/verify")]
+    [Authorize(Roles = "Customer")]
+    public async Task<IActionResult> VerifyRazorpayPayment([FromBody] VerifyPaymentDTO dto)
+    {
+        try
+        {
+            var result = await _service.VerifyAndSavePaymentAsync(dto);
+            return Ok(ApiResponse<object>.SuccessResponse(result, "Payment verified successfully."));
+        }
+        catch (PaymentFailedException ex)
+        {
+            return StatusCode(402, ApiResponse<string>.FailureResponse(ex.Message, statusCode: 402));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404));
+        }
+    }
+    [HttpGet("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> GetPaymentById(int id)
     {
-        var result = await _paymentService.GetPaymentByIdAsync(id);
-        return StatusCode(result.StatusCode, result);
+        try
+        {
+            var payment = await _service.GetPaymentByIdAsync(GetCustomerId(), id);
+            return Ok(ApiResponse<PaymentResponseDTO>.SuccessResponse(
+                payment!, "Payment fetched successfully."));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404));
+        }
+        catch (ForbiddenException ex)
+        {
+            return StatusCode(403, ApiResponse<string>.FailureResponse(ex.Message, statusCode: 403));
+        }
     }
-
+    [HttpGet("booking/{bookingId:int}")]
+    [Authorize]
+    public async Task<IActionResult> GetPaymentByBookingId(int bookingId)
+    {
+        try
+        {
+            var payment = await _service.GetPaymentByBookingIdAsync(GetCustomerId(), bookingId);
+            return Ok(ApiResponse<PaymentResponseDTO>.SuccessResponse(
+                payment!, "Payment fetched successfully."));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404));
+        }
+        catch (ForbiddenException ex)
+        {
+            return StatusCode(403, ApiResponse<string>.FailureResponse(ex.Message, statusCode: 403));
+        }
+    }
     [HttpGet("my")]
-    public async Task<IActionResult> GetMyPayments([FromQuery] int customerId)
+    [Authorize(Roles = "Customer")]
+    public async Task<IActionResult> GetMyPaymentHistory()
     {
-        var result = await _paymentService.GetMyPaymentsAsync(customerId);
-        return StatusCode(result.StatusCode, result);
+        var history = await _service.GetMyPaymentHistoryAsync(GetCustomerId());
+        return Ok(ApiResponse<List<PaymentHistoryDTO>>.SuccessResponse(
+            history, "Payment history fetched successfully."));
     }
-
-    [HttpGet("booking/{bookingId}")]
-    public async Task<IActionResult> GetPaymentByBooking(int bookingId)
-    {
-        var result = await _paymentService.GetPaymentByBookingIdAsync(bookingId);
-        return StatusCode(result.StatusCode, result);
-    }
-
     [HttpGet("agency/revenue")]
-    public async Task<IActionResult> GetAgencyRevenue([FromQuery] int agencyId)
+    [Authorize(Roles = "Agency")]
+    public async Task<IActionResult> GetAgencyRevenue()
     {
-        var result = await _paymentService.GetAgencyRevenueAsync(agencyId);
-        return StatusCode(result.StatusCode, result);
+        var revenue = await _service.GetAgencyRevenueAsync(GetAgencyId());
+        return Ok(ApiResponse<AgencyRevenueDTO>.SuccessResponse(
+            revenue, "Agency revenue fetched successfully."));
     }
-
-    [HttpGet("agency/trip/{tripId}/revenue")]
+    [HttpGet("agency/trip/{tripId:int}/revenue")]
+    [Authorize(Roles = "Agency")]
     public async Task<IActionResult> GetTripRevenue(int tripId)
     {
-        var result = await _paymentService.GetTripRevenueAsync(tripId);
-        return StatusCode(result.StatusCode, result);
+        try
+        {
+            var revenue = await _service.GetTripRevenueAsync(GetAgencyId(), tripId);
+            return Ok(ApiResponse<TripRevenueDTO>.SuccessResponse(
+                revenue, "Trip revenue fetched successfully."));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ApiResponse<string>.FailureResponse(ex.Message, statusCode: 404));
+        }
+        catch (ForbiddenException ex)
+        {
+            return StatusCode(403, ApiResponse<string>.FailureResponse(ex.Message, statusCode: 403));
+        }
     }
 }

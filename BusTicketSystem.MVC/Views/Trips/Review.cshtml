@@ -1,0 +1,140 @@
+@model BusTicketSystem.MVC.ViewModels.ReviewJourneyViewModel
+@{
+    ViewData["Title"] = "Review Your Journey";
+}
+
+<div class="container py-4">
+    <div class="vb-section-title mb-4">
+        <i class="bi bi-bezier2 vb-section-title-icon h3"></i>
+        <h1 class="h2 fw-bold mb-0">Review Your Journey</h1>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-8">
+
+            <div class="vb-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="vb-badge vb-badge-route">BUS @Model.Trip.Bus?.RegistrationNumber · EXPRESS</span>
+                    <a asp-action="SelectSeat" asp-route-id="@Model.Trip.TripId" class="vb-btn-ghost text-primary fw-bold">Change Trip</a>
+                </div>
+                <div class="text-muted small mb-4">@Model.Trip.DepartureTime.ToString("dddd, MMM dd, yyyy")</div>
+
+                <div class="vb-journey mt-3">
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon"></div>
+                        <div class="vb-journey-line"></div>
+                        <div class="ms-2">
+                            <div class="vb-journey-time">@Model.Trip.DepartureTime.ToString("HH:mm tt")</div>
+                            <div class="vb-journey-place">Central Station, Terminal B</div>
+                            <div class="vb-journey-sub">Bay 14 · Upper Level</div>
+                        </div>
+                    </div>
+                    <div class="vb-journey-gap" style="height: 40px;"></div>
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon destination"></div>
+                        <div class="ms-2">
+                            <div class="vb-journey-time">@Model.Trip.ArrivalTime.ToString("HH:mm tt")</div>
+                            <div class="vb-journey-place">@Model.Trip.ToCity Terminal</div>
+                            <div class="vb-journey-sub">Main Entrance</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="vb-section-title mt-5">Passenger Information</div>
+            <div class="vb-card mb-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="vb-form-group">
+                            <label class="vb-form-label">Full Name</label>
+                            <input type="text" class="vb-form-control" value="Alexander Thompson" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="vb-form-group">
+                            <label class="vb-form-label">Seat Preference</label>
+                            <div class="vb-select-wrapper">
+                                <div class="vb-form-control d-flex justify-content-between align-items-center bg-light">
+                                    <span>Window (@Model.SeatNumber A)</span>
+                                    <i class="bi bi-person-workspace vb-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="vb-section-title mt-5">Payment Method</div>
+            <div class="vb-payment-tiles">
+                <div class="vb-payment-tile selected">
+                    <i class="bi bi-credit-card vb-payment-icon"></i>
+                    <div class="vb-payment-name">Card ending in 4242</div>
+                    <div class="vb-payment-detail">Exp: 12/26</div>
+                    <input type="radio" name="pay" class="vb-payment-radio" checked>
+                </div>
+                <div class="vb-payment-tile">
+                    <i class="bi bi-bank vb-payment-icon"></i>
+                    <div class="vb-payment-name">Apple Pay</div>
+                    <input type="radio" name="pay" class="vb-payment-radio">
+                </div>
+                <div class="vb-payment-tile-add">
+                    <i class="bi bi-plus-lg"></i>
+                    <div>Add New</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-4">
+
+            <div class="vb-card mb-4">
+                <h5 class="fw-bold mb-4">Fare Breakdown</h5>
+                <div class="vb-summary-row">
+                    <span class="label">Base Fare (x1)</span>
+                    <span class="value">$@Model.BaseFare.ToString("F2")</span>
+                </div>
+                <div class="vb-summary-row">
+                    <span class="label">Seat Selection</span>
+                    <span class="value">$@Model.SeatFee.ToString("F2")</span>
+                </div>
+                <div class="vb-summary-row">
+                    <span class="label">Booking Fee</span>
+                    <span class="value">$@Model.BookingFee.ToString("F2")</span>
+                </div>
+                
+                <div class="vb-summary-total mt-4 pt-3">
+                    <span>Total Amount</span>
+                    <span class="total-amount">$@Model.Total.ToString("F2")</span>
+                </div>
+
+                <button class="vb-btn-primary w-100 justify-content-center mt-4 py-3 h5">
+                    Confirm & Pay <i class="bi bi-arrow-right"></i>
+                </button>
+                <div class="text-center vb-muted mt-3" style="font-size: 0.65rem;">
+                    By clicking pay, you agree to our <a href="#" class="text-decoration-underline">Terms of Service</a>.
+                </div>
+            </div>
+
+
+            <div class="vb-secure-badge mb-3">
+                <i class="bi bi-shield-lock h4 mb-0"></i>
+                <div>
+                    <strong>Secure SSL Payment</strong>
+                    256-bit encryption active
+                </div>
+            </div>
+
+
+            <div class="vb-card-notice border-primary border-opacity-10 bg-info bg-opacity-10">
+                <i class="bi bi-info-circle vb-notice-icon text-primary"></i>
+                <div>
+                    <strong class="d-block text-primary mb-1">Cancellation Policy</strong>
+                    Full refund if cancelled at least 24 hours before departure time.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

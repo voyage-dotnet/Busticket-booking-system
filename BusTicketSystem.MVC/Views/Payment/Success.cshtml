@@ -1,0 +1,180 @@
+@model BusTicketSystem.MVC.ViewModels.PaymentSuccessViewModel
+@{
+    ViewData["Title"] = "Booking Confirmed";
+}
+
+<div class="vb-page">
+
+    <!-- ── Success Banner ─────────────────────────────────────────────────── -->
+    <div class="text-center mb-5">
+        <div style="font-size:4rem; margin-bottom:1rem;">✅</div>
+        <h1 style="font-size:var(--vb-font-size-xl); font-weight:700;
+                   color:var(--vb-text-primary); margin-bottom:0.5rem;">
+            Booking Confirmed!
+        </h1>
+        <p class="vb-muted">
+            Your payment was successful. Have a great journey!
+        </p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-7">
+
+            <!-- ── Confirmation Code ──────────────────────────────────────── -->
+            <div class="vb-card mb-4 text-center"
+                 style="background: var(--vb-primary); color:#fff;">
+                <div style="font-size:var(--vb-font-size-sm); opacity:0.8; margin-bottom:0.25rem;">
+                    Confirmation Code
+                </div>
+                <div style="font-size:2rem; font-weight:700; letter-spacing:0.1em;">
+                    @Model.ConfirmationCode
+                </div>
+                <div style="font-size:var(--vb-font-size-xs); opacity:0.7; margin-top:0.25rem;">
+                    Save this code — you'll need it to manage your booking
+                </div>
+            </div>
+
+            <!-- ── Trip Details ───────────────────────────────────────────── -->
+            <div class="vb-card mb-4">
+                <div class="vb-section-title">Trip Details</div>
+
+                <div class="vb-journey">
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon"></div>
+                        <div class="vb-journey-line"></div>
+                        <div>
+                            <div class="vb-journey-time">
+                                @Model.DepartureTime.ToString("hh:mm tt")
+                            </div>
+                            <div class="vb-journey-place">
+                                @(Model.RouteName.Contains("->")
+                                    ? Model.RouteName.Split("->")[0].Trim()
+                                    : Model.RouteName)
+                            </div>
+                            <div class="vb-journey-sub">
+                                @Model.DepartureTime.ToString("dddd, MMM dd, yyyy")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vb-journey-gap"></div>
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon destination"></div>
+                        <div>
+                            <div class="vb-journey-place">
+                                @(Model.RouteName.Contains("->")
+                                    ? Model.RouteName.Split("->")[1].Trim()
+                                    : "—")
+                            </div>
+                            <div class="vb-journey-sub">Main Entrance</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Grid -->
+                <div class="row g-3 mt-3"
+                     style="border-top:1px solid var(--vb-border); padding-top:1rem;">
+                    <div class="col-6">
+                        <div class="vb-muted" style="font-size:var(--vb-font-size-xs);">
+                            BOOKING ID
+                        </div>
+                        <div style="font-weight:600;">#@Model.BookingId</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="vb-muted" style="font-size:var(--vb-font-size-xs);">
+                            PAYMENT ID
+                        </div>
+                        <div style="font-weight:600;">#@Model.PaymentId</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="vb-muted" style="font-size:var(--vb-font-size-xs);">
+                            SEAT NUMBER
+                        </div>
+                        <div style="font-weight:600;">@Model.SeatNumber A</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="vb-muted" style="font-size:var(--vb-font-size-xs);">
+                            PAYMENT METHOD
+                        </div>
+                        <div style="font-weight:600;">
+                            @(Model.Method == "CARD" ? "💳 Card" : "🏦 UPI")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Amount Paid ────────────────────────────────────────────── -->
+            <div class="vb-card mb-4">
+                <div class="vb-summary-total" style="border-top:none; padding-top:0;">
+                    <span>Amount Paid</span>
+                    <span class="total-amount">₹@Model.Amount.ToString("F2")</span>
+                </div>
+            </div>
+
+            <!-- ── Action Buttons ─────────────────────────────────────────── -->
+            <div class="d-flex gap-3 flex-wrap">
+                <a asp-controller="Booking" asp-action="MyBookings"
+                   class="vb-btn-primary">
+                    View My Bookings
+                </a>
+                <a asp-controller="Home" asp-action="Index"
+                   class="vb-btn-secondary">
+                    Book Another Trip
+                </a>
+            </div>
+
+        </div>
+
+        <!-- ── Right: What's Next ─────────────────────────────────────────── -->
+        <div class="col-lg-4">
+
+            <div class="vb-card mb-3">
+                <div class="vb-section-title">What's Next?</div>
+
+                <div style="display:flex; flex-direction:column; gap:1rem;">
+                    <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+                        <span style="font-size:1.25rem;">📧</span>
+                        <div>
+                            <div style="font-weight:600; font-size:var(--vb-font-size-sm);">
+                                Check your email
+                            </div>
+                            <div class="vb-muted" style="font-size:var(--vb-font-size-xs);">
+                                A confirmation with your e-ticket has been sent.
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+                        <span style="font-size:1.25rem;">🕐</span>
+                        <div>
+                            <div style="font-weight:600; font-size:var(--vb-font-size-sm);">
+                                Arrive 15 mins early
+                            </div>
+                            <div class="vb-muted" style="font-size:var(--vb-font-size-xs);">
+                                Be at the boarding point before departure.
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+                        <span style="font-size:1.25rem;">📱</span>
+                        <div>
+                            <div style="font-weight:600; font-size:var(--vb-font-size-sm);">
+                                Show your code
+                            </div>
+                            <div class="vb-muted" style="font-size:var(--vb-font-size-xs);">
+                                Present your confirmation code @Model.ConfirmationCode to board.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vb-card-notice">
+                <span class="vb-notice-icon">ℹ</span>
+                <div>
+                    <strong>Cancellation Policy</strong><br />
+                    Full refund if cancelled at least 24 hours before departure.
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
