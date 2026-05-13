@@ -1,0 +1,99 @@
+@model CreateBusViewModel
+@{
+    ViewData["Title"] = "Register New Bus";
+    ViewData["Breadcrumb"] = @"<a href='/Office'>My Offices</a><span class='sep'>›</span><span class='active'>Register Bus</span>";
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="vb-page-title mb-1"><i class="bi bi-bus-front-fill"></i> Register New Bus</div>
+        <p class="vb-page-subtitle">Add a bus to your fleet by assigning it to a branch office.</p>
+
+        <form asp-controller="Bus" asp-action="Create" method="post" id="busForm">
+            @Html.AntiForgeryToken()
+
+            <div class="vb-section-title">Bus Information</div>
+            <div class="vb-card mb-3">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="vb-label">Assigned Office</div>
+                        @if (Model.AvailableOffices.Any())
+                        {
+                            <select asp-for="OfficeId" class="vb-input">
+                                <option value="">— Select an office —</option>
+                                @foreach (var o in Model.AvailableOffices)
+                                {
+                                    <option value="@o.OfficeId">Office #@o.OfficeId — @o.OfficeMail</option>
+                                }
+                            </select>
+                        }
+                        else
+                        {
+                            <input asp-for="OfficeId" type="number" class="vb-input" placeholder="Enter Office ID" min="1" />
+                        }
+                        <span asp-validation-for="OfficeId" class="vb-validation-error"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="vb-label">Registration Number</div>
+                        <input asp-for="RegistrationNumber" class="vb-input" placeholder="e.g. MH 01 AB 1234" style="text-transform:uppercase;" />
+                        <span asp-validation-for="RegistrationNumber" class="vb-validation-error"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="vb-label">Bus Type</div>
+                        <select asp-for="Type" class="vb-input">
+                            <option value="">— Select type —</option>
+                            <option value="Sleeper">Sleeper</option>
+                            <option value="Semi-Sleeper">Semi-Sleeper</option>
+                            <option value="Seater">Seater</option>
+                            <option value="AC Sleeper">AC Sleeper</option>
+                            <option value="AC Seater">AC Seater</option>
+                            <option value="Volvo AC">Volvo AC</option>
+                        </select>
+                        <span asp-validation-for="Type" class="vb-validation-error"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="vb-label">Seat Capacity</div>
+                        <input asp-for="Capacity" type="number" class="vb-input" placeholder="e.g. 40" min="1" max="100" />
+                        <span asp-validation-for="Capacity" class="vb-validation-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="vb-alert vb-alert-error mb-3"></div>
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn-vb-primary">Register Bus <i class="bi bi-arrow-right ms-1"></i></button>
+                <a asp-controller="Office" asp-action="Index" class="btn-vb-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-lg-4">
+        <div style="position:sticky;top:72px;">
+            <div class="vb-card mb-3">
+                <div class="fw-700 mb-3">Bus Summary</div>
+                <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--vb-card-border);font-size:0.85rem;">
+                    <span class="text-muted-vb">Max Capacity</span>
+                    <span class="fw-600">100 seats</span>
+                </div>
+                <div class="d-flex justify-content-between py-2" style="font-size:0.85rem;">
+                    <span class="text-muted-vb">Available Types</span>
+                    <span class="fw-600">6</span>
+                </div>
+                <hr class="vb-divider">
+                <button form="busForm" type="submit" class="btn-vb-primary d-flex justify-content-center w-100">
+                    Confirm Registration <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+            </div>
+            <div class="vb-info-box mb-2">
+                <i class="bi bi-shield-lock-fill"></i>
+                <div><div class="fw-600" style="font-size:0.8rem;color:var(--vb-navy);">Secure SSL</div><div style="font-size:0.78rem;">256-bit encryption active</div></div>
+            </div>
+            <div class="vb-info-box">
+                <i class="bi bi-info-circle"></i>
+                <div style="font-size:0.78rem;">Buses can be updated up to 2 hours before departure for a small fee.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts { @await Html.PartialAsync("_ValidationScriptsPartial") }

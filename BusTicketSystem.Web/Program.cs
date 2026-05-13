@@ -17,7 +17,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Env.Load();
+Env.TraversePath().Load();
 builder.Configuration["ConnectionStrings:DefaultConnection"] = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 builder.Configuration["Jwt:Token"] = Environment.GetEnvironmentVariable("JWT_TOKEN");
 builder.Configuration["Jwt:Audience"] = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
