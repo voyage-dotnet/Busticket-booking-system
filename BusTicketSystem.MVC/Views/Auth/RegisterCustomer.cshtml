@@ -1,0 +1,83 @@
+@model BusTicketSystem.MVC.Models.RegisterCustomer
+@{
+    ViewData["Title"] = "Register Customer";
+}
+
+<div class="container-fluid p-0 ">
+    <div class="row g-0 w-100 d-flex justify-content-center align-items-center">
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-white">
+            <div class="p-4 p-md-5 w-100" style="max-width: 500px;">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold">Create your account</h2>
+                    <p class="text-muted">Choose your registration type to get started.</p>
+                </div>
+
+                <!-- Registration Type Tabs -->
+                <div class="d-flex mb-4 p-1 bg-light rounded" style="border: 1px solid var(--vb-border);">
+                    <a asp-action="RegisterCustomer" class="flex-grow-1 text-center py-2 rounded text-decoration-none fw-bold bg-white shadow-sm text-dark">
+                        Join as a Traveler
+                    </a>
+                    <a asp-action="RegisterAgency" class="flex-grow-1 text-center py-2 rounded text-decoration-none fw-bold text-muted">
+                        Register your Agency
+                    </a>
+                </div>
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <div asp-validation-summary="All" class="text-danger small mb-3"></div>
+
+                <form asp-action="RegisterCustomer" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold">Full Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="John Doe" style="padding: 12px;">
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-semibold">Email Address</label>
+                        <input asp-for="Email" class="form-control" placeholder="john@example.com" style="padding: 12px;">
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Phone" class="form-label fw-semibold">Phone Number</label>
+                            <input asp-for="Phone" class="form-control" placeholder="+91 12345 68795" style="padding: 12px;">
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold">Password</label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" style="padding: 12px;">
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                        <label class="form-check-label text-muted small" for="termsCheck">
+                            By creating an account, you agree to our <a href="#" class="text-primary text-decoration-none">Terms of Service</a> and <a href="#" class="text-primary text-decoration-none">Privacy Policy</a>.
+                        </label>
+                    </div>
+
+                    <button type="submit" class="vb-btn-primary w-100 py-3 mb-3 justify-content-center">
+                        Create Account
+                    </button>
+
+                    <p class="text-center text-muted">
+                        Already have an account? <a asp-action="LoginCustomer" class="text-primary fw-bold text-decoration-none">Sign In</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

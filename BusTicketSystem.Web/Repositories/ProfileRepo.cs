@@ -26,12 +26,16 @@ namespace BusTicketSystem.Web.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<CustomerProfileDTO> GetCustomerProfile(string Email)
+        public async Task<CustomerProfileDTO?> GetCustomerProfile(string Email)
         {
+            if (string.IsNullOrEmpty(Email)) return null;
+
             var profile = await _context.Customers
-            .Include(c => c.Address)
-            .FirstOrDefaultAsync(c => c.Email == Email);
+                .Include(c => c.Address)
+                .FirstOrDefaultAsync(c => c.Email != null && c.Email.ToLower() == Email.ToLower());
             
+            if (profile == null) return null;
+
             return new CustomerProfileDTO
             {
                 CustomerId = profile.CustomerId,

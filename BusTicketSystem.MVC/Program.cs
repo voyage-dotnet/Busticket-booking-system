@@ -2,6 +2,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<BusTicketSystem.MVC.Handlers.AuthHeaderHandler>();
+builder.Services.AddHttpClient("VoyageAPI", client => { })
+    .AddHttpMessageHandler<BusTicketSystem.MVC.Handlers.AuthHeaderHandler>();
+builder.Services.AddScoped<BusTicketSystem.MVC.Services.VoyageApiClient>();
+builder.Services.AddAuthentication();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -17,8 +30,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseAuthorization();
+app.UseAuthentication();
+app.UseSession();
+app.UseAuthorization();;
 
 app.MapControllerRoute(
     name: "default",

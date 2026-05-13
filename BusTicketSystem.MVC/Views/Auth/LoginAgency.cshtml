@@ -1,0 +1,80 @@
+@model BusTicketSystem.MVC.Models.Login
+@{
+    ViewData["Title"] = "Agency Login";
+}
+
+<div class="container-fluid p-0">
+    <div class="row g-0 w-100 d-flex justify-content-center align-item-center">
+
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-white">
+            <div class="p-4 p-md-5 w-100" style="max-width: 500px;">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold">Agency Portal Login</h2>
+                    <p class="text-muted">Enter your business details to manage your fleet.</p>
+                </div>
+
+                <!-- Login Type Tabs -->
+                <div class="d-flex mb-4 p-1 bg-light rounded" style="border: 1px solid var(--vb-border);">
+                    <a asp-action="LoginCustomer" class="flex-grow-1 text-center py-2 rounded text-decoration-none fw-bold text-muted">
+                        Traveler
+                    </a>
+                    <a asp-action="LoginAgency" class="flex-grow-1 text-center py-2 rounded text-decoration-none fw-bold bg-white shadow-sm text-dark">
+                        Agency
+                    </a>
+                </div>
+
+                @if (TempData["Message"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Message"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form asp-action="LoginAgency" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-semibold">Business Email</label>
+                        <input asp-for="Email" class="form-control" placeholder="contact@agency.com" style="padding: 12px;">
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label asp-for="Password" class="form-label fw-semibold mb-0">Password</label>
+                            <a asp-action="ForgotPasswordAgency" class="text-primary small text-decoration-none">Forgot password?</a>
+                        </div>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" style="padding: 12px;">
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    @* <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label text-muted small" for="rememberMe">
+                            Remember this device
+                        </label>
+                    </div> *@
+
+                    <button type="submit" class="vb-btn-primary w-100 py-3 mb-3 justify-content-center">
+                        Sign In to Portal
+                    </button>
+
+                    <p class="text-center text-muted">
+                        Don't have an agency account? <a asp-action="RegisterAgency" class="text-primary fw-bold text-decoration-none">Register your agency</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

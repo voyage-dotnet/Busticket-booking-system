@@ -1,0 +1,86 @@
+@model BusTicketSystem.MVC.Models.CustomerProfileViewModel
+@{
+    ViewData["Title"] = "Your Profile";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="vb-card text-center">
+                <div class="mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 100px; height: 100px;">
+                        <i class="bi bi-person-fill text-secondary" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+                <h3 class="fw-bold mb-1">@Model.Name</h3>
+                <p class="text-muted mb-4">@Model.Email</p>
+                
+                <div class="d-grid gap-2">
+                    <a asp-action="UpdateEmail" class="vb-btn-secondary justify-content-center text-decoration-none">
+                        <i class="bi bi-pencil-square"></i> Update Email
+                    </a>
+                    <form asp-controller="Auth" asp-action="Logout" method="post">
+                        <button type="submit" class="vb-btn-ghost w-100 justify-content-center text-danger">
+                            <i class="bi bi-box-arrow-right"></i> Sign Out
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="vb-card mb-4">
+                <h4 class="fw-bold mb-4">Account Information</h4>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="vb-filter-label">Full Name</label>
+                        <p class="fw-semibold">@Model.Name</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="vb-filter-label">Email Address</label>
+                        <p class="fw-semibold">@Model.Email</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="vb-filter-label">Phone Number</label>
+                        <p class="fw-semibold">@Model.Phone</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vb-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0"> Address</h4>
+                    @if (Model.Address == null)
+                    {
+                        <a asp-action="AddAddress" class="vb-btn-primary py-2 px-3">
+                            <i class="bi bi-plus-lg"></i> Add Address
+                        </a>
+                    }
+                </div>
+
+                @if (Model.Address != null)
+                {
+                    <div class="p-3 rounded bg-light border">
+                        <div class="d-flex gap-3">
+                            <i class="bi bi-geo-alt-fill text-primary mt-1" style="font-size: 1.2rem;"></i>
+                            <div>
+                                <p class="fw-semibold mb-1">@Model.Address.Address1</p>
+                                <p class="text-muted mb-0">@Model.Address.City, @Model.Address.State @Model.Address.ZipCode</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-house-door d-block mb-2" style="font-size: 2rem;"></i>
+                        <p>No address found. Please add an address to your profile.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+</div>

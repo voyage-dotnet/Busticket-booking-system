@@ -1,0 +1,62 @@
+@model BusTicketSystem.MVC.Models.CustomerAddressViewModel
+@{
+    ViewData["Title"] = "Add Address";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="vb-card">
+                <div class="mb-4">
+                    <a asp-action="Index" class="text-decoration-none text-muted small mb-3 d-inline-block">
+                        <i class="bi bi-arrow-left"></i> Back to Profile
+                    </a>
+                    <h2 class="fw-bold">Add your Address</h2>
+                    <p class="text-muted">Please provide your address.</p>
+                </div>
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["Error"]
+                    </div>
+                }
+
+                <form asp-action="AddAddress" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Address1" class="form-label fw-semibold">Street Address</label>
+                        <input asp-for="Address1" class="form-control" placeholder="123 Main St" style="padding: 12px;">
+                        <span asp-validation-for="Address1" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="City" class="form-label fw-semibold">City</label>
+                            <input asp-for="City" class="form-control" placeholder="City" style="padding: 12px;">
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="State" class="form-label fw-semibold">State</label>
+                            <input asp-for="State" class="form-control" placeholder="State" style="padding: 12px;">
+                            <span asp-validation-for="State" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ZipCode" class="form-label fw-semibold">Zip Code</label>
+                        <input asp-for="ZipCode" class="form-control" placeholder="12345" style="padding: 12px;">
+                        <span asp-validation-for="ZipCode" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="vb-btn-primary w-100 py-3 justify-content-center">
+                        Save Address
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

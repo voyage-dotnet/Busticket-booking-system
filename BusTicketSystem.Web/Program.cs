@@ -122,7 +122,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 Encoding.UTF8.GetBytes(jwtToken)
             ),
             NameClaimType = "sub",   // Support for GetCustomerId()
-            RoleClaimType = "role"   // Support for [Authorize(Roles="...")]
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role   // Match GenerateJwtToken
         };
     });
 

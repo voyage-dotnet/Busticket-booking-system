@@ -19,8 +19,8 @@ namespace BusTicketSystem.Web.Repositories
 
         public async Task<Customer?> GetCustomerByEmailAsync(string Email)
         {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.Email.ToLower() == Email.ToLower());
-    
+            if (string.IsNullOrEmpty(Email)) return null;
+            return await _context.Customers.FirstOrDefaultAsync(c => c.Email != null && c.Email.ToLower() == Email.ToLower());
         }
         public async Task<Customer?> RegisterCustomerAsync(Customer request)
         {
@@ -44,7 +44,8 @@ namespace BusTicketSystem.Web.Repositories
 
         public async Task<Agency?> GetAgencyByEmailAysnc(string Email)
         {
-            return await _context.Agencies.FirstOrDefaultAsync(a => a.Email.ToLower() == Email.ToLower());
+            if (string.IsNullOrEmpty(Email)) return null;
+            return await _context.Agencies.FirstOrDefaultAsync(a => a.Email != null && a.Email.ToLower() == Email.ToLower());
         }
 
         public async Task<Agency?> RegisterAgencyAsync (Agency request)

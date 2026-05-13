@@ -1,0 +1,58 @@
+@model BusTicketSystem.MVC.Models.UpdateEmailViewModel
+@{
+    ViewData["Title"] = "Update Email";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="vb-card p-4 shadow-sm" style="border-radius: var(--vb-radius-lg); background: white;">
+                <div class="text-center mb-4">
+                    <div class="vb-icon-circle mb-3 mx-auto">
+                        <i class="bi bi-envelope-at fs-2 text-primary"></i>
+                    </div>
+                    <h2 class="fw-bold h3 mb-2">Update Email Address</h2>
+                    <p class="text-muted small">Change your account email address for VoyaBus</p>
+                </div>
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form asp-action="UpdateEmail" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Email" class="vb-filter-label mb-1">Current Email Address</label>
+                        <input asp-for="Email" class="vb-search-input py-2" placeholder="current@domain.com" style="border-radius: var(--vb-radius-md);">
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="NewEmail" class="vb-filter-label mb-1">New Email Address</label>
+                        <input asp-for="NewEmail" class="vb-search-input py-2" placeholder="new@domain.com" style="border-radius: var(--vb-radius-md);">
+                        <span asp-validation-for="NewEmail" class="text-danger small"></span>
+                        <div class="form-text mt-2 small text-muted">
+                            <i class="bi bi-info-circle me-1"></i> You will need to log in again after changing your email.
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="vb-btn-primary justify-content-center py-3">
+                            <i class="bi bi-save me-2"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="vb-btn-ghost justify-content-center py-2 text-decoration-none">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
