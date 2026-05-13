@@ -40,10 +40,10 @@ public class RouteService : IRouteService
         return _mapper.Map<RouteResponseDTO>(route);
     }
 
-    public async Task<IEnumerable<RouteSearchResultDTO>> SearchRoutesAsync(string fromCity, string toCity)
+    public async Task<IEnumerable<RouteResponseDTO>> SearchRoutesAsync(string fromCity, string toCity)
     {
         var route = await _repo.SearchRoutesAsync(fromCity, toCity);
-        return _mapper.Map<IEnumerable<RouteSearchResultDTO>>(route);
+        return _mapper.Map<IEnumerable<RouteResponseDTO>>(route);
     }
 
     public async Task<RouteResponseDTO> UpdateRouteAsync(int id, UpdateRouteRequestDTO request)

@@ -34,6 +34,8 @@ public class TripRepository : ITripRepository
     public async Task<IEnumerable<Trip>> GetAllAsync()
     {
         return await _context.Trips
+                             .AsNoTracking()
+                             .AsSplitQuery()
                              .Include(t => t.Route)
                              .Include(t => t.Bus)
                                  .ThenInclude(t => t.Office)
@@ -52,6 +54,7 @@ public class TripRepository : ITripRepository
     public async Task<Trip?> GetByIdAsync(int id)
     {
         return await _context.Trips
+            .AsSplitQuery()
             .Include(t => t.Route)
             .Include(t => t.Bus)
                 .ThenInclude(b => b.Office)
@@ -63,6 +66,8 @@ public class TripRepository : ITripRepository
     public async Task<IEnumerable<Trip>> GetTripsByAgencyAsync(int agencyId)
     {
         return await _context.Trips
+            .AsNoTracking()
+            .AsSplitQuery()
             .Include(t => t.Route)
             .Include(t => t.Bus)
                 .ThenInclude(b => b.Office)
@@ -73,6 +78,8 @@ public class TripRepository : ITripRepository
     public async Task<IEnumerable<Trip>> SearchTripsAsync(string from, string to, DateTime date)
     {
         return await _context.Trips
+            .AsNoTracking()
+            .AsSplitQuery()
             .Include(t => t.Route)
             .Include(t => t.Bus)
                 .ThenInclude(b => b.Office)

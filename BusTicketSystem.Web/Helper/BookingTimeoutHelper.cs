@@ -8,17 +8,12 @@ public class BookingTimeoutHelper : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly TimeSpan _interval = TimeSpan.FromMinutes(1);
     private readonly TimeSpan _timeout  = TimeSpan.FromMinutes(10);
-
-    // Tracks when each booking was set to Pending
-    // Key = BookingId, Value = time it became Pending
     private static readonly Dictionary<int, DateTime> _pendingTimes = new();
 
     public BookingTimeoutHelper(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
     }
-
-    // Call this from BookingsController when a booking is set to Pending
     public static void TrackBooking(int bookingId)
     {
         _pendingTimes[bookingId] = DateTime.Now;
@@ -38,8 +33,6 @@ public class BookingTimeoutHelper : BackgroundService
         using var scope = _scopeFactory.CreateScope();
         var context     = scope.ServiceProvider
                              .GetRequiredService<BusTicketDbContext>();
-
-        // Find all bookings that have been Pending for more than 10 minutes
         var expiredIds = _pendingTimes
             .Where(x => DateTime.Now - x.Value > _timeout)
             .Select(x => x.Key)
@@ -55,7 +48,7 @@ public class BookingTimeoutHelper : BackgroundService
         foreach (var booking in expiredBookings)
         {
             booking.Status = "Available";
-            _pendingTimes.Remove(booking.BookingId); // stop tracking it
+            _pendingTimes.Remove(booking.BookingId); 
         }
 
         if (expiredBookings.Any())

@@ -13,16 +13,12 @@ namespace BusTicketSystem.Web.Repositories
             _db = db;
         }
 
-        // ─── Add a new review ────────────────────────────────────────────────────
-
         public async Task<Review> AddAsync(Review review)
         {
             _db.Reviews.Add(review);
             await _db.SaveChangesAsync();
             return review;
         }
-
-        // ─── Get single review by ID (with navigations) ──────────────────────────
 
         public async Task<Review?> GetByIdAsync(int reviewId)
         {
@@ -31,8 +27,6 @@ namespace BusTicketSystem.Web.Repositories
                 .Include(r => r.Trip).ThenInclude(t => t.Route)
                 .FirstOrDefaultAsync(r => r.ReviewId == reviewId);
         }
-
-        // ─── All reviews for a specific trip ─────────────────────────────────────
 
         public async Task<List<Review>> GetByTripIdAsync(int tripId)
         {
@@ -43,8 +37,6 @@ namespace BusTicketSystem.Web.Repositories
                 .OrderByDescending(r => r.ReviewDate)
                 .ToListAsync();
         }
-
-        // ─── All reviews for trips belonging to an agency ────────────────────────
 
         public async Task<List<Review>> GetByAgencyIdAsync(int agencyId)
         {
@@ -61,8 +53,6 @@ namespace BusTicketSystem.Web.Repositories
            .ToListAsync();
         }
 
-        // ─── All reviews written by a customer ───────────────────────────────────
-
         public async Task<List<Review>> GetByCustomerIdAsync(int customerId)
         {
             return await _db.Reviews
@@ -73,8 +63,6 @@ namespace BusTicketSystem.Web.Repositories
                 .ToListAsync();
         }
 
-        // ─── Guard: does customer have a completed booking for this trip? ─────────
-
         public async Task<bool> HasCompletedBookingAsync(int customerId, int tripId)
         {
             return await _db.Payments
@@ -84,15 +72,11 @@ namespace BusTicketSystem.Web.Repositories
                        && p.Booking.Status == "Booked");
         }
 
-        // ─── Guard: has customer already reviewed this trip? ─────────────────────
-
         public async Task<bool> HasAlreadyReviewedAsync(int customerId, int tripId)
         {
             return await _db.Reviews
                 .AnyAsync(r => r.CustomerId == customerId && r.TripId == tripId);
         }
-
-        // ─── Update an existing review ───────────────────────────────────────────
 
         public async Task<Review> UpdateAsync(Review review)
         {

@@ -1,70 +1,671 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - VoyaBus</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/BusTicketSystem.MVC.styles.css" asp-append-version="true" />
+    <style>
+        /* ============================================================
+           VoyaBus Agency — Design System
+           Matches: light gray bg, white cards, navy primary, clean type
+        ============================================================ */
+        :root {
+            --vb-navy:        #1e2d4d;
+            --vb-navy-hover:  #162038;
+            --vb-blue-mid:    #2d4a7a;
+            --vb-accent:      #3b60a8;
+            --vb-bg:          #eef0f5;
+            --vb-surface:     #ffffff;
+            --vb-card-border: #d8dde8;
+            --vb-input-bg:    #ffffff;
+            --vb-input-border:#cdd2de;
+            --vb-text:        #1a2234;
+            --vb-text-mid:    #4a5568;
+            --vb-text-muted:  #8892a4;
+            --vb-green:       #27ae60;
+            --vb-red:         #e74c3c;
+            --vb-selected:    #1e2d4d;
+            --vb-tag-bg:      #e8ecf5;
+            --vb-tag-text:    #2d4a7a;
+            --radius-card:    10px;
+            --radius-btn:     6px;
+            --shadow-card:    0 1px 4px rgba(30,45,77,0.08), 0 2px 12px rgba(30,45,77,0.06);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--vb-bg);
+            color: var(--vb-text);
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* ── Scrollbar ───────────────────────────────────────── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--vb-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--vb-card-border); border-radius: 4px; }
+
+        /* ══════════════════════════════════════════════════════
+           NAVBAR  (exact VoyaBus style)
+        ══════════════════════════════════════════════════════ */
+        .vb-navbar {
+            background: #fff;
+            border-bottom: 1px solid var(--vb-card-border);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .vb-navbar .container-xl {
+            display: flex;
+            align-items: center;
+            height: 56px;
+            gap: 2rem;
+        }
+
+        .vb-brand {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--vb-navy) !important;
+            text-decoration: none;
+            letter-spacing: -0.3px;
+            flex-shrink: 0;
+        }
+
+        .vb-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex: 1;
+        }
+
+        .vb-nav-links li a {
+            display: block;
+            padding: 0.9rem 1.1rem;
+            color: var(--vb-text-mid);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.88rem;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+            height: 56px;
+            line-height: 36px;
+        }
+
+        .vb-nav-links li a:hover { color: var(--vb-navy); }
+        .vb-nav-links li a.active {
+            color: var(--vb-navy);
+            border-bottom-color: var(--vb-navy);
+            font-weight: 600;
+        }
+
+        .vb-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-left: auto;
+        }
+
+        .btn-vb-signin {
+            background: none;
+            border: none;
+            color: var(--vb-text-mid);
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0.45rem 0.75rem;
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .btn-vb-signin:hover { color: var(--vb-navy); }
+
+        .btn-vb-register {
+            background: var(--vb-navy);
+            color: #fff !important;
+            border: none;
+            border-radius: var(--radius-btn);
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 0.45rem 1.1rem;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+        .btn-vb-register:hover { background: var(--vb-navy-hover); }
+
+        /* ══════════════════════════════════════════════════════
+           BREADCRUMB
+        ══════════════════════════════════════════════════════ */
+        .vb-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--vb-text-muted);
+            padding: 1rem 0 0.25rem;
+        }
+
+        .vb-breadcrumb a {
+            color: var(--vb-text-muted);
+            text-decoration: none;
+        }
+        .vb-breadcrumb a:hover { color: var(--vb-navy); }
+        .vb-breadcrumb .active { color: var(--vb-navy); font-weight: 600; }
+        .vb-breadcrumb .sep { color: var(--vb-card-border); }
+
+        /* ══════════════════════════════════════════════════════
+           PAGE WRAPPER
+        ══════════════════════════════════════════════════════ */
+        .vb-page { min-height: calc(100vh - 56px - 64px); padding: 1.75rem 0 3rem; }
+
+        /* ══════════════════════════════════════════════════════
+           CARDS
+        ══════════════════════════════════════════════════════ */
+        .vb-card {
+            background: var(--vb-surface);
+            border: 1px solid var(--vb-card-border);
+            border-radius: var(--radius-card);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .vb-card-sm { padding: 1rem 1.25rem; }
+
+        /* ══════════════════════════════════════════════════════
+           PAGE TITLE
+        ══════════════════════════════════════════════════════ */
+        .vb-page-title {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: var(--vb-navy);
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.4px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .vb-page-title i { font-size: 1.2rem; color: var(--vb-accent); }
+        .vb-page-subtitle { font-size: 0.85rem; color: var(--vb-text-muted); margin-bottom: 1.5rem; }
+
+        /* ══════════════════════════════════════════════════════
+           SECTION LABELS (like "Passenger Information")
+        ══════════════════════════════════════════════════════ */
+        .vb-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--vb-text);
+            margin-bottom: 0.85rem;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           TABLES
+        ══════════════════════════════════════════════════════ */
+        .vb-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .vb-table thead th {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--vb-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid var(--vb-card-border);
+            background: #f7f9fc;
+        }
+
+        .vb-table thead th:first-child { border-radius: 8px 0 0 0; }
+        .vb-table thead th:last-child  { border-radius: 0 8px 0 0; }
+
+        .vb-table tbody tr {
+            border-bottom: 1px solid #f0f2f8;
+            transition: background 0.15s;
+        }
+
+        .vb-table tbody tr:last-child { border-bottom: none; }
+        .vb-table tbody tr:hover { background: #f7f9fc; }
+
+        .vb-table tbody td {
+            padding: 0.9rem 1rem;
+            font-size: 0.875rem;
+            color: var(--vb-text);
+            vertical-align: middle;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           BUTTONS
+        ══════════════════════════════════════════════════════ */
+        .btn-vb-primary {
+            background: var(--vb-navy);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.6rem 1.4rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+            line-height: 1.4;
+        }
+
+        .btn-vb-primary:hover { background: var(--vb-navy-hover); color: #fff; }
+        .btn-vb-primary:active { transform: scale(0.98); }
+
+        .btn-vb-outline {
+            background: transparent;
+            color: var(--vb-navy);
+            border: 1.5px solid var(--vb-card-border);
+            border-radius: var(--radius-btn);
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            text-decoration: none;
+            line-height: 1.4;
+            cursor: pointer;
+        }
+
+        .btn-vb-outline:hover {
+            border-color: var(--vb-navy);
+            color: var(--vb-navy);
+            background: var(--vb-tag-bg);
+        }
+
+        .btn-vb-ghost {
+            background: none;
+            border: none;
+            color: var(--vb-accent);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .btn-vb-ghost:hover { color: var(--vb-navy); text-decoration: underline; }
+
+        /* ══════════════════════════════════════════════════════
+           FORM ELEMENTS (match VoyaBus input style)
+        ══════════════════════════════════════════════════════ */
+        .vb-form-group { margin-bottom: 1rem; }
+
+        .vb-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--vb-text-muted);
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .vb-input {
+            width: 100%;
+            background: var(--vb-input-bg);
+            border: 1px solid var(--vb-input-border);
+            border-radius: 6px;
+            color: var(--vb-text);
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            padding: 0.6rem 0.85rem;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .vb-input:focus {
+            border-color: var(--vb-accent);
+            box-shadow: 0 0 0 3px rgba(59, 96, 168, 0.12);
+        }
+
+        .vb-input::placeholder { color: var(--vb-text-muted); }
+
+        select.vb-input { cursor: pointer; }
+
+        .vb-validation-error {
+            color: var(--vb-red);
+            font-size: 0.78rem;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           ALERTS / TOAST (top of page)
+        ══════════════════════════════════════════════════════ */
+        .vb-alert {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .vb-alert-success {
+            background: #edfaf3;
+            border: 1px solid #a3e4c0;
+            color: #1a6b3c;
+        }
+
+        .vb-alert-error {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           BADGES / TAGS
+        ══════════════════════════════════════════════════════ */
+        .vb-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2em 0.65em;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .vb-tag-navy  { background: var(--vb-tag-bg); color: var(--vb-navy); }
+        .vb-tag-green { background: #edfaf3; color: #1a6b3c; }
+        .vb-tag-gray  { background: #f0f2f8; color: var(--vb-text-muted); }
+        .vb-tag-express { background: #fef3e2; color: #b45309; }
+
+        /* ══════════════════════════════════════════════════════
+           INFO BOX (Secure SSL / Cancellation Policy style)
+        ══════════════════════════════════════════════════════ */
+        .vb-info-box {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            background: #f7f9fc;
+            border: 1px solid var(--vb-card-border);
+            border-radius: 8px;
+            padding: 0.85rem 1rem;
+            font-size: 0.82rem;
+            color: var(--vb-text-mid);
+        }
+
+        .vb-info-box i { color: var(--vb-accent); flex-shrink: 0; margin-top: 1px; }
+
+        /* ══════════════════════════════════════════════════════
+           STAT CARDS  (overview tiles)
+        ══════════════════════════════════════════════════════ */
+        .vb-stat-card {
+            background: var(--vb-surface);
+            border: 1px solid var(--vb-card-border);
+            border-radius: var(--radius-card);
+            padding: 1.1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .vb-stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: var(--vb-tag-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--vb-navy);
+            flex-shrink: 0;
+        }
+
+        .vb-stat-value { font-size: 1.3rem; font-weight: 700; color: var(--vb-navy); line-height: 1; }
+        .vb-stat-label { font-size: 0.78rem; color: var(--vb-text-muted); margin-top: 0.15rem; }
+
+        /* ══════════════════════════════════════════════════════
+           AVATAR INITIALS
+        ══════════════════════════════════════════════════════ */
+        .vb-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--vb-tag-bg);
+            color: var(--vb-navy);
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           TRIP ROUTE LINE  (vertical dots like images)
+        ══════════════════════════════════════════════════════ */
+        .vb-route-line {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .vb-route-stop {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.35rem 0;
+        }
+
+        .vb-route-stop-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid var(--vb-navy);
+            background: #fff;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .vb-route-stop-dot.filled { background: var(--vb-navy); }
+
+        .vb-route-connector {
+            width: 2px;
+            height: 20px;
+            background: var(--vb-card-border);
+            margin-left: 6px;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           EMPTY STATE
+        ══════════════════════════════════════════════════════ */
+        .vb-empty {
+            text-align: center;
+            padding: 3.5rem 1rem;
+        }
+
+        .vb-empty-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--vb-tag-bg);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--vb-text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .vb-empty-title { font-size: 1rem; font-weight: 600; color: var(--vb-text); margin-bottom: 0.35rem; }
+        .vb-empty-text  { font-size: 0.85rem; color: var(--vb-text-muted); margin-bottom: 1.25rem; }
+
+        /* ══════════════════════════════════════════════════════
+           DIVIDER
+        ══════════════════════════════════════════════════════ */
+        .vb-divider {
+            border: none;
+            border-top: 1px solid var(--vb-card-border);
+            margin: 1.25rem 0;
+        }
+
+        /* ══════════════════════════════════════════════════════
+           FOOTER  (exact VoyaBus style)
+        ══════════════════════════════════════════════════════ */
+        .vb-footer {
+            background: #fff;
+            border-top: 1px solid var(--vb-card-border);
+            padding: 1.5rem 0;
+        }
+
+        .vb-footer .vb-brand { font-size: 1rem; }
+
+        .vb-footer-copy {
+            font-size: 0.78rem;
+            color: var(--vb-text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .vb-footer-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .vb-footer-links a {
+            font-size: 0.82rem;
+            color: var(--vb-text-muted);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .vb-footer-links a:hover { color: var(--vb-navy); }
+
+        /* ══════════════════════════════════════════════════════
+           UTILITIES
+        ══════════════════════════════════════════════════════ */
+        .fw-500 { font-weight: 500; }
+        .fw-600 { font-weight: 600; }
+        .fw-700 { font-weight: 700; }
+        .text-navy   { color: var(--vb-navy); }
+        .text-mid    { color: var(--vb-text-mid); }
+        .text-muted-vb { color: var(--vb-text-muted); }
+        .text-accent { color: var(--vb-accent); }
+        .text-green  { color: var(--vb-green); }
+        .text-red    { color: var(--vb-red); }
+        .fs-sm { font-size: 0.8rem; }
+        .fs-xs { font-size: 0.72rem; }
+
+        /* Responsive collapse for mobile */
+        @@media (max-width: 768px) {
+            .vb-nav-links { display: none; }
+            .vb-footer-links { justify-content: flex-start; margin-top: 0.75rem; }
+        }
+    </style>
 </head>
 <body>
 
+    <!-- ═══════════════════════════════════════════ NAVBAR -->
     <nav class="vb-navbar">
-        <a asp-controller="Home" asp-action="Index" class="vb-navbar-brand">VoyaBus</a>
+        <div class="container-xl">
+            <a href="/" class="vb-brand">VoyaBus</a>
 
-        <div class="d-flex align-items-center">
-            <a asp-controller="Home" asp-action="Index"
-               class="vb-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
-                Find Trips
-            </a>
-            <a asp-controller="Booking" asp-action="MyBookings"
-               class="vb-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" ? "active" : "")">
-                Manage Booking
-            </a>
-            <a href="#" class="vb-nav-link">Travel Alerts</a>
-            <a href="#" class="vb-nav-link">Support</a>
-        </div>
+            <ul class="vb-nav-links">
+                <li><a asp-controller="Home" asp-action="Index">Find Trips</a></li>
+                <li>
+                    <a asp-controller="Agency" asp-action="Profile"
+                       class="@(ViewContext.RouteData.Values["controller"]?.ToString() is "Agency" or "Office" or "Bus" or "Driver" ? "active" : "")">
+                        Manage Agency
+                    </a>
+                </li>
+                <li><a asp-controller="Agency" asp-action="Index">Travel Alerts</a></li>
+                <li><a href="#">Support</a></li>
+            </ul>
 
-        <div class="d-flex align-items-center gap-2">
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <span class="vb-muted">@User.Identity.Name</span>
-                <a asp-controller="Auth" asp-action="Logout" class="vb-btn-ghost">Sign Out</a>
-            }
-            else
-            {
-                <a asp-controller="Auth" asp-action="Login" class="vb-btn-ghost">Sign In</a>
-                <a asp-controller="Auth" asp-action="Register" class="vb-btn-primary">Register</a>
-            }
+            <div class="vb-nav-right">
+                <a asp-controller="Auth" asp-action="Login" class="btn-vb-signin">Sign In</a>
+                <a asp-controller="Auth" asp-action="Register" class="btn-vb-register">Register</a>
+            </div>
         </div>
     </nav>
 
-    <main>
-        @RenderBody()
-    </main>
+    <!-- ═══════════════════════════════════════════ PAGE -->
+    <div class="vb-page">
+        <div class="container-xl">
 
+            @* ── Breadcrumb slot ── *@
+            @if (ViewData["Breadcrumb"] != null)
+            {
+                <div class="vb-breadcrumb">
+                    @Html.Raw(ViewData["Breadcrumb"])
+                </div>
+            }
+
+            @* ── Global TempData alerts ── *@
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="vb-alert vb-alert-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>@TempData["SuccessMessage"]</span>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="vb-alert vb-alert-error">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>@TempData["ErrorMessage"]</span>
+                </div>
+            }
+
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ FOOTER -->
     <footer class="vb-footer">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <div>
-                <div class="vb-footer-brand">VoyaBus</div>
-                <div class="vb-footer-copy">© 2024 VoyaBus Transit Systems. All rights reserved.</div>
+        <div class="container-xl">
+            <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                <div>
+                    <div class="vb-brand">VoyaBus</div>
+                    <div class="vb-footer-copy">© @DateTime.Now.Year VoyaBus Transit Systems. All rights reserved.</div>
+                </div>
+                <div class="vb-footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Settings</a>
+                    <a asp-controller="Agency" asp-action="Profile">Partner Portal</a>
+                    <a href="#">Sitemap</a>
+
+                </div>
             </div>
-            <ul class="vb-footer-links">
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">Cookie Settings</a></li>
-                <li><a href="#">Partner Portal</a></li>
-                <li><a href="#">Sitemap</a></li>
-            </ul>
+
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

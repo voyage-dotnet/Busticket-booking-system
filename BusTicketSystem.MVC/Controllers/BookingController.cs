@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using BusTicketSystem.MVC.ViewModels;
-using BusTicketSystem.MVC.Models.Booking;
+using BusTicketSystem.MVC.ViewModels.Booking;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BusTicketSystem.MVC.Controllers;
@@ -76,12 +76,12 @@ public class BookingController : Controller
 
         var vm = new BookingConfirmationViewModel
         {
-            BookingId     = dto.BookingId,
-            RouteName     = dto.RouteName,
+            BookingId = dto.BookingId,
+            RouteName = dto.RouteName,
             DepartureTime = dto.DepartureTime,
-            Fare          = dto.Fare,
-            SeatNumber    = dto.SeatNumber,
-            Status        = dto.Status
+            Fare = dto.Fare,
+            SeatNumber = dto.SeatNumber,
+            Status = dto.Status
         };
 
         return View(vm);
@@ -108,11 +108,11 @@ public class BookingController : Controller
 
         var vm = new SeatSelectionViewModel
         {
-            TripId         = tripId,
-            RouteName      = routeName,
-            DepartureTime  = departureTime,
-            Fare           = fare,
-            TotalSeats     = totalSeats,
+            TripId = tripId,
+            RouteName = routeName,
+            DepartureTime = departureTime,
+            Fare = fare,
+            TotalSeats = totalSeats,
             AvailableSeats = seats
         };
 
@@ -126,13 +126,14 @@ public class BookingController : Controller
         if (!ModelState.IsValid)
             return View("SelectSeat", form);
 
+
         var payload = JsonSerializer.Serialize(new
         {
-            tripId     = form.TripId,
+            tripId = form.TripId,
             seatNumber = form.SelectedSeat
         });
 
-        var client   = CreateApiClient();
+        var client = CreateApiClient();
         var response = await client.PostAsync("api/bookings",
             new StringContent(payload, Encoding.UTF8, "application/json"));
 
@@ -151,10 +152,10 @@ public class BookingController : Controller
 
             return RedirectToAction(nameof(SelectSeat), new
             {
-                tripId        = form.TripId,
-                routeName     = form.RouteName,
+                tripId = form.TripId,
+                routeName = form.RouteName,
                 departureTime = form.DepartureTime,
-                fare          = form.Fare
+                fare = form.Fare
             });
         }
 
@@ -169,7 +170,7 @@ public class BookingController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Cancel(int id)
     {
-        var client   = CreateApiClient();
+        var client = CreateApiClient();
         var response = await client.PutAsync($"api/bookings/{id}/cancel", null);
 
         TempData[response.IsSuccessStatusCode ? "Success" : "Error"] =
@@ -182,12 +183,12 @@ public class BookingController : Controller
 
     private static BookingItemViewModel MapToItem(BookingDto dto) => new()
     {
-        BookingId     = dto.BookingId,
-        TripId        = dto.TripId,
-        RouteName     = dto.RouteName,
+        BookingId = dto.BookingId,
+        TripId = dto.TripId,
+        RouteName = dto.RouteName,
         DepartureTime = dto.DepartureTime,
-        Fare          = dto.Fare,
-        SeatNumber    = dto.SeatNumber,
-        Status        = dto.Status
+        Fare = dto.Fare,
+        SeatNumber = dto.SeatNumber,
+        Status = dto.Status
     };
 }

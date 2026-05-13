@@ -30,11 +30,11 @@ public class RoutesController : ControllerBase
         var route = await _service.GetRouteByIdAsync(id);
         return Ok(ApiResponse<RouteResponseDTO>.SuccessResponse(route));
     }
-    [HttpGet("{search}")]
+    [HttpGet("search")]
     public async Task<IActionResult> SearchRoutes([FromQuery] string from, [FromQuery] string to)
     {
         var route = await _service.SearchRoutesAsync(from, to);
-        return Ok(ApiResponse<IEnumerable<RouteSearchResultDTO>>.SuccessResponse(route));
+        return Ok(ApiResponse<IEnumerable<RouteResponseDTO>>.SuccessResponse(route));
     }
     [HttpPost]
     [Authorize(Roles = "Agency")]

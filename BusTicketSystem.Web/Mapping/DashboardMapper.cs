@@ -9,7 +9,7 @@ namespace BusTicketSystem.Web.Mapping
         public static AgencyTripStatsDTO ToAgencyTripStatsDTO(
         Trip trip, int bookedSeats, decimal revenue)
     {
-        var totalSeats = trip.Bus?.Capacity ?? 0;   // Bus.Capacity from Bus.cs
+        var totalSeats = trip.Bus?.Capacity ?? 0;   
  
         return new AgencyTripStatsDTO
         {

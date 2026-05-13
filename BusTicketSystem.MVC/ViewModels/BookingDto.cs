@@ -1,4 +1,4 @@
-namespace BusTicketSystem.MVC.ViewModels;
+namespace BusTicketSystem.MVC.ViewModels.Booking;
 
 public sealed class BookingDto
 {

@@ -1,0 +1,123 @@
+@model CreateDriverViewModel
+@{
+    ViewData["Title"] = "Add New Driver";
+    ViewData["Breadcrumb"] = @"<a href='/Office'>My Offices</a><span class='sep'>›</span><span class='active'>Add Driver</span>";
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="vb-page-title mb-1"><i class="bi bi-person-plus-fill"></i> Add New Driver</div>
+        <p class="vb-page-subtitle">Register a new driver and assign them to a branch office.</p>
+
+        <form asp-controller="Driver" asp-action="Create" method="post" id="driverForm">
+            @Html.AntiForgeryToken()
+
+            <div class="vb-section-title">Driver Information</div>
+            <div class="vb-card mb-3">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="vb-label">Full Name</div>
+                        <input asp-for="Name" class="vb-input" placeholder="e.g. Suresh Kumar" />
+                        <span asp-validation-for="Name" class="vb-validation-error"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="vb-label">License Number</div>
+                        <input asp-for="LicenseNumber" class="vb-input" placeholder="e.g. MH0120210012345" style="text-transform:uppercase;" />
+                        <span asp-validation-for="LicenseNumber" class="vb-validation-error"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="vb-label">Phone Number</div>
+                        <input asp-for="Phone" type="tel" class="vb-input" placeholder="+91 98765 43210" />
+                        <span asp-validation-for="Phone" class="vb-validation-error"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="vb-label">Assigned Office</div>
+                        @if (Model.AvailableOffices.Any())
+                        {
+                            <select asp-for="OfficeId" class="vb-input">
+                                <option value="">— Select an office —</option>
+                                @foreach (var o in Model.AvailableOffices)
+                                {
+                                    <option value="@o.OfficeId">Office #@o.OfficeId — @o.OfficeMail</option>
+                                }
+                            </select>
+                        }
+                        else
+                        {
+                            <input asp-for="OfficeId" type="number" class="vb-input" placeholder="Enter Office ID" min="1" />
+                        }
+                        <span asp-validation-for="OfficeId" class="vb-validation-error"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="vb-label">Address ID</div>
+                        <input asp-for="AddressId" type="number" class="vb-input" placeholder="Enter existing Address ID" min="1" />
+                        <span asp-validation-for="AddressId" class="vb-validation-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="vb-alert vb-alert-error mb-3"></div>
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn-vb-primary">Add Driver <i class="bi bi-arrow-right ms-1"></i></button>
+                <a asp-controller="Office" asp-action="Index" class="btn-vb-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-lg-4">
+        <div style="position:sticky;top:72px;">
+            <div class="vb-card" style="background:var(--vb-navy);border-color:var(--vb-navy);color:#fff;" class="mb-3">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="fw-700" style="font-size:0.95rem;">Selection Summary</div>
+                    <i class="bi bi-person-fill-gear"></i>
+                </div>
+                <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.15);font-size:0.85rem;">
+                    <span style="opacity:.7;">Driver Name</span>
+                    <span class="fw-700" id="previewName">—</span>
+                </div>
+                <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.15);font-size:0.85rem;">
+                    <span style="opacity:.7;">License</span>
+                    <span class="fw-700" id="previewLicense">—</span>
+                </div>
+                <div class="d-flex justify-content-between py-2" style="font-size:0.85rem;">
+                    <span style="opacity:.7;">Office</span>
+                    <span class="fw-700" id="previewOffice">—</span>
+                </div>
+                <button form="driverForm" type="submit"
+                        class="d-flex justify-content-center w-100 mt-3"
+                        style="background:#fff;color:var(--vb-navy);border:none;border-radius:6px;font-weight:700;font-size:0.88rem;padding:0.6rem;cursor:pointer;">
+                    Confirm Driver
+                </button>
+                <p class="text-center mt-2" style="font-size:0.72rem;opacity:.6;">PRICES INCLUDE ALL TRANSIT TAXES</p>
+            </div>
+
+            <div class="vb-info-box mt-3">
+                <i class="bi bi-info-circle"></i>
+                <div style="font-size:0.78rem;">
+                    <strong style="color:var(--vb-navy);">License Requirement</strong><br />
+                    Driver must hold a valid commercial vehicle license for the state of operation.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        // Live preview in sidebar
+        document.getElementById('Name').addEventListener('input', function() {
+            document.getElementById('previewName').textContent = this.value || '—';
+        });
+        document.getElementById('LicenseNumber').addEventListener('input', function() {
+            document.getElementById('previewLicense').textContent = this.value || '—';
+        });
+        const officeSelect = document.getElementById('OfficeId');
+        if (officeSelect) {
+            officeSelect.addEventListener('change', function() {
+                const opt = this.options[this.selectedIndex];
+                document.getElementById('previewOffice').textContent = opt.text !== '— Select an office —' ? opt.text : '—';
+            });
+        }
+    </script>
+}

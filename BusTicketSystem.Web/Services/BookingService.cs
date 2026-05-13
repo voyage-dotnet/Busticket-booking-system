@@ -18,41 +18,25 @@ public class BookingService : IBookingService
         _bookingRepo = bookingRepo;
     }
 
-    // ─── POST /api/bookings ───────────────────────────────────────────────────
-
     public async Task<ApiResponse<BookingResponseDTO>> CreateBookingAsync(
         int customerId, BookingRequestDTO request)
     {
-        // 1. Validate input using validator
         var errors = BookingValidator.Validate(request);
         if (errors.Any())
             return ApiResponse<BookingResponseDTO>.FailureResponse(
                 string.Join(" | ", errors), statusCode: 400);
-
-        // 2. Check trip exists
         var trip = await _bookingRepo.GetTripByIdAsync(request.TripId);
         if (trip == null)
             return ApiResponse<BookingResponseDTO>.FailureResponse(
                 "Trip not found.", statusCode: 404);
-
-        //// 3. Check available seats
-        //if (trip.AvailableSeats <= 0)
-        //    return ApiResponse<BookingResponseDTO>.FailureResponse(
-        //        "No available seats on this trip.", statusCode: 409);
-
-        // 3. Validate seat number within bus capacity
         if (request.SeatNumber < 1 || request.SeatNumber > trip.Bus.Capacity)
             return ApiResponse<BookingResponseDTO>.FailureResponse(
                 $"Seat number must be between 1 and {trip.Bus.Capacity}.", statusCode: 400);
-
-        // 5. Check seat not already taken
         var isTaken = await _bookingRepo.IsSeatAlreadyBookedAsync(
             request.TripId, request.SeatNumber);
         if (isTaken)
             return ApiResponse<BookingResponseDTO>.FailureResponse(
                 $"Seat {request.SeatNumber} is already booked.", statusCode: 409);
-
-        // 6. Create booking with Status = "Pending"
         var booking = new Booking
         {
             TripId = request.TripId,
@@ -61,11 +45,7 @@ public class BookingService : IBookingService
         };
 
         var created = await _bookingRepo.CreateAsync(booking);
-
-        // 7. Track for auto-expire after 10 minutes
         BookingTimeoutHelper.TrackBooking(created.BookingId);
-
-        // 8. Re-fetch with navigations for mapper
         var saved = await _bookingRepo.GetByIdAsync(created.BookingId);
 
         return ApiResponse<BookingResponseDTO>.SuccessResponse(
@@ -73,8 +53,6 @@ public class BookingService : IBookingService
             "Booking created. Please complete payment within 10 minutes.",
             201);
     }
-
-    // ─── GET /api/bookings/{id} ───────────────────────────────────────────────
 
     public async Task<ApiResponse<BookingResponseDTO>> GetBookingByIdAsync(int bookingId)
     {
@@ -88,8 +66,6 @@ public class BookingService : IBookingService
             "Booking fetched successfully.");
     }
 
-    // ─── GET /api/bookings/my ─────────────────────────────────────────────────
-
     public async Task<ApiResponse<List<BookingResponseDTO>>> GetMyBookingsAsync(int customerId)
     {
         var bookings = await _bookingRepo.GetByCustomerIdAsync(customerId);
@@ -98,8 +74,6 @@ public class BookingService : IBookingService
             "Bookings fetched successfully.");
     }
 
-    // ─── GET /api/bookings/trip/{tripId} ──────────────────────────────────────
-
     public async Task<ApiResponse<List<BookingResponseDTO>>> GetBookingsByTripAsync(int tripId)
     {
         var bookings = await _bookingRepo.GetByTripIdAsync(tripId);
@@ -107,8 +81,6 @@ public class BookingService : IBookingService
             BookingMapper.ToDtoList(bookings),
             "Bookings fetched successfully.");
     }
-
-    // ─── GET /api/bookings/available-seats/{tripId} ───────────────────────────
 
     public async Task<ApiResponse<List<int>>> GetAvailableSeatsAsync(int tripId)
     {
@@ -123,16 +95,12 @@ public class BookingService : IBookingService
             $"{seats.Count} seat(s) available.");
     }
 
-    // ─── PUT /api/bookings/{id}/cancel ────────────────────────────────────────
-
     public async Task<ApiResponse<string>> CancelBookingAsync(int customerId, int bookingId)
     {
         var booking = await _bookingRepo.GetByIdAsync(bookingId);
         if (booking == null)
             return ApiResponse<string>.FailureResponse(
                 "Booking not found.", statusCode: 404);
-
-        // Verify ownership via payment record
         var isOwner = booking.Payments.Any(p => p.CustomerId == customerId);
         if (!isOwner)
             return ApiResponse<string>.FailureResponse(

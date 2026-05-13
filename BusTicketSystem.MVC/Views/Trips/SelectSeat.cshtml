@@ -1,0 +1,157 @@
+@model BusTicketSystem.MVC.ViewModels.TripSeatSelectionViewModel
+@{
+    ViewData["Title"] = "Select Seat";
+}
+
+<div class="container py-4">
+
+    <nav class="vb-breadcrumb">
+        <a href="#" class="vb-breadcrumb-item">Select Trip</a>
+        <span class="vb-breadcrumb-sep"><i class="bi bi-chevron-right"></i></span>
+        <span class="vb-breadcrumb-item active">Choose Seats</span>
+        <span class="vb-breadcrumb-sep"><i class="bi bi-chevron-right"></i></span>
+        <span class="vb-breadcrumb-item">Payment</span>
+    </nav>
+
+    <div class="row">
+
+        <div class="col-lg-8">
+            <div class="vb-content-box mb-4">
+                <h1 class="h3 fw-bold mb-1">Select your seat</h1>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <p class="vb-muted mb-0">Route @Model.Trip.Bus?.RegistrationNumber: @Model.Trip.FromCity <i class="bi bi-arrow-right mx-1"></i> @Model.Trip.ToCity</p>
+                    <div class="vb-seat-legend">
+                        <span><span class="vb-legend-dot available"></span> AVAILABLE</span>
+                        <span><span class="vb-legend-dot selected"></span> SELECTED</span>
+                        <span><span class="vb-legend-dot occupied"></span> OCCUPIED</span>
+                    </div>
+                </div>
+
+                <div class="vb-seat-map-wrapper">
+                    <div class="vb-seat-map-label">STEERING_WHEEL</div>
+                    
+                    <div class="vb-seat-grid" id="seatGrid">
+                        @if (Model.SeatLayout != null)
+                        {
+                            for (int i = 0; i < Model.SeatLayout.Seats.Count; i += 4)
+                            {
+
+                                for (int j = 0; j < 4; j++)
+                                {
+                                    if (i + j < Model.SeatLayout.Seats.Count)
+                                    {
+                                        var seat = Model.SeatLayout.Seats[i + j];
+                                        var isOccupied = seat.Status == "Booked";
+                                        
+                                        <button type="button" 
+                                                class="vb-seat @(isOccupied ? "occupied" : "")" 
+                                                data-seat-id="@seat.SeatNumber"
+                                                data-price="@Model.Trip.Fare"
+                                                @(isOccupied ? "disabled" : "")>
+                                            @seat.SeatNumber
+                                        </button>
+                                        
+
+                                        if (j == 1) { <div class="vb-seat-aisle"></div> }
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+
+                    <div class="d-flex gap-4 mt-5 text-muted opacity-25 h4">
+                        <i class="bi bi-person-standing"></i>
+                        <i class="bi bi-wifi"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-4">
+
+            <div class="vb-trip-overview mb-4">
+                <div class="vb-trip-overview-title">Trip Overview</div>
+                <div class="vb-journey">
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon"></div>
+                        <div class="vb-journey-line"></div>
+                        <div>
+                            <div class="vb-trip-overview-place">Central Station</div>
+                            <div class="vb-trip-overview-time">@Model.Trip.DepartureTime.ToString("MMM dd, yyyy · HH:mm")</div>
+                        </div>
+                    </div>
+                    <div class="vb-journey-gap"></div>
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon destination"></div>
+                        <div>
+                            <div class="vb-trip-overview-place">@Model.Trip.ToCity Terminal</div>
+                            <div class="vb-trip-overview-time">@Model.Trip.ArrivalTime.ToString("MMM dd, yyyy · HH:mm")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="vb-card-dark mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0 fw-bold">Selection Summary</h5>
+                    <i class="bi bi-ticket-perforated h4 mb-0 opacity-75"></i>
+                </div>
+                
+                <div class="vb-summary-row">
+                    <span class="label">Seat Number</span>
+                    <span class="value" id="selectedSeatLabel">--</span>
+                </div>
+                <div class="vb-summary-row">
+                    <span class="label">Seat Class</span>
+                    <span class="value">Standard Window</span>
+                </div>
+                <div class="vb-summary-row">
+                    <span class="label">Ticket Price</span>
+                    <span class="value" id="ticketPriceLabel">$0.00</span>
+                </div>
+                
+                <div class="vb-summary-total bg-transparent border-light border-opacity-10 mt-3 pt-3">
+                    <span>Total</span>
+                    <span class="total-amount text-white" id="totalPriceLabel">$0.00</span>
+                </div>
+
+                <form asp-action="Review" method="get" id="confirmForm" class="mt-4">
+                    <input type="hidden" name="tripId" value="@Model.Trip.TripId" />
+                    <input type="hidden" name="seatNumber" id="seatInput" />
+                    <button type="submit" class="vb-btn-confirm" id="confirmBtn" disabled>Confirm Selection</button>
+                </form>
+                <div class="text-center extra-small text-white-50 mt-3">
+                    PRICES INCLUDE ALL TRANSIT TAXES
+                </div>
+            </div>
+
+
+            <div class="vb-card-notice">
+                <i class="bi bi-info-circle vb-notice-icon"></i>
+                <div>Seats can be changed up to 2 hours before departure for a small convenience fee.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.vb-seat:not(.occupied)').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.vb-seat').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const seatId = this.dataset.seatId;
+                const price = parseFloat(this.dataset.price);
+                
+                document.getElementById('selectedSeatLabel').innerText = seatId;
+                document.getElementById('ticketPriceLabel').innerText = '$' + price.toFixed(2);
+                document.getElementById('totalPriceLabel').innerText = '$' + price.toFixed(2);
+                document.getElementById('seatInput').value = seatId;
+                document.getElementById('confirmBtn').disabled = false;
+            });
+        });
+    </script>
+}

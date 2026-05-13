@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BusTicketSystem.MVC.Models.Booking;
+namespace BusTicketSystem.MVC.ViewModels.Booking;
 
 public class BookingListViewModel
 {
@@ -21,9 +21,9 @@ public class BookingItemViewModel
 
     public string StatusBadgeCss => Status switch
     {
-        "Booked"    => "badge-success",
+        "Booked" => "badge-success",
         "Available" => "badge-warning",
-        _           => "badge-info"
+        _ => "badge-info"
     };
 }
 

@@ -24,10 +24,6 @@ namespace BusTicketSystem.Web.Controllers
 
         private int GetCustomerId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         private int GetAgencyId() => _currentUserService.GetAgencyId();
-
-
-        // GET /api/dashboard/agency/overview
-        // Role: Agency — KPIs: trips, bookings, revenue, avg rating
         [HttpGet("agency/overview")]
         [Authorize(Roles = "Agency")]
         public async Task<IActionResult> GetAgencyOverview()
@@ -36,9 +32,6 @@ namespace BusTicketSystem.Web.Controllers
             return Ok(ApiResponse<AgencyOverviewDTO>.SuccessResponse(
                 overview, "Agency overview fetched successfully."));
         }
-
-        // GET /api/dashboard/agency/trips
-        // Role: Agency — Trips occupancy % + revenue per trip
         [HttpGet("agency/trips")]
         [Authorize(Roles = "Agency")]
         public async Task<IActionResult> GetAgencyTripStats()
@@ -47,9 +40,6 @@ namespace BusTicketSystem.Web.Controllers
             return Ok(ApiResponse<List<AgencyTripStatsDTO>>.SuccessResponse(
                 stats, "Agency trip stats fetched successfully."));
         }
-
-        // GET /api/dashboard/agency/top-routes
-        // Role: Agency — Top routes by booking count
         [HttpGet("agency/top-routes")]
         [Authorize(Roles = "Agency")]
         public async Task<IActionResult> GetAgencyTopRoutes()
@@ -58,9 +48,6 @@ namespace BusTicketSystem.Web.Controllers
             return Ok(ApiResponse<List<TopRouteDTO>>.SuccessResponse(
                 routes, "Top routes fetched successfully."));
         }
-
-        // GET /api/dashboard/customer/overview
-        // Role: Customer — Trips taken, amount spent, reviews given
         [HttpGet("customer/overview")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetCustomerOverview()
@@ -69,9 +56,6 @@ namespace BusTicketSystem.Web.Controllers
             return Ok(ApiResponse<CustomerOverviewDTO>.SuccessResponse(
                 overview, "Customer overview fetched successfully."));
         }
-
-        // GET /api/dashboard/public/stats
-        // Role: Public — Platform stats (routes, cities, agencies)
         [HttpGet("public/stats")]
         [AllowAnonymous]
         public async Task<IActionResult> GetPublicStats()

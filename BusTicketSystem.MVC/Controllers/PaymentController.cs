@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using BusTicketSystem.MVC.ViewModels;
-using BusTicketSystem.MVC.Models.Booking;
+using BusTicketSystem.MVC.ViewModels.Booking;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BusTicketSystem.MVC.Controllers;
