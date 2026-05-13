@@ -99,6 +99,11 @@ namespace BusTicketSystem.Web.Services
 
         public async Task<ApiResponse<Object>> UpdateCustomerEmailAsync(string Email, UpdateEmailDTO request)
         {
+            if (string.IsNullOrEmpty(request.Email))
+            {
+                return ApiResponse<Object>.FailureResponse("New email is required", new List<string> { "New email cannot be empty" }, 400);
+            }
+
             var ExistCustomer = await _repo.GetCustomerByEmailAsync(Email);
 
             if(ExistCustomer is null)
@@ -106,12 +111,14 @@ namespace BusTicketSystem.Web.Services
                 return ApiResponse<Object>.FailureResponse("Customer not registered", new List<string> {$""}, 400);
             }
 
-             if(await _repo.GetCustomerByEmailAsync(request.Email) != null)
+            // Check if the NEW email is already taken by ANOTHER customer
+            var customerWithNewEmail = await _repo.GetCustomerByEmailAsync(request.Email);
+             if(customerWithNewEmail != null && customerWithNewEmail.CustomerId != ExistCustomer.CustomerId)
             {
                 return ApiResponse<Object>.FailureResponse("This Email Already exist. Please enter new Email", new List<string> {$""}, 400); 
             }
 
-            ExistCustomer.Email = request.Email;
+            ExistCustomer.Email = request.Email.ToLower();
             await _repo.UpdateCustomerEmailAsync(ExistCustomer);
             return ApiResponse<Object>.SuccessResponse(null, "Email Updated Successfully",200);
 
@@ -192,6 +199,11 @@ namespace BusTicketSystem.Web.Services
 
         public async Task<ApiResponse<Object>> UpdateAgencyEmailAsync (string Email, UpdateEmailDTO request)
         {
+            if (string.IsNullOrEmpty(request.Email))
+            {
+                return ApiResponse<Object>.FailureResponse("New email is required", new List<string> { "New email cannot be empty" }, 400);
+            }
+
             var existAgency = await _repo.GetAgencyByEmailAysnc(Email);
 
             if(existAgency is null)
@@ -199,12 +211,13 @@ namespace BusTicketSystem.Web.Services
                 return ApiResponse<Object>.FailureResponse("Agency not registered", new List<string> {$""}, 400); 
             }
 
-            if(await _repo.GetAgencyByEmailAysnc(request.Email) != null)
+            var agencyWithNewEmail = await _repo.GetAgencyByEmailAysnc(request.Email);
+            if(agencyWithNewEmail != null && agencyWithNewEmail.AgencyId != existAgency.AgencyId)
             {
                 return ApiResponse<Object>.FailureResponse("This Email Already exist. Please enter new Email", new List<string> {$""}, 400); 
             }
 
-            existAgency.Email = request.Email;
+            existAgency.Email = request.Email.ToLower();
             await _repo.UpadateAgencyEmailAsync(existAgency);
             return ApiResponse<Object>.SuccessResponse(null, "Email Updated Successfully", 200);
         }

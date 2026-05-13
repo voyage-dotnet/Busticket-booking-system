@@ -10,6 +10,12 @@ Env.Load();
 
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<BusTicketSystem.MVC.Handlers.AuthHeaderHandler>();
+builder.Services.AddHttpClient("VoyageAPI", client => { })
+    .AddHttpMessageHandler<BusTicketSystem.MVC.Handlers.AuthHeaderHandler>();
+builder.Services.AddScoped<BusTicketSystem.MVC.Services.VoyageApiClient>();
+builder.Services.AddAuthentication();
+
 builder.Services.AddHttpClient("BusApi", client =>
 {
     client.BaseAddress = new Uri("http://localhost:5135/api/");
@@ -26,6 +32,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
 
 // ── HttpContextAccessor (needed by ApiService to read session) ────────────────
 builder.Services.AddHttpContextAccessor();
@@ -56,7 +63,6 @@ builder.Services.AddHttpClient<ApiService>(client =>
         new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 });
 
-
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -68,9 +74,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseSession();          // ← required for JWT token storage used by BookingController
-
+app.UseAuthentication();
+app.UseSession();
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",

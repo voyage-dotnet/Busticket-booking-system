@@ -9,7 +9,7 @@ namespace BusTicketSystem.Web.Repositories
 
         Task SaveAddressOfCustomerAsync();
 
-        Task<CustomerProfileDTO> GetCustomerProfile(string Email);
+        Task<CustomerProfileDTO?> GetCustomerProfile(string Email);
         
     }
 }
