@@ -1,18 +1,12 @@
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using BusTicketSystem.MVC.ApiResponseWrapper;
 
 namespace BusTicketSystem.MVC.Services
 {
-    /// <summary>
-    /// A thin, reusable HTTP client wrapper that routes all API calls
-    /// to the BusTicketSystem.Web backend. Automatically injects the
-    /// JWT stored in session into every request that requires auth.
-    /// </summary>
     public class ApiService
     {
         private readonly HttpClient _httpClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private static readonly JsonSerializerOptions _jsonOptions = new()
         {
@@ -20,31 +14,9 @@ namespace BusTicketSystem.MVC.Services
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        public ApiService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+        public ApiService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        // ─────────────────────────────────────────────────────────────────────
-        //  Private helpers
-        // ─────────────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Attaches the JWT from session (key "JwtToken") as a Bearer header.
-        /// </summary>
-        private void AttachToken()
-        {
-            var token = _httpContextAccessor.HttpContext?.Session.GetString("JwtToken");
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
-            }
-            else
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = null;
-            }
         }
 
         private static StringContent ToJsonContent(object body)
@@ -53,69 +25,78 @@ namespace BusTicketSystem.MVC.Services
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
 
-        /// <summary>
-        /// Reads the JSON body from the response and deserialises the
-        /// <c>data</c> property of the standard ApiResponse wrapper:
-        /// <code>{ "data": {...}, "message": "...", "statusCode": 200 }</code>
-        /// </summary>
-        private static async Task<T?> ReadDataAsync<T>(HttpResponseMessage response)
+        private async Task<ApiResponse<T>> ProcessResponse<T>(HttpResponseMessage response)
         {
-            var json = await response.Content.ReadAsStringAsync();
-            if (string.IsNullOrWhiteSpace(json)) return default;
-
-            using var doc = JsonDocument.Parse(json);
-            if (doc.RootElement.TryGetProperty("data", out var dataProp))
+            var content = await response.Content.ReadAsStringAsync();
+            
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized || response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                return JsonSerializer.Deserialize<T>(dataProp.GetRawText(), _jsonOptions);
+                return new ApiResponse<T>
+                {
+                    Success = false,
+                    StatusCode = (int)response.StatusCode,
+                    Message = "Unauthorized access. Please log in again."
+                };
             }
-            // If there's no wrapper, try deserialising the root directly
-            return JsonSerializer.Deserialize<T>(json, _jsonOptions);
+
+            try
+            {
+                var result = JsonSerializer.Deserialize<ApiResponse<T>>(content, _jsonOptions);
+                if (result != null)
+                {
+                    result.StatusCode = (int)response.StatusCode;
+                    return result;
+                }
+            }
+            catch (JsonException)
+            {
+                return new ApiResponse<T>
+                {
+                    Success = response.IsSuccessStatusCode,
+                    StatusCode = (int)response.StatusCode,
+                    Message = response.IsSuccessStatusCode ? "Success" : $"API Error: {content}",
+                    Data = response.IsSuccessStatusCode ? JsonSerializer.Deserialize<T>(content, _jsonOptions)! : default!
+                };
+            }
+
+            return new ApiResponse<T>
+            {
+                Success = false,
+                StatusCode = (int)response.StatusCode,
+                Message = "An unknown error occurred."
+            };
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        //  Public HTTP verbs
-        // ─────────────────────────────────────────────────────────────────────
-
-        public async Task<T?> GetAsync<T>(string endpoint, bool requiresAuth = true)
+        public async Task<ApiResponse<T>> GetAsync<T>(string endpoint, bool requiresAuth = true)
         {
-            if (requiresAuth) AttachToken();
+            
+            
             var response = await _httpClient.GetAsync(endpoint);
-            response.EnsureSuccessStatusCode();
-            return await ReadDataAsync<T>(response);
+            return await ProcessResponse<T>(response);
         }
 
-        public async Task<T?> PostAsync<T>(string endpoint, object body, bool requiresAuth = true)
+        public async Task<ApiResponse<T>> PostAsync<T>(string endpoint, object body, bool requiresAuth = true)
         {
-            if (requiresAuth) AttachToken();
             var response = await _httpClient.PostAsync(endpoint, ToJsonContent(body));
-            response.EnsureSuccessStatusCode();
-            return await ReadDataAsync<T>(response);
+            return await ProcessResponse<T>(response);
         }
 
-        public async Task<T?> PutAsync<T>(string endpoint, object body, bool requiresAuth = true)
+        public async Task<ApiResponse<T>> PutAsync<T>(string endpoint, object body, bool requiresAuth = true)
         {
-            if (requiresAuth) AttachToken();
             var response = await _httpClient.PutAsync(endpoint, ToJsonContent(body));
-            response.EnsureSuccessStatusCode();
-            return await ReadDataAsync<T>(response);
+            return await ProcessResponse<T>(response);
         }
 
-        /// <summary>
-        /// Returns true if the API call succeeded (2xx).
-        /// Used when the response body is irrelevant.
-        /// </summary>
-        public async Task<bool> PostVoidAsync(string endpoint, object body, bool requiresAuth = true)
+        public async Task<ApiResponse<T>> PatchAsync<T>(string endpoint, object body, bool requiresAuth = true)
         {
-            if (requiresAuth) AttachToken();
-            var response = await _httpClient.PostAsync(endpoint, ToJsonContent(body));
-            return response.IsSuccessStatusCode;
+            var response = await _httpClient.PatchAsync(endpoint, ToJsonContent(body));
+            return await ProcessResponse<T>(response);
         }
 
-        public async Task<bool> PutVoidAsync(string endpoint, object body, bool requiresAuth = true)
+        public async Task<ApiResponse<T>> DeleteAsync<T>(string endpoint, bool requiresAuth = true)
         {
-            if (requiresAuth) AttachToken();
-            var response = await _httpClient.PutAsync(endpoint, ToJsonContent(body));
-            return response.IsSuccessStatusCode;
+            var response = await _httpClient.DeleteAsync(endpoint);
+            return await ProcessResponse<T>(response);
         }
     }
 }

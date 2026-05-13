@@ -1,0 +1,43 @@
+@model BusTicketSystem.MVC.ViewModels.UpdateReviewViewModel
+
+@{
+    ViewData["Title"] = "Edit Review";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">Edit Your Review</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="ReviewId" />
+
+                        <div class="mb-3">
+                            <label asp-for="Rating" class="form-label fw-bold">Rating (1 to 5)</label>
+                            <input asp-for="Rating" class="form-control" type="number" min="1" max="5" required />
+                            <span asp-validation-for="Rating" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Comment" class="form-label fw-bold">Comment (Optional)</label>
+                            <textarea asp-for="Comment" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Update Review</button>
+                            <a href="@Url.Action("MyReviews")" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

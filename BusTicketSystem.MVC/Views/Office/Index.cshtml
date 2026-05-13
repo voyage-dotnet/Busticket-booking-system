@@ -1,91 +1,66 @@
 @model OfficeListViewModel
 @{
-    ViewData["Title"] = "My Offices";
-    ViewData["Breadcrumb"] = @"<a href='/Agency/Profile'>My Profile</a><span class='sep'>›</span><span class='active'>My Offices</span>";
+    ViewData["Title"] = "My Offices - VoyaBus";
 }
 
-<div class="d-flex align-items-start justify-content-between mb-1">
-    <div>
-        <div class="vb-page-title"><i class="bi bi-diagram-3-fill"></i> My Offices</div>
-        <p class="vb-page-subtitle">Branch offices registered under your agency.</p>
-    </div>
-    <a asp-controller="Office" asp-action="Create" class="btn-vb-primary mt-1">
-        <i class="bi bi-plus-lg"></i> Add Office
-    </a>
-</div>
-
-@if (!Model.Offices.Any())
-{
-    <div class="vb-card vb-empty">
-        <div class="vb-empty-icon"><i class="bi bi-building-slash"></i></div>
-        <div class="vb-empty-title">No offices yet</div>
-        <div class="vb-empty-text">Add your first branch office to start managing buses and drivers.</div>
-        <a asp-controller="Office" asp-action="Create" class="btn-vb-primary">
-            <i class="bi bi-plus-lg"></i> Add First Office
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="h2 fw-bold">Branch Offices</h1>
+            <p class="vb-muted">Manage your regional offices and their resources.</p>
+        </div>
+        <a asp-controller="Office" asp-action="Create" class="btn btn-vb-dark px-4 py-2">
+            <i class="bi bi-plus-lg me-2"></i> Add Office
         </a>
     </div>
-}
-else
-{
-    <div class="d-flex flex-column gap-3">
-        @foreach (var office in Model.Offices)
-        {
-            <div class="vb-card" style="padding:1.25rem 1.5rem;">
-                <div class="row align-items-center g-3">
 
-                    <!-- Office Info (Trip row style) -->
-                    <div class="col">
-                        <div class="d-flex align-items-center gap-3 mb-1">
-                            <div class="vb-avatar" style="width:38px;height:38px;border-radius:8px;font-size:0.9rem;background:var(--vb-tag-bg);">
-                                <i class="bi bi-building" style="color:var(--vb-navy);"></i>
-                            </div>
-                            <div>
-                                <div class="fw-700" style="font-size:0.93rem;">
-                                    @office.OfficeContactPersonName
-                                    <span class="vb-tag vb-tag-navy ms-2">Office #@office.OfficeId</span>
+    @if (!Model.Offices.Any())
+    {
+        <div class="vb-content-box text-center py-5 border-0 shadow-sm">
+            <div class="opacity-25 mb-3"><i class="bi bi-building h1"></i></div>
+            <h4 class="fw-bold">No offices registered</h4>
+            <p class="vb-muted mb-4">Add your first branch office to start managing buses and drivers.</p>
+            <a asp-controller="Office" asp-action="Create" class="btn btn-vb-dark rounded-pill px-4">Register Office</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var office in Model.Offices)
+            {
+                <div class="col-lg-6">
+                    <div class="vb-content-box p-4 border-0 shadow-sm h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-light p-3 rounded-3"><i class="bi bi-building h4 mb-0 opacity-50"></i></div>
+                                <div>
+                                    <div class="h6 fw-bold mb-0">@office.OfficeContactPersonName</div>
+                                    <div class="extra-small text-muted fw-bold text-uppercase letter-spacing-1">OFFICE #@office.OfficeId.ToString("D3")</div>
                                 </div>
-                                <div class="text-muted-vb fs-sm">@office.OfficeMail</div>
                             </div>
+                            <span class="badge bg-success bg-opacity-10 text-success border-0 px-3 py-2 rounded-pill extra-small fw-bold">ACTIVE</span>
                         </div>
 
-                        <div class="d-flex flex-wrap gap-3 mt-2" style="font-size:0.82rem;color:var(--vb-text-mid);">
-                            <span><i class="bi bi-telephone me-1"></i>@office.OfficeContactNumber</span>
-                            @if (!string.IsNullOrWhiteSpace(office.FullAddress))
-                            {
-                                <span><i class="bi bi-geo-alt me-1"></i>@office.FullAddress</span>
-                            }
-                            <span class="text-green fw-600">
-                                <i class="bi bi-check-circle-fill me-1"></i>Active
-                            </span>
+                        <div class="mb-4">
+                            <div class="small text-muted mb-1"><i class="bi bi-envelope me-2"></i>@office.OfficeMail</div>
+                            <div class="small text-muted mb-1"><i class="bi bi-telephone me-2"></i>@office.OfficeContactNumber</div>
+                            <div class="small text-muted"><i class="bi bi-geo-alt me-2"></i>@office.FullAddress</div>
                         </div>
-                    </div>
 
-                    <!-- Right Actions -->
-                    <div class="col-auto d-flex flex-column align-items-end gap-2">
-                        <a asp-controller="Bus" asp-action="Index"
-                           asp-route-officeId="@office.OfficeId"
-                           class="btn-vb-primary" style="font-size:0.82rem;padding:0.45rem 1rem;">
-                            <i class="bi bi-bus-front-fill"></i> Buses
-                        </a>
-                        <div class="d-flex gap-2">
-                            <a asp-controller="Driver" asp-action="Index"
-                               asp-route-officeId="@office.OfficeId"
-                               class="btn-vb-outline" style="font-size:0.78rem;padding:0.35rem 0.75rem;">
-                                <i class="bi bi-person-workspace"></i> Drivers
-                            </a>
-                            <a asp-controller="Office" asp-action="Edit"
-                               asp-route-id="@office.OfficeId"
-                               class="btn-vb-outline" style="font-size:0.78rem;padding:0.35rem 0.75rem;">
-                                <i class="bi bi-pencil"></i>
-                            </a>
+                        <div class="d-flex gap-2 pt-3 border-top">
+                            <a asp-controller="Bus" asp-action="Index" asp-route-officeId="@office.OfficeId" class="btn btn-vb-dark btn-sm rounded-pill px-3 fw-bold small flex-grow-1">Manage Buses</a>
+                            <a asp-controller="Driver" asp-action="Index" asp-route-officeId="@office.OfficeId" class="btn btn-outline-light border text-dark btn-sm rounded-pill px-3 fw-bold small flex-grow-1">Staff</a>
+                            <a asp-controller="Office" asp-action="Edit" asp-route-id="@office.OfficeId" class="btn btn-outline-light border text-dark btn-sm rounded-pill px-3 fw-bold"><i class="bi bi-pencil-square"></i></a>
                         </div>
-                        <a asp-controller="Office" asp-action="Details"
-                           asp-route-id="@office.OfficeId" class="btn-vb-ghost fs-sm">
-                            View details
-                        </a>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-}
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .btn-vb-dark { background: #475569; color: white; border: 0; font-weight: 600; }
+    .btn-vb-dark:hover { background: #334155; color: white; }
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05rem; }
+</style>

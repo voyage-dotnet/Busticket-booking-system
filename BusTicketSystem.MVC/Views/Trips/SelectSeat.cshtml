@@ -1,156 +1,176 @@
 @model BusTicketSystem.MVC.ViewModels.TripSeatSelectionViewModel
 @{
-    ViewData["Title"] = "Select Seat";
+    ViewData["Title"] = "Select Your Seat - VoyaBus";
 }
 
 <div class="container py-4">
-
-    <nav class="vb-breadcrumb">
-        <a href="#" class="vb-breadcrumb-item">Select Trip</a>
-        <span class="vb-breadcrumb-sep"><i class="bi bi-chevron-right"></i></span>
-        <span class="vb-breadcrumb-item active">Choose Seats</span>
-        <span class="vb-breadcrumb-sep"><i class="bi bi-chevron-right"></i></span>
-        <span class="vb-breadcrumb-item">Payment</span>
+    <nav class="vb-breadcrumb-modern mb-5">
+        <span class="text-muted">Select Trip</span>
+        <i class="bi bi-chevron-right mx-2 opacity-50"></i>
+        <span class="fw-bold">Choose Seats</span>
+        <i class="bi bi-chevron-right mx-2 opacity-50"></i>
+        <span class="text-muted">Payment</span>
     </nav>
 
-    <div class="row">
-
+    <div class="row g-4">
         <div class="col-lg-8">
-            <div class="vb-content-box mb-4">
+            <div class="vb-content-box p-4 p-lg-5 mb-4">
                 <h1 class="h3 fw-bold mb-1">Select your seat</h1>
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <p class="vb-muted mb-0">Route @Model.Trip.Bus?.RegistrationNumber: @Model.Trip.FromCity <i class="bi bi-arrow-right mx-1"></i> @Model.Trip.ToCity</p>
-                    <div class="vb-seat-legend">
-                        <span><span class="vb-legend-dot available"></span> AVAILABLE</span>
-                        <span><span class="vb-legend-dot selected"></span> SELECTED</span>
-                        <span><span class="vb-legend-dot occupied"></span> OCCUPIED</span>
+                <div class="d-flex justify-content-between align-items-center mb-5 pb-3 border-bottom">
+                    <p class="text-muted mb-0 small">Route @Model.Trip.BusNumber: @Model.Trip.FromCity <i class="bi bi-arrow-right mx-1"></i> @Model.Trip.ToCity</p>
+                    <div class="vb-seat-legend-modern d-flex gap-4">
+                        <div class="d-flex align-items-center gap-2 small fw-bold opacity-50"><span class="vb-dot-square available"></span> AVAILABLE</div>
+                        <div class="d-flex align-items-center gap-2 small fw-bold opacity-50"><span class="vb-dot-square selected"></span> SELECTED</div>
+                        <div class="d-flex align-items-center gap-2 small fw-bold opacity-50"><span class="vb-dot-square occupied"></span> OCCUPIED</div>
                     </div>
                 </div>
 
-                <div class="vb-seat-map-wrapper">
-                    <div class="vb-seat-map-label">STEERING_WHEEL</div>
+                <div class="vb-bus-chassis mx-auto mt-5">
+                    <div class="text-center mb-4">
+                        <span class="vb-steering-wheel-text">STEERING_WHEEL</span>
+                    </div>
                     
-                    <div class="vb-seat-grid" id="seatGrid">
-                        @if (Model.SeatLayout != null)
+                    <div class="vb-seat-grid-bus">
+                        @for (int row = 1; row <= (Model.Trip.TotalSeats + 3) / 4; row++)
                         {
-                            for (int i = 0; i < Model.SeatLayout.Seats.Count; i += 4)
-                            {
-
-                                for (int j = 0; j < 4; j++)
-                                {
-                                    if (i + j < Model.SeatLayout.Seats.Count)
+                            <div class="d-flex justify-content-between mb-3 px-4">
+                                <div class="d-flex gap-3">
+                                    @for (int col = 0; col < 2; col++)
                                     {
-                                        var seat = Model.SeatLayout.Seats[i + j];
-                                        var isOccupied = seat.Status == "Booked";
-                                        
-                                        <button type="button" 
-                                                class="vb-seat @(isOccupied ? "occupied" : "")" 
-                                                data-seat-id="@seat.SeatNumber"
-                                                data-price="@Model.Trip.Fare"
-                                                @(isOccupied ? "disabled" : "")>
-                                            @seat.SeatNumber
-                                        </button>
-                                        
-
-                                        if (j == 1) { <div class="vb-seat-aisle"></div> }
+                                        int seatIdx = (row - 1) * 4 + col + 1;
+                                        if (seatIdx <= Model.Trip.TotalSeats)
+                                        {
+                                            string seatLabel = $"{row}{(char)('A' + col)}";
+                                            var isOccupied = Model.OccupiedSeats.Contains(seatIdx);
+                                            <button type="button" 
+                                                    class="vb-seat-btn @(isOccupied ? "occupied" : "available")" 
+                                                    data-seat-id="@seatIdx"
+                                                    data-seat-label="@seatLabel"
+                                                    @(isOccupied ? "disabled" : "")>
+                                                @seatLabel
+                                            </button>
+                                        }
                                     }
-                                }
-                            }
+                                </div>
+                                <div class="d-flex gap-3">
+                                    @for (int col = 2; col < 4; col++)
+                                    {
+                                        int seatIdx = (row - 1) * 4 + col + 1;
+                                        if (seatIdx <= Model.Trip.TotalSeats)
+                                        {
+                                            string seatLabel = $"{row}{(char)('A' + col)}";
+                                            var isOccupied = Model.OccupiedSeats.Contains(seatIdx);
+                                            <button type="button" 
+                                                    class="vb-seat-btn @(isOccupied ? "occupied" : "available")" 
+                                                    data-seat-id="@seatIdx"
+                                                    data-seat-label="@seatLabel"
+                                                    @(isOccupied ? "disabled" : "")>
+                                                @seatLabel
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            </div>
                         }
                     </div>
 
-                    <div class="d-flex gap-4 mt-5 text-muted opacity-25 h4">
-                        <i class="bi bi-person-standing"></i>
-                        <i class="bi bi-wifi"></i>
+                    <div class="text-center mt-5 opacity-25">
+                        <i class="bi bi-person-standing h4 mx-2"></i>
+                        <i class="bi bi-wifi h4 mx-2"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-
         <div class="col-lg-4">
-
-            <div class="vb-trip-overview mb-4">
-                <div class="vb-trip-overview-title">Trip Overview</div>
-                <div class="vb-journey">
-                    <div class="vb-journey-stop">
-                        <div class="vb-journey-icon"></div>
-                        <div class="vb-journey-line"></div>
+            <div class="vb-content-box p-4 mb-4">
+                <h6 class="fw-bold mb-4">Trip Overview</h6>
+                <div class="vb-trip-summary-timeline">
+                    <div class="d-flex gap-3 mb-4">
+                        <i class="bi bi-clock-history h4 text-muted"></i>
                         <div>
-                            <div class="vb-trip-overview-place">Central Station</div>
-                            <div class="vb-trip-overview-time">@Model.Trip.DepartureTime.ToString("MMM dd, yyyy · HH:mm")</div>
+                            <div class="fw-bold small">@Model.Trip.FromCity</div>
+                            <div class="extra-small text-muted">@Model.Trip.DepartureTime.ToString("MMM dd, yyyy · HH:mm tt")</div>
                         </div>
                     </div>
-                    <div class="vb-journey-gap"></div>
-                    <div class="vb-journey-stop">
-                        <div class="vb-journey-icon destination"></div>
+                    <div class="vb-timeline-connector ms-3"></div>
+                    <div class="d-flex gap-3">
+                        <i class="bi bi-geo-alt h4 text-muted"></i>
                         <div>
-                            <div class="vb-trip-overview-place">@Model.Trip.ToCity Terminal</div>
-                            <div class="vb-trip-overview-time">@Model.Trip.ArrivalTime.ToString("MMM dd, yyyy · HH:mm")</div>
+                            <div class="fw-bold small">@Model.Trip.ToCity</div>
+                            <div class="extra-small text-muted">@Model.Trip.ArrivalTime.ToString("MMM dd, yyyy · HH:mm tt")</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-
-            <div class="vb-card-dark mb-4">
+            <div class="vb-selection-summary-card p-4 text-white mb-4 shadow-lg">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0 fw-bold">Selection Summary</h5>
-                    <i class="bi bi-ticket-perforated h4 mb-0 opacity-75"></i>
+                    <h6 class="fw-bold mb-0">Selection Summary</h6>
+                    <i class="bi bi-bus-front h4 mb-0 opacity-50"></i>
                 </div>
-                
-                <div class="vb-summary-row">
-                    <span class="label">Seat Number</span>
-                    <span class="value" id="selectedSeatLabel">--</span>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="opacity-75 small">Seat Number</span>
+                    <span class="fw-bold" id="selectedSeatLabel">--</span>
                 </div>
-                <div class="vb-summary-row">
-                    <span class="label">Seat Class</span>
-                    <span class="value">Standard Window</span>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="opacity-75 small">Seat Class</span>
+                    <span class="fw-bold">Standard Window</span>
                 </div>
-                <div class="vb-summary-row">
-                    <span class="label">Ticket Price</span>
-                    <span class="value" id="ticketPriceLabel">$0.00</span>
+                <div class="d-flex justify-content-between mb-4 pb-4 border-bottom border-white border-opacity-25">
+                    <span class="opacity-75 small">Ticket Price</span>
+                    <span class="fw-bold">$@Model.Trip.Fare.ToString("F2")</span>
                 </div>
-                
-                <div class="vb-summary-total bg-transparent border-light border-opacity-10 mt-3 pt-3">
+                <div class="d-flex justify-content-between h5 fw-bold mb-5">
                     <span>Total</span>
-                    <span class="total-amount text-white" id="totalPriceLabel">$0.00</span>
+                    <span>$@Model.Trip.Fare.ToString("F2")</span>
                 </div>
 
-                <form asp-action="Review" method="get" id="confirmForm" class="mt-4">
+                <form asp-controller="Trips" asp-action="Review" method="get">
                     <input type="hidden" name="tripId" value="@Model.Trip.TripId" />
-                    <input type="hidden" name="seatNumber" id="seatInput" />
-                    <button type="submit" class="vb-btn-confirm" id="confirmBtn" disabled>Confirm Selection</button>
+                    <input type="hidden" name="seatNumber" id="selectedSeatInput" value="" />
+                    <button type="submit" id="bookBtn" class="btn btn-white-modern w-100 py-3 fw-bold rounded-3" disabled>Confirm Selection</button>
                 </form>
-                <div class="text-center extra-small text-white-50 mt-3">
-                    PRICES INCLUDE ALL TRANSIT TAXES
-                </div>
+                <div class="text-center extra-small opacity-50 mt-4 text-uppercase">Prices include all transit taxes</div>
             </div>
 
-
-            <div class="vb-card-notice">
-                <i class="bi bi-info-circle vb-notice-icon"></i>
-                <div>Seats can be changed up to 2 hours before departure for a small convenience fee.</div>
+            <div class="vb-notice-card p-3 rounded-3 d-flex gap-3 align-items-start border">
+                <i class="bi bi-info-circle text-muted h5 mb-0"></i>
+                <div class="small text-muted">
+                    Seats can be changed up to 2 hours before departure for a small convenience fee.
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+    .vb-steering-wheel-text { font-size: 2.2rem; font-weight: 300; color: #cbd5e1; letter-spacing: 0.3rem; }
+    .vb-bus-chassis { max-width: 400px; border: 2px solid #e2e8f0; border-radius: 40px; padding: 40px 0; background: white; }
+    .vb-seat-btn { width: 44px; height: 44px; border: 1px solid #e2e8f0; background: white; border-radius: 8px; font-size: 0.75rem; font-weight: 600; color: #64748b; transition: all 0.2s; }
+    .vb-seat-btn.occupied { background: #f1f5f9; color: #cbd5e1; cursor: not-allowed; }
+    .vb-seat-btn.available:hover { border-color: #6366f1; color: #6366f1; }
+    .vb-seat-btn.selected { background: #334155; border-color: #334155; color: white; }
+    .vb-dot-square { width: 14px; height: 14px; display: inline-block; border-radius: 3px; }
+    .vb-dot-square.available { background: white; border: 1px solid #e2e8f0; }
+    .vb-dot-square.selected { background: #334155; }
+    .vb-dot-square.occupied { background: #f1f5f9; border: 1px solid #e2e8f0; }
+    .vb-selection-summary-card { background: #64748b; border-radius: 12px; }
+    .btn-white-modern { background: white; color: #334155; border: 0; }
+    .btn-white-modern:disabled { opacity: 0.5; }
+    .vb-timeline-connector { height: 30px; border-left: 2px dashed #e2e8f0; margin-bottom: 20px; }
+    .extra-small { font-size: 0.7rem; }
+</style>
+
 @section Scripts {
     <script>
-        document.querySelectorAll('.vb-seat:not(.occupied)').forEach(btn => {
+        document.querySelectorAll('.vb-seat-btn.available').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.vb-seat').forEach(b => b.classList.remove('selected'));
+                document.querySelectorAll('.vb-seat-btn').forEach(b => b.classList.remove('selected'));
                 this.classList.add('selected');
-                
-                const seatId = this.dataset.seatId;
-                const price = parseFloat(this.dataset.price);
-                
-                document.getElementById('selectedSeatLabel').innerText = seatId;
-                document.getElementById('ticketPriceLabel').innerText = '$' + price.toFixed(2);
-                document.getElementById('totalPriceLabel').innerText = '$' + price.toFixed(2);
-                document.getElementById('seatInput').value = seatId;
-                document.getElementById('confirmBtn').disabled = false;
+                document.getElementById('selectedSeatInput').value = this.dataset.seatId;
+                document.getElementById('selectedSeatLabel').textContent = this.dataset.seatLabel;
+                document.getElementById('bookBtn').disabled = false;
             });
         });
     </script>

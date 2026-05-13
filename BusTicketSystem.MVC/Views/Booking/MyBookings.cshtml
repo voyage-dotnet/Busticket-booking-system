@@ -1,189 +1,132 @@
-@model BusTicketSystem.MVC.ViewModels.Booking.BookingListViewModel
+@model BusTicketSystem.MVC.ViewModels.BookingListViewModel
 @{
-    ViewData["Title"] = "Manage Booking";
+    ViewData["Title"] = "My Bookings - VoyaBus";
 }
 
-<div class="vb-page">
-    <div class="d-flex justify-content-between align-items-start mb-4">
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h1 style="font-size:var(--vb-font-size-xl); font-weight:700; color:var(--vb-text-primary); margin-bottom:0.2rem;">
-                My Bookings
-            </h1>
+            <h1 class="h2 fw-bold">My Bookings</h1>
             <p class="vb-muted">View and manage your trip reservations.</p>
         </div>
-        <a asp-controller="Home" asp-action="Index" class="vb-btn-primary">+ New Booking</a>
+        <a asp-controller="Trips" asp-action="Index" class="btn btn-vb-dark px-4 py-2">
+            <i class="bi bi-plus-lg me-2"></i> New Booking
+        </a>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div style="background:#dcfce7; border:1px solid #86efac; color:#166534;
-                    border-radius:var(--vb-radius-sm); padding:0.75rem 1rem;
-                    margin-bottom:1rem; font-size:var(--vb-font-size-sm);">
-            ✓ @TempData["Success"]
-        </div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div style="background:#fee2e2; border:1px solid #fecaca; color:#b91c1c;
-                    border-radius:var(--vb-radius-sm); padding:0.75rem 1rem;
-                    margin-bottom:1rem; font-size:var(--vb-font-size-sm);">
-            ✕ @TempData["Error"]
-        </div>
-    }
-
-    <!-- Metrics -->
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="vb-stat-card">
-                <div class="vb-stat-label">Total Bookings</div>
-                <div class="vb-stat-value">@Model.Bookings.Count</div>
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="vb-content-box p-4 border-0 shadow-sm">
+                <div class="extra-small fw-bold opacity-50 mb-1 text-uppercase">TOTAL BOOKINGS</div>
+                <div class="h3 fw-bold mb-0">@Model.Bookings.Count</div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="vb-stat-card">
-                <div class="vb-stat-label">Booked</div>
-                <div class="vb-stat-value" style="color:#166534;">
-                    @Model.Bookings.Count(b => b.Status == "Booked")
-                </div>
+        <div class="col-md-3">
+            <div class="vb-content-box p-4 border-0 shadow-sm">
+                <div class="extra-small fw-bold opacity-50 mb-1 text-uppercase">CONFIRMED</div>
+                <div class="h3 fw-bold mb-0 text-success">@Model.Bookings.Count(b => b.Status == "Booked")</div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="vb-stat-card">
-                <div class="vb-stat-label">Available</div>
-                <div class="vb-stat-value" style="color:#854d0e;">
-                    @Model.Bookings.Count(b => b.Status == "Available")
-                </div>
+        <div class="col-md-3">
+            <div class="vb-content-box p-4 border-0 shadow-sm">
+                <div class="extra-small fw-bold opacity-50 mb-1 text-uppercase">PENDING</div>
+                <div class="h3 fw-bold mb-0 text-warning">@Model.Bookings.Count(b => b.Status == "Available")</div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="vb-stat-card">
-                <div class="vb-stat-label">Other</div>
-                <div class="vb-stat-value" style="color:#b91c1c;">
-                    @Model.Bookings.Count(b => b.Status != "Booked" && b.Status != "Available")
-                </div>
+        <div class="col-md-3">
+            <div class="vb-content-box p-4 border-0 shadow-sm">
+                <div class="extra-small fw-bold opacity-50 mb-1 text-uppercase">CANCELLED</div>
+                <div class="h3 fw-bold mb-0 text-danger">@Model.Bookings.Count(b => b.Status == "Cancelled")</div>
             </div>
         </div>
     </div>
 
-    <!-- Bookings Table -->
-    <div class="vb-card" style="padding:0; overflow:hidden;">
-        <div class="d-flex justify-content-between align-items-center px-4 py-3"
-             style="border-bottom:1px solid var(--vb-border);">
-            <span style="font-size:var(--vb-font-size-base); font-weight:600; color:var(--vb-text-primary);">
-                Recent Bookings
-            </span>
-            <span class="vb-muted">Your past 30 days of travel</span>
+    <div class="vb-content-box p-0 overflow-hidden shadow-sm border-0">
+        <div class="px-4 py-3 border-bottom bg-white d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold mb-0">Recent Bookings</h6>
+            <span class="small text-muted">Your past 30 days of travel</span>
         </div>
 
-        @if (!Model.Bookings.Any())
-        {
-            <div class="text-center py-5">
-                <p class="vb-muted">You have no bookings yet.</p>
-                <a asp-controller="Home" asp-action="Index" class="vb-btn-primary">Find a Trip</a>
-            </div>
-        }
-        else
-        {
-            <div class="table-responsive">
-                <table class="table mb-0" style="font-size:var(--vb-font-size-sm);">
-                    <thead style="background:var(--vb-bg-panel);">
-                        <tr>
-                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
-                                       color:var(--vb-text-muted); font-weight:700;
-                                       text-transform:uppercase; letter-spacing:0.05em;
-                                       border-bottom:1px solid var(--vb-border);">Date &amp; Time</th>
-                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
-                                       color:var(--vb-text-muted); font-weight:700;
-                                       text-transform:uppercase; letter-spacing:0.05em;
-                                       border-bottom:1px solid var(--vb-border);">Reference</th>
-                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
-                                       color:var(--vb-text-muted); font-weight:700;
-                                       text-transform:uppercase; letter-spacing:0.05em;
-                                       border-bottom:1px solid var(--vb-border);">Journey</th>
-                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
-                                       color:var(--vb-text-muted); font-weight:700;
-                                       text-transform:uppercase; letter-spacing:0.05em;
-                                       border-bottom:1px solid var(--vb-border);">Seat</th>
-                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
-                                       color:var(--vb-text-muted); font-weight:700;
-                                       text-transform:uppercase; letter-spacing:0.05em;
-                                       border-bottom:1px solid var(--vb-border);">Total Fare</th>
-                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
-                                       color:var(--vb-text-muted); font-weight:700;
-                                       text-transform:uppercase; letter-spacing:0.05em;
-                                       border-bottom:1px solid var(--vb-border);">Status</th>
-                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
-                                       color:var(--vb-text-muted); font-weight:700;
-                                       text-transform:uppercase; letter-spacing:0.05em;
-                                       border-bottom:1px solid var(--vb-border);">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var booking in Model.Bookings)
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase extra-small fw-bold opacity-50">Departure</th>
+                        <th class="py-3 text-uppercase extra-small fw-bold opacity-50">Reference</th>
+                        <th class="py-3 text-uppercase extra-small fw-bold opacity-50">Journey</th>
+                        <th class="py-3 text-uppercase extra-small fw-bold opacity-50">Seat</th>
+                        <th class="py-3 text-uppercase extra-small fw-bold opacity-50">Total Fare</th>
+                        <th class="py-3 text-uppercase extra-small fw-bold opacity-50">Status</th>
+                        <th class="pe-4 py-3 text-end text-uppercase extra-small fw-bold opacity-50">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Bookings.Any())
+                    {
+                        foreach (var booking in Model.Bookings)
                         {
-                            <tr style="border-bottom:1px solid var(--vb-bg-page);">
-                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
-                                    <div style="font-weight:600; color:var(--vb-text-primary);">
-                                        @booking.DepartureTime.ToString("MMM dd, yyyy")
-                                    </div>
-                                    <div class="vb-muted">@booking.DepartureTime.ToString("HH:mm")</div>
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold">@booking.DepartureTime.ToString("MMM dd, yyyy")</div>
+                                    <div class="extra-small text-muted fw-bold">@booking.DepartureTime.ToString("HH:mm tt")</div>
                                 </td>
-                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
-                                    <span class="vb-badge vb-badge-verified">
+                                <td>
+                                    <span class="badge bg-light text-dark fw-bold border py-2 px-3 rounded-3 extra-small">
                                         VYG-@booking.BookingId.ToString("D4")-XC
                                     </span>
                                 </td>
-                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
-                                    <strong>@booking.RouteName</strong>
-                                </td>
-                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
-                                    @booking.SeatNumber
-                                </td>
-                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
-                                    <strong>₹@booking.Fare.ToString("F2")</strong>
-                                </td>
-                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
+                                <td><div class="fw-bold small">@booking.RouteName</div></td>
+                                <td><span class="fw-bold">@booking.SeatNumber</span></td>
+                                <td class="fw-bold text-dark">$@booking.Fare.ToString("F2")</td>
+                                <td>
                                     @{
-                                        string badgeStyle = booking.Status switch {
-                                            "Booked"    => "background:#dcfce7; color:#166534;",
-                                            "Available" => "background:#fef9c3; color:#854d0e;",
-                                            "Cancelled" => "background:#fee2e2; color:#b91c1c;",
-                                            _           => "background:var(--vb-bg-panel); color:var(--vb-text-secondary);"
+                                        var statusClass = booking.Status switch {
+                                            "Booked" => "bg-success text-success",
+                                            "Available" => "bg-warning text-warning",
+                                            "Cancelled" => "bg-danger text-danger",
+                                            _ => "bg-secondary text-secondary"
                                         };
                                     }
-                                    <span class="vb-badge" style="@badgeStyle">@booking.Status</span>
+                                    <span class="badge @statusClass bg-opacity-10 border-0 px-3 py-2 rounded-pill extra-small fw-bold">
+                                        @booking.Status.ToUpper()
+                                    </span>
                                 </td>
-                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
-                                    <a asp-action="Detail" asp-route-id="@booking.BookingId"
-                                       class="vb-btn-ghost" style="font-size:var(--vb-font-size-xs);">
-                                        View
-                                    </a>
-                                    @if (booking.Status == "Booked")
-                                    {
-                                        <a asp-controller="Payment" asp-action="Pay"
-                                           asp-route-bookingId="@booking.BookingId"
-                                           asp-route-amount="@booking.Fare"
-                                           class="vb-btn-primary" style="font-size:var(--vb-font-size-xs); padding:6px 12px;">
-                                            Pay
-                                        </a>
-                                    }
-                                    @if (booking.IsCancellable)
-                                    {
-                                        <form asp-action="Cancel" asp-route-id="@booking.BookingId" method="post"
-                                              class="d-inline" onsubmit="return confirm('Cancel this booking?')">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="vb-btn-ghost"
-                                                    style="color:#b91c1c; font-size:var(--vb-font-size-xs);">
-                                                Cancel
-                                            </button>
-                                        </form>
-                                    }
+                                <td class="pe-4 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        @if (booking.Status == "Booked")
+                                        {
+                                            <a asp-action="Detail" asp-route-id="@booking.BookingId" class="btn btn-outline-light border text-dark btn-sm rounded-pill px-3 fw-bold small">View</a>
+                                        }
+                                        @if (booking.IsCancellable)
+                                        {
+                                            <form asp-action="Cancel" asp-route-id="@booking.BookingId" method="post" class="d-inline" onsubmit="return confirm('Cancel this booking?')">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-link text-danger text-decoration-none small fw-bold p-0 px-2">Cancel</button>
+                                            </form>
+                                        }
+                                    </div>
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
-        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <div class="opacity-25 mb-3"><i class="bi bi-ticket-perforated h1"></i></div>
+                                <p class="vb-muted mb-0">No bookings found. Ready for your next trip?</p>
+                                <a asp-controller="Trips" asp-action="Index" class="btn btn-link fw-bold mt-2">Find a Trip</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+<style>
+    .btn-vb-dark { background: #475569; color: white; border: 0; font-weight: 600; }
+    .btn-vb-dark:hover { background: #334155; color: white; }
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05rem; }
+</style>

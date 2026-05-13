@@ -1,30 +1,22 @@
-using BusTicketSystem.Web.Models;
-using Microsoft.EntityFrameworkCore;
 using BusTicketSystem.MVC.Services;
+using BusTicketSystem.MVC.Handlers;
 using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
+builder.Services.AddControllersWithViews()
+    .ConfigureApplicationPartManager(manager =>
+    {
+        var webPart = manager.ApplicationParts.FirstOrDefault(p => p.Name == "BusTicketSystem.Web");
+        if (webPart != null)
+        {
+            manager.ApplicationParts.Remove(webPart);
+        }
+    });
 
-
-builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<BusTicketSystem.MVC.Handlers.AuthHeaderHandler>();
-builder.Services.AddHttpClient("VoyageAPI", client => { })
-    .AddHttpMessageHandler<BusTicketSystem.MVC.Handlers.AuthHeaderHandler>();
-builder.Services.AddScoped<BusTicketSystem.MVC.Services.VoyageApiClient>();
-builder.Services.AddAuthentication();
-
-builder.Services.AddHttpClient("BusApi", client =>
-{
-    client.BaseAddress = new Uri("http://localhost:5135/api/");
-});
-
-
-builder.Services.AddAutoMapper(typeof(BusTicketSystem.Web.Mapping.TripMappingProfile).Assembly);
-
-// ── Session (stores JWT token after login) ────────────────────────────────────
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -33,35 +25,23 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddTransient<AuthHeaderHandler>();
 
-// ── HttpContextAccessor (needed by ApiService to read session) ────────────────
-builder.Services.AddHttpContextAccessor();
-
-// ── HttpClient + ApiService ───────────────────────────────────────────────────
-// Base address is configured in appsettings.json under "ApiBaseUrl"
 builder.Services.AddHttpClient<ApiService>(client =>
 {
     var baseUrl = builder.Configuration["ApiBaseUrl"];
-
     if (string.IsNullOrWhiteSpace(baseUrl))
     {
-        baseUrl = "https://localhost:7001/";
+        baseUrl = "http://localhost:5001/";
     }
-
     if (!baseUrl.EndsWith("/"))
     {
         baseUrl += "/";
     }
-
-    Console.WriteLine("====================================");
-    Console.WriteLine($"MVC API BASE URL = {baseUrl}");
-    Console.WriteLine("====================================");
-
     client.BaseAddress = new Uri(baseUrl);
-
-    client.DefaultRequestHeaders.Accept.Add(
-        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-});
+    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+})
+.AddHttpMessageHandler<AuthHeaderHandler>();
 
 var app = builder.Build();
 
@@ -74,10 +54,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllerRoute(
     name: "default",

@@ -111,7 +111,7 @@ namespace BusTicketSystem.Web.Services
                 return ApiResponse<Object>.FailureResponse("Customer not registered", new List<string> {$""}, 400);
             }
 
-            // Check if the NEW email is already taken by ANOTHER customer
+            
             var customerWithNewEmail = await _repo.GetCustomerByEmailAsync(request.Email);
              if(customerWithNewEmail != null && customerWithNewEmail.CustomerId != ExistCustomer.CustomerId)
             {

@@ -1,4 +1,4 @@
-@model BusTicketSystem.MVC.ViewModels.Booking.BookingConfirmationViewModel
+@model BusTicketSystem.MVC.ViewModels.BookingConfirmationViewModel
 @{
     ViewData["Title"] = "Review Your Journey";
 }
@@ -18,10 +18,10 @@
     }
 
     <div class="row g-4">
-        <!-- LEFT -->
+        
         <div class="col-lg-8">
 
-            <!-- Trip Summary Card -->
+            
             <div class="vb-card mb-4">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
@@ -39,7 +39,7 @@
                 </div>
 
                 <div class="vb-journey">
-                    <!-- Departure -->
+                    
                     <div class="vb-journey-stop">
                         <div class="vb-journey-icon"></div>
                         <div class="vb-journey-line"></div>
@@ -52,7 +52,7 @@
                         </div>
                     </div>
                     <div class="vb-journey-gap"></div>
-                    <!-- Arrival -->
+                    
                     <div class="vb-journey-stop">
                         <div class="vb-journey-icon destination"></div>
                         <div>
@@ -65,7 +65,7 @@
                 </div>
             </div>
 
-            <!-- Passenger Information -->
+            
             <div class="vb-card mb-4">
                 <div class="vb-section-title">Passenger Information</div>
                 <div class="row g-3">
@@ -90,7 +90,7 @@
                 </div>
             </div>
 
-            <!-- Payment Method -->
+            
             <div class="vb-card mb-4">
                 <div class="vb-section-title">Payment Method</div>
                 <div class="vb-payment-tiles">
@@ -112,7 +112,7 @@
                 </div>
             </div>
 
-            <!-- Cancel Button -->
+            
             @if (Model.Status == "Booked")
             {
                 <form asp-action="Cancel" asp-route-id="@Model.BookingId" method="post"
@@ -123,7 +123,7 @@
             }
         </div>
 
-        <!-- RIGHT: Fare Breakdown -->
+        
         <div class="col-lg-4">
             <div class="vb-card mb-3">
                 <div class="vb-section-title">Fare Breakdown</div>
@@ -154,7 +154,7 @@
                     </a>
                     <p class="vb-muted text-center mt-2" style="font-size:var(--vb-font-size-xs);">
                         By clicking pay, you agree to our
-                        <a href="#">Terms of Service</a>.
+                        Terms of Service.
                     </p>
                 }
                 else

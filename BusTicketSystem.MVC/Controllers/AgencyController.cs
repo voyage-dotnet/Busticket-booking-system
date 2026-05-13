@@ -1,16 +1,10 @@
-using BusTicketSystem.MVC.Models.ViewModels.Agency;
+using BusTicketSystem.MVC.ViewModels;
+
 using BusTicketSystem.MVC.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BusTicketSystem.MVC.Controllers
 {
-    /// <summary>
-    /// Handles all agency-level UI operations:
-    ///   GET  /api/agencies          → public list
-    ///   GET  /api/agencies/{id}     → public detail
-    ///   GET  /api/agencies/me       → logged-in agency profile
-    ///   PUT  /api/agencies/me       → update own profile
-    /// </summary>
     public class AgencyController : Controller
     {
         private readonly ApiService _apiService;
@@ -20,167 +14,89 @@ namespace BusTicketSystem.MVC.Controllers
             _apiService = apiService;
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        //  GET /Agency/Index  →  GET /api/agencies  (Public)
-        // ─────────────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Lists all registered agencies visible to the public.
-        /// </summary>
         public async Task<IActionResult> Index()
         {
-            try
-            {
-                var agencies = await _apiService.GetAsync<List<AgencyViewModel>>(
-                    "api/agencies", requiresAuth: false);
+            var response = await _apiService.GetAsync<List<AgencyViewModel>>("api/agencies", requiresAuth: false);
 
-                var model = new AgencyListViewModel
-                {
-                    Agencies = agencies ?? new List<AgencyViewModel>()
-                };
-                return View(model);
-            }
-            catch (HttpRequestException ex)
+            var model = new AgencyListViewModel
             {
-                TempData["ErrorMessage"] = $"Could not load agencies: {ex.Message}";
-                return View(new AgencyListViewModel());
+                Agencies = response.Data ?? new List<AgencyViewModel>()
+            };
+            
+            if (!response.Success)
+            {
+                TempData["ErrorMessage"] = response.Message ?? "Could not load agencies.";
             }
+            
+            return View(model);
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        //  GET /Agency/Details/{id}  →  GET /api/agencies/{id}  (Public)
-        // ─────────────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Shows the public profile of a specific agency.
-        /// </summary>
         public async Task<IActionResult> Details(int id)
         {
-            try
-            {
-                var agency = await _apiService.GetAsync<AgencyViewModel>(
-                    $"api/agencies/{id}", requiresAuth: false);
+            var response = await _apiService.GetAsync<AgencyViewModel>($"api/agencies/{id}", requiresAuth: false);
 
-                if (agency == null)
-                {
-                    TempData["ErrorMessage"] = "Agency not found.";
-                    return RedirectToAction(nameof(Index));
-                }
-                return View(agency);
-            }
-            catch (HttpRequestException ex)
+            if (!response.Success || response.Data == null)
             {
-                TempData["ErrorMessage"] = $"Could not load agency: {ex.Message}";
+                TempData["ErrorMessage"] = response.Message ?? "Agency not found.";
                 return RedirectToAction(nameof(Index));
             }
+            return View(response.Data);
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        //  GET /Agency/Profile  →  GET /api/agencies/me  (Agency role)
-        // ─────────────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Shows the full profile of the currently logged-in agency.
-        /// </summary>
         public async Task<IActionResult> Profile()
         {
-            if (!IsAgencyLoggedIn())
-                return RedirectToLogin();
+            if (!IsAgencyLoggedIn()) return RedirectToLogin();
 
-            try
+            var response = await _apiService.GetAsync<AgencyViewModel>("api/agencies/me");
+            if (!response.Success || response.Data == null)
             {
-                var agency = await _apiService.GetAsync<AgencyViewModel>("api/agencies/me");
-                if (agency == null)
-                {
-                    TempData["ErrorMessage"] = "Could not retrieve your profile.";
-                    return RedirectToAction("Index", "Home");
-                }
-                return View(agency);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["ErrorMessage"] = $"Error fetching profile: {ex.Message}";
+                TempData["ErrorMessage"] = response.Message ?? "Could not retrieve your profile.";
                 return RedirectToAction("Index", "Home");
             }
+            return View(response.Data);
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        //  GET  /Agency/EditProfile  →  load form for PUT /api/agencies/me
-        //  POST /Agency/EditProfile  →  PUT /api/agencies/me  (Agency role)
-        // ─────────────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Shows the edit form pre-populated with the current agency data.
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
-            if (!IsAgencyLoggedIn())
-                return RedirectToLogin();
+            if (!IsAgencyLoggedIn()) return RedirectToLogin();
 
-            try
+            var response = await _apiService.GetAsync<AgencyViewModel>("api/agencies/me");
+            if (!response.Success || response.Data == null)
             {
-                var agency = await _apiService.GetAsync<AgencyViewModel>("api/agencies/me");
-                if (agency == null)
-                {
-                    TempData["ErrorMessage"] = "Could not retrieve your profile.";
-                    return RedirectToAction(nameof(Profile));
-                }
-
-                // Pre-populate the form from the current profile
-                var model = new UpdateAgencyViewModel
-                {
-                    Name = agency.Name,
-                    ContactPersonName = agency.ContactPersonName,
-                    Email = agency.Email,
-                    Phone = agency.Phone
-                };
-                return View(model);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["ErrorMessage"] = $"Error loading form: {ex.Message}";
+                TempData["ErrorMessage"] = response.Message ?? "Could not retrieve your profile.";
                 return RedirectToAction(nameof(Profile));
             }
+
+            var agency = response.Data;
+            var model = new UpdateAgencyViewModel
+            {
+                Name = agency.Name,
+                ContactPersonName = agency.ContactPersonName,
+                Email = agency.Email,
+                Phone = agency.Phone
+            };
+            return View(model);
         }
 
-        /// <summary>
-        /// Submits updated agency info to PUT /api/agencies/me.
-        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(UpdateAgencyViewModel model)
         {
-            if (!IsAgencyLoggedIn())
-                return RedirectToLogin();
+            if (!IsAgencyLoggedIn()) return RedirectToLogin();
 
-            if (!ModelState.IsValid)
-                return View(model);
+            if (!ModelState.IsValid) return View(model);
 
-            try
+            var result = await _apiService.PutAsync<AgencyViewModel>("api/agencies/me", model);
+            if (result.Success)
             {
-                var payload = new
-                {
-                    model.Name,
-                    model.ContactPersonName,
-                    model.Email,
-                    model.Phone
-                };
-
-                await _apiService.PutAsync<AgencyViewModel>("api/agencies/me", payload);
                 TempData["SuccessMessage"] = "Agency profile updated successfully.";
                 return RedirectToAction(nameof(Profile));
             }
-            catch (HttpRequestException ex)
-            {
-                ModelState.AddModelError(string.Empty, $"Update failed: {ex.Message}");
-                return View(model);
-            }
+            
+            ModelState.AddModelError(string.Empty, result.Message ?? "Update failed.");
+            return View(model);
         }
-
-        // ─────────────────────────────────────────────────────────────────────
-        //  Helpers
-        // ─────────────────────────────────────────────────────────────────────
 
         private bool IsAgencyLoggedIn()
         {
@@ -192,7 +108,7 @@ namespace BusTicketSystem.MVC.Controllers
         private IActionResult RedirectToLogin()
         {
             TempData["ErrorMessage"] = "Please log in as an agency to continue.";
-            return RedirectToAction("Login", "Auth");
+            return RedirectToAction("LoginAgency", "Auth");
         }
     }
 }

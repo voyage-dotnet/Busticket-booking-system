@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BusTicketSystem.MVC.Models.ViewModels.Agency
+namespace BusTicketSystem.MVC.ViewModels
 {
-    /// <summary>
-    /// Represents a single agency's public-facing info (used in lists and detail pages).
-    /// </summary>
+    
+    
+    
     public class AgencyViewModel
     {
         public int AgencyId { get; set; }
@@ -14,17 +14,17 @@ namespace BusTicketSystem.MVC.Models.ViewModels.Agency
         public string Phone { get; set; } = string.Empty;
     }
 
-    /// <summary>
-    /// Used for GET /api/agencies — list all public agencies.
-    /// </summary>
+    
+    
+    
     public class AgencyListViewModel
     {
         public List<AgencyViewModel> Agencies { get; set; } = new();
     }
 
-    /// <summary>
-    /// Used for PUT /api/agencies/me — update own agency profile form.
-    /// </summary>
+    
+    
+    
     public class UpdateAgencyViewModel
     {
         [Required(ErrorMessage = "Agency name is required.")]

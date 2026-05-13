@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BusTicketSystem.MVC.Models.ViewModels.Agency
+namespace BusTicketSystem.MVC.ViewModels
 {
-    /// <summary>
-    /// Represents driver data returned from the API for display in views.
-    /// </summary>
+    
+    
+    
     public class DriverViewModel
     {
         public int DriverId { get; set; }
@@ -25,18 +25,18 @@ namespace BusTicketSystem.MVC.Models.ViewModels.Agency
         public int AddressId { get; set; }
     }
 
-    /// <summary>
-    /// Used for GET /api/offices/{officeId}/drivers — list all drivers for an office.
-    /// </summary>
+    
+    
+    
     public class DriverListViewModel
     {
         public int OfficeId { get; set; }
         public List<DriverViewModel> Drivers { get; set; } = new();
     }
 
-    /// <summary>
-    /// Used for POST /api/drivers — register a new driver form.
-    /// </summary>
+    
+    
+    
     public class CreateDriverViewModel
     {
         [Required(ErrorMessage = "Driver name is required.")]
@@ -64,13 +64,13 @@ namespace BusTicketSystem.MVC.Models.ViewModels.Agency
         [Display(Name = "Address ID")]
         public int AddressId { get; set; }
 
-        // For dropdown list of offices
+        
         public List<OfficeViewModel> AvailableOffices { get; set; } = new();
     }
 
-    /// <summary>
-    /// Used for PUT /api/drivers/{id} — update driver info form.
-    /// </summary>
+    
+    
+    
     public class UpdateDriverViewModel
     {
         [StringLength(100)]

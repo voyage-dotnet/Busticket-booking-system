@@ -1,0 +1,59 @@
+@model BusTicketSystem.MVC.ViewModels.AgencyReviewSummaryViewModel
+
+@{
+    ViewData["Title"] = "Agency Reviews";
+}
+
+<div class="container mt-4">
+    <h2>Reviews for @Model.AgencyName</h2>
+    <hr />
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light border-warning mb-3 text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">Average Rating</h5>
+                    <h1 class="display-4 fw-bold">@Model.AverageRating.ToString("0.0") <span class="text-warning">★</span></h1>
+                    <p class="text-muted">Based on @Model.TotalReviews reviews</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4>All Reviews</h4>
+    @if (Model.Reviews != null && Model.Reviews.Any())
+    {
+        <div class="row">
+            @foreach (var review in Model.Reviews)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@review.CustomerName <span class="text-muted fs-6">on @review.TripName</span></h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                @for (int i = 0; i < review.Rating; i++)
+                                {
+                                    <span class="text-warning">★</span>
+                                }
+                                @for (int i = review.Rating; i < 5; i++)
+                                {
+                                    <span class="text-secondary">★</span>
+                                }
+                                - @review.ReviewDate.ToString("MMM dd, yyyy")
+                            </h6>
+                            <p class="card-text mt-3">
+                                @(string.IsNullOrEmpty(review.Comment) ? "No comment provided." : review.Comment)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No reviews yet for this agency.
+        </div>
+    }
+</div>

@@ -1,79 +1,51 @@
-/*
- html {
-  font-size: 14px;
-}
- 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}  */
 
 
-/*
- * site.css — VoyaBus Theme
- * Layered on top of Bootstrap without overriding core Bootstrap utilities.
- * All selectors are scoped or use custom class names to avoid conflicts.
- */
 
-/* ============================================================
-   CSS CUSTOM PROPERTIES (Design Tokens)
-   ============================================================ */
+
+
+
 :root {
-    /* Brand Colors */
+    
     --vb-primary: #3d5166;
     --vb-primary-dark: #2e3f50;
     --vb-primary-light: #4a6079;
     --vb-accent: #3d5166;
 
-    /* Backgrounds */
+    
     --vb-bg-page: #f0f2f5;
     --vb-bg-card: #ffffff;
     --vb-bg-panel: #f7f8fa;
     --vb-bg-dark-panel: #3d5166;
 
-    /* Text */
+    
     --vb-text-primary: #1a2533;
     --vb-text-secondary: #6b7c8d;
     --vb-text-muted: #9aaab8;
     --vb-text-on-dark: #ffffff;
     --vb-text-on-dark-muted: #b8c8d8;
 
-    /* Borders */
+    
     --vb-border: #e2e8ef;
     --vb-border-strong: #c8d4de;
 
-    /* Status */
+    
     --vb-success: #2e7d5e;
     --vb-warning: #b07d2a;
     --vb-danger: #c0392b;
 
-    /* Shadows */
+    
     --vb-shadow-sm: 0 1px 4px rgba(30, 50, 70, 0.07);
     --vb-shadow-md: 0 3px 12px rgba(30, 50, 70, 0.10);
     --vb-shadow-lg: 0 8px 32px rgba(30, 50, 70, 0.13);
 
-    /* Radius */
+    
     --vb-radius-sm: 6px;
     --vb-radius-md: 10px;
     --vb-radius-lg: 14px;
     --vb-radius-xl: 20px;
     --vb-radius-pill: 999px;
 
-    /* Typography */
+    
     --vb-font-base: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     --vb-font-size-xs: 0.72rem;
     --vb-font-size-sm: 0.82rem;
@@ -83,7 +55,7 @@ body {
     --vb-font-size-xl: 1.4rem;
     --vb-font-size-2xl: 1.75rem;
 
-    /* Spacing */
+    
     --vb-space-xs: 4px;
     --vb-space-sm: 8px;
     --vb-space-md: 16px;
@@ -91,13 +63,11 @@ body {
     --vb-space-xl: 32px;
     --vb-space-2xl: 48px;
 
-    /* Transitions */
+    
     --vb-transition: 0.18s ease;
 }
 
-/* ============================================================
-   BASE / BODY
-   ============================================================ */
+
 body {
     font-family: var(--vb-font-base);
     font-size: var(--vb-font-size-base);
@@ -118,9 +88,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* ============================================================
-   NAVBAR  (.vb-navbar)
-   ============================================================ */
+
 .vb-navbar {
     background-color: #ffffff;
     border-bottom: 1px solid var(--vb-border);
@@ -167,11 +135,9 @@ a:hover {
     border-bottom-color: var(--vb-primary);
 }
 
-/* ============================================================
-   BUTTONS  (.vb-btn-*)
-   ============================================================ */
 
-/* Primary CTA — dark slate */
+
+
 .vb-btn-primary {
     background-color: var(--vb-primary);
     color: var(--vb-text-on-dark);
@@ -197,7 +163,7 @@ a:hover {
     text-decoration: none;
 }
 
-/* Secondary / Outline */
+
 .vb-btn-secondary {
     background-color: transparent;
     color: var(--vb-primary);
@@ -221,7 +187,7 @@ a:hover {
     text-decoration: none;
 }
 
-/* Ghost / text button */
+
 .vb-btn-ghost {
     background: none;
     border: none;
@@ -240,7 +206,7 @@ a:hover {
     text-decoration: none;
 }
 
-/* Select / action button in listings */
+
 .vb-btn-select {
     background-color: var(--vb-primary);
     color: #fff;
@@ -258,7 +224,7 @@ a:hover {
     background-color: var(--vb-primary-dark);
 }
 
-/* Confirm selection — white on dark panel */
+
 .vb-btn-confirm {
     width: 100%;
     background-color: #ffffff;
@@ -277,9 +243,7 @@ a:hover {
     opacity: 0.88;
 }
 
-/* ============================================================
-   CARDS  (.vb-card)
-   ============================================================ */
+
 .vb-card {
     background: var(--vb-bg-card);
     border: 1px solid var(--vb-border);
@@ -295,7 +259,7 @@ a:hover {
     padding: var(--vb-space-md);
 }
 
-/* Dark panel card (Seat Selection Summary, Fare Breakdown) */
+
 .vb-card-dark {
     background: var(--vb-primary);
     border: none;
@@ -304,7 +268,7 @@ a:hover {
     color: var(--vb-text-on-dark);
 }
 
-/* Info/notice card */
+
 .vb-card-notice {
     background: var(--vb-bg-panel);
     border: 1px solid var(--vb-border);
@@ -324,9 +288,7 @@ a:hover {
     flex-shrink: 0;
 }
 
-/* ============================================================
-   HERO SECTION  (.vb-hero)
-   ============================================================ */
+
 .vb-hero {
     position: relative;
     background-color: var(--vb-primary-dark);
@@ -365,9 +327,7 @@ a:hover {
     max-width: 500px;
 }
 
-/* ============================================================
-   SEARCH / TRIP FINDER BAR  (.vb-search-bar)
-   ============================================================ */
+
 .vb-search-bar {
     background: #ffffff;
     border-radius: var(--vb-radius-lg);
@@ -416,9 +376,7 @@ a:hover {
     color: var(--vb-text-muted);
 }
 
-/* ============================================================
-   TRIP RESULT CARDS  (.vb-trip-card)
-   ============================================================ */
+
 .vb-trip-card {
     background: var(--vb-bg-card);
     border: 1px solid var(--vb-border);
@@ -484,9 +442,7 @@ a:hover {
     letter-spacing: 0.06em;
 }
 
-/* ============================================================
-   BADGES / PILLS  (.vb-badge-*)
-   ============================================================ */
+
 .vb-badge {
     display: inline-flex;
     align-items: center;
@@ -520,9 +476,7 @@ a:hover {
     border: 1px solid var(--vb-border);
 }
 
-/* ============================================================
-   FILTERS SIDEBAR  (.vb-filters)
-   ============================================================ */
+
 .vb-filters {
     background: #ffffff;
     border: 1px solid var(--vb-border);
@@ -571,7 +525,7 @@ a:hover {
     display: block;
 }
 
-/* Custom checkbox to match VoyaBus style */
+
 .vb-check {
     display: flex;
     align-items: center;
@@ -592,9 +546,7 @@ a:hover {
     border-radius: 3px;
 }
 
-/* ============================================================
-   BREADCRUMB  (.vb-breadcrumb)
-   ============================================================ */
+
 .vb-breadcrumb {
     display: flex;
     align-items: center;
@@ -618,9 +570,7 @@ a:hover {
     font-size: 0.7rem;
 }
 
-/* ============================================================
-   SEAT MAP  (.vb-seat-map)
-   ============================================================ */
+
 .vb-seat-map-wrapper {
     background: #f7f9fb;
     border: 1px solid var(--vb-border);
@@ -648,7 +598,7 @@ a:hover {
     max-width: 280px;
 }
 
-/* individual seat button */
+
 .vb-seat {
     width: 40px;
     height: 40px;
@@ -686,10 +636,10 @@ a:hover {
 
 .vb-seat-aisle {
     width: 18px;
-    /* spacer for aisle */
+    
 }
 
-/* Seat legend */
+
 .vb-seat-legend {
     display: flex;
     gap: var(--vb-space-md);
@@ -722,9 +672,7 @@ a:hover {
     border: 1.5px solid #cdd6e0;
 }
 
-/* ============================================================
-   TRIP JOURNEY TIMELINE  (.vb-journey)
-   ============================================================ */
+
 .vb-journey {
     display: flex;
     flex-direction: column;
@@ -788,9 +736,7 @@ a:hover {
     border-left: 2px dashed var(--vb-border-strong);
 }
 
-/* ============================================================
-   FARE / SELECTION SUMMARY TABLE  (.vb-summary-row)
-   ============================================================ */
+
 .vb-summary-row {
     display: flex;
     justify-content: space-between;
@@ -813,7 +759,7 @@ a:hover {
     color: var(--vb-text-on-dark);
 }
 
-/* Light variant (white card) */
+
 .vb-card .vb-summary-row {
     border-bottom-color: var(--vb-border);
 }
@@ -842,9 +788,7 @@ a:hover {
     font-size: 1.15rem;
 }
 
-/* ============================================================
-   FORM FIELDS  (.vb-form-*)
-   ============================================================ */
+
 .vb-form-group {
     display: flex;
     flex-direction: column;
@@ -880,7 +824,7 @@ a:hover {
     color: var(--vb-text-muted);
 }
 
-/* Select with icon (Seat Preference) */
+
 .vb-select-wrapper {
     position: relative;
 }
@@ -901,9 +845,7 @@ a:hover {
     font-size: 0.85rem;
 }
 
-/* ============================================================
-   PAYMENT METHOD TILES  (.vb-payment-tile)
-   ============================================================ */
+
 .vb-payment-tiles {
     display: flex;
     gap: var(--vb-space-sm);
@@ -975,9 +917,7 @@ a:hover {
     accent-color: var(--vb-primary);
 }
 
-/* ============================================================
-   SECTION HEADINGS  (.vb-section-title)
-   ============================================================ */
+
 .vb-section-title {
     font-size: 1.05rem;
     font-weight: 700;
@@ -993,9 +933,7 @@ a:hover {
     color: var(--vb-text-muted);
 }
 
-/* ============================================================
-   TRIP OVERVIEW (sidebar)  (.vb-trip-overview)
-   ============================================================ */
+
 .vb-trip-overview {
     background: #ffffff;
     border: 1px solid var(--vb-border);
@@ -1022,9 +960,7 @@ a:hover {
     margin-top: 1px;
 }
 
-/* ============================================================
-   LIVE NETWORK WIDGET  (.vb-live-network)
-   ============================================================ */
+
 .vb-live-network {
     background: var(--vb-bg-panel);
     border: 1px solid var(--vb-border);
@@ -1068,9 +1004,7 @@ a:hover {
     margin-left: 5px;
 }
 
-/* ============================================================
-   RECENT TRIPS LIST  (.vb-recent-trip)
-   ============================================================ */
+
 .vb-recent-trip {
     background: #ffffff;
     border: 1px solid var(--vb-border);
@@ -1113,9 +1047,7 @@ a:hover {
     color: var(--vb-text-muted);
 }
 
-/* ============================================================
-   SORT / RESULTS BAR  (.vb-results-bar)
-   ============================================================ */
+
 .vb-results-bar {
     display: flex;
     justify-content: space-between;
@@ -1141,9 +1073,7 @@ a:hover {
     outline: none;
 }
 
-/* ============================================================
-   FOOTER  (.vb-footer)
-   ============================================================ */
+
 .vb-footer {
     background: #ffffff;
     border-top: 1px solid var(--vb-border);
@@ -1184,25 +1114,23 @@ a:hover {
     text-decoration: none;
 }
 
-/* ============================================================
-   UTILITY / HELPERS
-   ============================================================ */
 
-/* Divider */
+
+
 .vb-divider {
     border: none;
     border-top: 1px solid var(--vb-border);
     margin: var(--vb-space-md) 0;
 }
 
-/* Page wrapper */
+
 .vb-page {
     max-width: 1140px;
     margin: 0 auto;
     padding: var(--vb-space-xl) var(--vb-space-md);
 }
 
-/* Inline icon + text */
+
 .vb-icon-text {
     display: inline-flex;
     align-items: center;
@@ -1211,20 +1139,20 @@ a:hover {
     font-size: var(--vb-font-size-xs);
 }
 
-/* Muted text */
+
 .vb-muted {
     color: var(--vb-text-muted);
     font-size: var(--vb-font-size-xs);
 }
 
-/* Price highlight */
+
 .vb-price-highlight {
     color: var(--vb-primary);
     font-weight: 700;
     font-size: 1.1rem;
 }
 
-/* Amenity icon chips */
+
 .vb-amenity-icon {
     width: 30px;
     height: 30px;
@@ -1238,7 +1166,7 @@ a:hover {
     color: var(--vb-text-secondary);
 }
 
-/* Security / SSL badge */
+
 .vb-secure-badge {
     background: var(--vb-bg-panel);
     border: 1px solid var(--vb-border);
@@ -1258,7 +1186,7 @@ a:hover {
     color: var(--vb-text-primary);
 }
 
-/* Page content box (white container on grey page bg) */
+
 .vb-content-box {
     background: #ffffff;
     border: 1px solid var(--vb-border);
@@ -1267,9 +1195,7 @@ a:hover {
     box-shadow: var(--vb-shadow-sm);
 }
 
-/* ============================================================
-   RESPONSIVE ADJUSTMENTS
-   ============================================================ */
+
 @media (max-width: 768px) {
     .vb-navbar {
         padding: 0 var(--vb-space-md);

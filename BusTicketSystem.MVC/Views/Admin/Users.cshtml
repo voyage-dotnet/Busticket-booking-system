@@ -1,0 +1,54 @@
+@model List<BusTicketSystem.MVC.ViewModels.UserDetailViewModel>
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <nav class="small mb-2">
+                <a asp-action="Dashboard" class="text-decoration-none text-muted">Admin Dashboard</a>
+                <span class="mx-2 text-muted">/</span>
+                <span class="text-dark">Users</span>
+            </nav>
+            <h1 class="h2 fw-bold">User Management</h1>
+        </div>
+    </div>
+
+    <div class="vb-content-box p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 border-0">Email</th>
+                        <th class="py-3 border-0">Role</th>
+                        <th class="py-3 border-0">Joined Date</th>
+                        <th class="pe-4 py-3 border-0 text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">@user.Email</div>
+                                <div class="small text-muted">ID: @user.UserId</div>
+                            </td>
+                            <td>
+                                <span class="badge @(user.Role == "Admin" ? "bg-danger" : user.Role == "Agency" ? "bg-primary" : "bg-success") bg-opacity-10 @(user.Role == "Admin" ? "text-danger" : user.Role == "Agency" ? "text-primary" : "text-success") border-0 px-3 py-2 rounded-pill small">
+                                    @user.Role
+                                </span>
+                            </td>
+                            <td>@user.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            <td class="pe-4 text-end">
+                                <a asp-action="UserDetail" asp-route-id="@user.UserId" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                    Manage Role
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

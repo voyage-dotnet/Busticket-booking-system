@@ -47,7 +47,7 @@ namespace BusTicketSystem.Web.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        // [Authorize(Roles = "Customer")]
+        
         [HttpPatch("Customer-forget-password")]
         public async Task<IActionResult> CustomerForgetPassword(string Email, UpdatePasswordDTO request)
         {
@@ -102,7 +102,7 @@ namespace BusTicketSystem.Web.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        // [Authorize(Roles = "Agency")]
+        
         [HttpPatch("Agency-forget-password")]
 
         public async Task<IActionResult> AgencyForgetPassword(string Email, UpdatePasswordDTO request)

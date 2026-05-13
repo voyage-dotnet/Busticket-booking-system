@@ -1,120 +1,192 @@
 @model BusTicketSystem.MVC.ViewModels.TripSearchPageViewModel
 @{
-    ViewData["Title"] = "Find Your Next Journey";
+    ViewData["Title"] = "Find Trips - VoyaBus";
 }
 
-<div class="vb-hero">
-    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=2000" class="vb-hero-bg" alt="Bus background">
-    <div class="container vb-hero-content">
-        <h1 class="vb-hero-title">Find Your Next Journey</h1>
-        <p class="vb-hero-subtitle">Book your bus tickets with ease and travel across the country with comfort.</p>
-        
-        <form asp-action="Index" method="get" class="vb-search-bar mt-4">
-            <div class="vb-search-field">
-                <label>From</label>
-                <input type="text" name="from" value="@Model.From" class="vb-search-input" placeholder="Enter City" required>
+<div class="container-fluid bg-white border-bottom py-3 sticky-top" style="top: 72px; z-index: 1010;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-10">
+                <div class="d-flex align-items-center gap-5">
+                    <div>
+                        <div class="small text-muted fw-bold">From</div>
+                        <div class="fw-bold">@Model.From</div>
+                    </div>
+                    <i class="bi bi-arrow-right h4 mb-0 opacity-25"></i>
+                    <div>
+                        <div class="small text-muted fw-bold">To</div>
+                        <div class="fw-bold">@Model.To</div>
+                    </div>
+                    <div class="ms-auto">
+                        <div class="small text-muted fw-bold">Departure</div>
+                        <div class="fw-bold">@Model.Date</div>
+                    </div>
+                </div>
             </div>
-            <div class="vb-search-field">
-                <label>To</label>
-                <input type="text" name="to" value="@Model.To" class="vb-search-input" placeholder="Enter City" required>
-            </div>
-            <div class="vb-search-field">
-                <label>Date</label>
-                <input type="date" name="date" value="@Model.Date" class="vb-search-input" required>
-            </div>
-            <button type="submit" class="vb-btn-primary py-2 px-4 h-auto" style="height: 46px !important;">Find Trips</button>
-        </form>
+        </div>
     </div>
 </div>
 
 <div class="container py-5">
-    <div class="row">
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">Filters</h5>
+                <button class="btn btn-link text-muted text-decoration-none small p-0">Reset all</button>
+            </div>
 
-        <div class="col-lg-3 d-none d-lg-block">
-            <div class="vb-filters">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <span class="vb-filter-title">Filters</span>
-                    <button class="vb-filter-reset">Reset All</button>
+            <div class="mb-5">
+                <label class="fw-bold small mb-3">Price Range</label>
+                <div class="px-2">
+                    <input type="range" class="form-range" min="20" max="150" step="10">
+                    <div class="d-flex justify-content-between small text-muted mt-2">
+                        <span>$20</span>
+                        <span>$150+</span>
+                    </div>
                 </div>
+            </div>
 
-                <div class="vb-filter-section">
-                    <span class="vb-filter-label">Bus Type</span>
-                    <label class="vb-check">
-                        <input type="checkbox" checked> AC Sleeper
-                    </label>
-                    <label class="vb-check">
-                        <input type="checkbox"> Non-AC
-                    </label>
+            <div class="mb-5">
+                <label class="fw-bold small mb-3">Departure Time</label>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="time1">
+                    <label class="form-check-label small" for="time1">Early Morning (00:00 - 08:00)</label>
                 </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="time2" checked>
+                    <label class="form-check-label small" for="time2">Morning (08:00 - 12:00)</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="time3">
+                    <label class="form-check-label small" for="time3">Afternoon (12:00 - 18:00)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="time4">
+                    <label class="form-check-label small" for="time4">Evening (18:00 - 00:00)</label>
+                </div>
+            </div>
 
-                <div class="vb-filter-section border-0">
-                    <span class="vb-filter-label">Departure Time</span>
-                    <label class="vb-check">
-                        <input type="checkbox"> Morning (6am - 12pm)
-                    </label>
-                    <label class="vb-check">
-                        <input type="checkbox"> Evening (6pm - 12am)
-                    </label>
+            <div class="mb-5">
+                <label class="fw-bold small mb-3">Amenities</label>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="amen1" checked>
+                    <label class="form-check-label small" for="amen1">Free Wi-Fi</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="amen2">
+                    <label class="form-check-label small" for="amen2">Power Outlets</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="amen3" checked>
+                    <label class="form-check-label small" for="amen3">Extra Legroom</label>
                 </div>
             </div>
         </div>
 
-
         <div class="col-lg-9">
-            <div class="vb-results-bar">
-                <div>Showing <span class="vb-results-count">@(Model.Trips?.Count() ?? 0)</span> trips found</div>
-                <select class="vb-sort-select">
-                    <option>Cheapest First</option>
-                    <option>Earliest First</option>
-                </select>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="text-muted">Showing <span class="fw-bold text-dark">@(Model.Trips?.Count() ?? 0) results</span> for your search</div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="small text-muted">Sort by:</span>
+                    <select class="form-select form-select-sm border-0 bg-transparent fw-bold p-0" style="width: auto;">
+                        <option>Price (Low to High)</option>
+                        <option>Earliest First</option>
+                    </select>
+                </div>
             </div>
 
             @if (Model.Trips != null && Model.Trips.Any())
             {
                 foreach (var trip in Model.Trips)
                 {
-                    <div class="vb-trip-card d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-5 flex-grow-1">
-                            <div style="min-width: 100px;">
-                                <div class="vb-trip-time">@trip.DepartureTime.ToString("HH:mm")</div>
-                                <div class="vb-trip-station">@trip.FromCity</div>
-                            </div>
-                            
-                            <div class="flex-grow-1 px-4 text-center">
-                                <div class="vb-trip-duration">@trip.BusType</div>
-                                <div class="position-relative my-2">
-                                    <div class="border-bottom w-100" style="border-bottom: 2px solid var(--vb-border) !important;"></div>
-                                    <div class="position-absolute top-50 start-0 translate-middle-y bg-white p-1 rounded-circle border border-2 border-secondary" style="width:10px; height:10px;"></div>
-                                    <div class="position-absolute top-50 end-0 translate-middle-y bg-primary p-1 rounded-circle border border-2 border-primary" style="width:10px; height:10px;"></div>
+                    <div class="vb-search-result-card mb-4">
+                        <div class="p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-5">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="h5 fw-bold mb-1">@trip.DepartureTime.ToString("HH:mm")</div>
+                                            <div class="small text-muted fw-bold">@trip.FromCity</div>
+                                        </div>
+                                        <div class="text-center flex-grow-1 px-3">
+                                            <div class="small text-muted opacity-50 mb-1">6h 15m</div>
+                                            <div class="vb-route-visual mb-1"></div>
+                                            <div class="small fw-bold text-primary">Direct</div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="h5 fw-bold mb-1">@trip.ArrivalTime.ToString("HH:mm")</div>
+                                            <div class="small text-muted fw-bold">@trip.ToCity</div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="vb-trip-stops">Direct Trip</div>
-                            </div>
-
-                            <div style="min-width: 100px;">
-                                <div class="vb-trip-time">@trip.ArrivalTime.ToString("HH:mm")</div>
-                                <div class="vb-trip-station">@trip.ToCity</div>
+                                <div class="col-md-2 text-center border-start border-end">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <i class="bi bi-wifi small bg-light p-2 rounded-circle"></i>
+                                        <i class="bi bi-lightning small bg-light p-2 rounded-circle"></i>
+                                        <i class="bi bi-person-workspace small bg-light p-2 rounded-circle"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="small text-muted">Starting at</div>
+                                    <div class="h5 fw-bold">$@trip.Fare.ToString("F2")</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <a asp-action="SelectSeat" asp-route-tripId="@trip.TripId" class="btn btn-vb-dark w-100 py-2">Select</a>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="ms-5 ps-5 border-start" style="border-left: 1px solid var(--vb-border) !important; min-width: 180px;">
-                            <div class="vb-trip-badge-premium mb-1">@trip.AgencyName</div>
-                            <div class="vb-trip-price">
-                                <span class="vb-trip-price-label">Price from</span>
-                                <span class="vb-trip-price-amount h4 mb-0">$@trip.Fare.ToString("F2")</span>
+                        <div class="card-footer bg-white border-top-0 px-4 py-3 d-flex justify-content-between align-items-center">
+                            <div class="small d-flex align-items-center gap-2">
+                                <span class="bg-primary rounded-circle" style="width: 6px; height: 6px;"></span>
+                                <span class="text-muted fw-bold">Live Tracking Available</span>
                             </div>
-                            <a asp-action="SelectSeat" asp-route-id="@trip.TripId" class="vb-btn-select mt-2 d-inline-block text-center w-100">Select Seats</a>
+                            <a href="#" class="small text-muted text-decoration-none fw-bold">View details</a>
                         </div>
                     </div>
                 }
             }
-            else if (!string.IsNullOrEmpty(Model.From))
-            {
-                <div class="vb-content-box text-center py-5">
-                    <i class="bi bi-search h1 text-muted mb-3 d-block"></i>
-                    <h3 class="h4">No trips found</h3>
-                    <p class="vb-muted">Try adjusting your search criteria or choosing a different date.</p>
+
+            <div class="mt-5">
+                <h6 class="fw-bold mb-4 opacity-50">Popular Stop Locations</h6>
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="vb-map-preview position-relative rounded-3 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=1000" class="w-100" style="height: 250px; object-fit: cover; filter: grayscale(1);">
+                            <div class="position-absolute bottom-0 start-0 p-3 w-100 bg-white bg-opacity-75 backdrop-blur">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="bg-dark text-white p-2 rounded-3"><i class="bi bi-geo-alt"></i></div>
+                                    <div>
+                                        <div class="fw-bold small">Salesforce Transit Center</div>
+                                        <div class="extra-small text-muted">425 Mission St, San Francisco</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="vb-chat-support-card p-4 h-100 rounded-3 text-white">
+                            <h6 class="fw-bold mb-3">Need Help?</h6>
+                            <p class="small opacity-75 mb-4">Our transit concierges are available 24/7 to assist with your San Francisco departure.</p>
+                            <button class="btn btn-white w-100 py-2 rounded-3 fw-bold text-dark">Chat Now</button>
+                        </div>
+                    </div>
                 </div>
-            }
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .btn-vb-dark { background: #475569; color: white; border: 0; font-weight: 600; border-radius: 6px; transition: background 0.2s; }
+    .btn-vb-dark:hover { background: #334155; color: white; }
+    .vb-search-result-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; transition: box-shadow 0.2s; }
+    .vb-search-result-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .vb-route-visual { height: 2px; background: #e2e8f0; position: relative; margin: 10px 0; }
+    .vb-route-visual::before, .vb-route-visual::after { content: ''; position: absolute; top: 50%; width: 8px; height: 8px; background: white; border: 2px solid #cbd5e1; border-radius: 50%; transform: translateY(-50%); }
+    .vb-route-visual::before { left: 0; }
+    .vb-route-visual::after { right: 0; background: #6366f1; border-color: #6366f1; }
+    .vb-chat-support-card { background: #475569; }
+    .btn-white { background: white; border: 0; }
+    .extra-small { font-size: 0.7rem; }
+    .backdrop-blur { backdrop-filter: blur(8px); }
+</style>

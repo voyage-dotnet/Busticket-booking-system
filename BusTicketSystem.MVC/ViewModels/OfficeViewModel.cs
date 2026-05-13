@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BusTicketSystem.MVC.Models.ViewModels.Agency
+namespace BusTicketSystem.MVC.ViewModels
 {
-    /// <summary>
-    /// Represents the full details of a single office returned from the API.
-    /// </summary>
+    
+    
+    
     public class OfficeViewModel
     {
         public int OfficeId { get; set; }
@@ -26,17 +26,17 @@ namespace BusTicketSystem.MVC.Models.ViewModels.Agency
         public string FullAddress { get; set; } = string.Empty;
     }
 
-    /// <summary>
-    /// Used for GET /api/agencies/me/offices — list offices for the logged-in agency.
-    /// </summary>
+    
+    
+    
     public class OfficeListViewModel
     {
         public List<OfficeViewModel> Offices { get; set; } = new();
     }
 
-    /// <summary>
-    /// Used for POST /api/agencies/me/offices — create new office form.
-    /// </summary>
+    
+    
+    
     public class CreateOfficeViewModel
     {
         [Required(ErrorMessage = "Office email is required.")]
@@ -60,9 +60,9 @@ namespace BusTicketSystem.MVC.Models.ViewModels.Agency
         public int OfficeAddressId { get; set; }
     }
 
-    /// <summary>
-    /// Used for PUT /api/offices/{id} — update existing office form.
-    /// </summary>
+    
+    
+    
     public class UpdateOfficeViewModel
     {
         [EmailAddress(ErrorMessage = "Enter a valid email address.")]

@@ -1,111 +1,103 @@
 @model DriverListViewModel
 @{
-    ViewData["Title"] = "Drivers";
+    ViewData["Title"] = "Drivers Management - VoyaBus";
     var officeName = ViewBag.OfficeName as string ?? $"Office #{Model.OfficeId}";
-    ViewData["Breadcrumb"] = $@"<a href='/Office'>My Offices</a><span class='sep'>›</span><a href='/Office/Details/{Model.OfficeId}'>{officeName}</a><span class='sep'>›</span><span class='active'>Drivers</span>";
 }
 
-<div class="d-flex align-items-start justify-content-between mb-1">
-    <div>
-        <div class="vb-page-title"><i class="bi bi-person-workspace"></i> Drivers</div>
-        <p class="vb-page-subtitle">Staff assigned to @officeName.</p>
-    </div>
-    <a asp-controller="Driver" asp-action="Create" class="btn-vb-primary mt-1">
-        <i class="bi bi-person-plus-fill"></i> Add Driver
-    </a>
-</div>
-
-@if (!Model.Drivers.Any())
-{
-    <div class="vb-card vb-empty">
-        <div class="vb-empty-icon"><i class="bi bi-person-x"></i></div>
-        <div class="vb-empty-title">No drivers assigned</div>
-        <div class="vb-empty-text">Add your first driver to this office to assign them to trips.</div>
-        <a asp-controller="Driver" asp-action="Create" class="btn-vb-primary"><i class="bi bi-person-plus-fill"></i> Add Driver</a>
-    </div>
-}
-else
-{
-    <!-- Seat-selection style: Selection Summary box -->
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <p class="mb-0 text-muted-vb" style="font-size:0.85rem;">
-                    <strong style="color:var(--vb-text);">@Model.Drivers.Count</strong> drivers at this office
-                </p>
-            </div>
-
-            <div class="d-flex flex-column gap-3">
-                @foreach (var driver in Model.Drivers)
-                {
-                    <div class="vb-card" style="padding:1.1rem 1.5rem;">
-                        <div class="row align-items-center g-2">
-                            <div class="col-auto">
-                                <div class="vb-avatar" style="width:42px;height:42px;font-size:1rem;border-radius:50%;">
-                                    @driver.Name.Substring(0,1).ToUpper()
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="fw-700" style="font-size:0.92rem;">@driver.Name</div>
-                                <div class="d-flex flex-wrap gap-3 text-muted-vb" style="font-size:0.8rem;">
-                                    <span style="font-family:monospace;color:var(--vb-accent);">@driver.LicenseNumber</span>
-                                    <span><i class="bi bi-telephone me-1"></i>@driver.Phone</span>
-                                    <span class="vb-tag vb-tag-gray">Driver #@driver.DriverId</span>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <a asp-controller="Driver" asp-action="Edit"
-                                   asp-route-id="@driver.DriverId"
-                                   asp-route-officeId="@Model.OfficeId"
-                                   class="btn-vb-outline" style="font-size:0.8rem;padding:0.4rem 0.85rem;">
-                                    <i class="bi bi-pencil"></i> Edit
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="h2 fw-bold">Drivers Staff</h1>
+            <p class="vb-muted">Personnel assigned to @officeName.</p>
         </div>
+        <a asp-controller="Driver" asp-action="Create" class="btn btn-vb-dark px-4 py-2">
+            <i class="bi bi-person-plus me-2"></i> Add Driver
+        </a>
+    </div>
 
-        <!-- Right: Selection Summary style box -->
-        <div class="col-lg-4">
-            <div style="position:sticky;top:72px;">
-                <div class="vb-card" style="background:var(--vb-navy);border-color:var(--vb-navy);color:#fff;">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="fw-700" style="font-size:0.95rem;">Staff Summary</div>
-                        <i class="bi bi-person-fill-gear"></i>
+    @if (!Model.Drivers.Any())
+    {
+        <div class="vb-content-box text-center py-5 border-0 shadow-sm">
+            <div class="opacity-25 mb-3"><i class="bi bi-person-badge h1"></i></div>
+            <h4 class="fw-bold">No drivers assigned</h4>
+            <p class="vb-muted mb-4">Add your first driver to this office to assign them to trips.</p>
+            <a asp-controller="Driver" asp-action="Create" class="btn btn-vb-dark rounded-pill px-4">Add Driver</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="text-muted small fw-bold">
+                        <span class="text-dark">@Model.Drivers.Count</span> staff members
                     </div>
-
-                    <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.15);font-size:0.85rem;">
-                        <span style="opacity:.7;">Total Drivers</span>
-                        <span class="fw-700">@Model.Drivers.Count</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.15);font-size:0.85rem;">
-                        <span style="opacity:.7;">Office ID</span>
-                        <span class="fw-700">#@Model.OfficeId</span>
-                    </div>
-                    <div class="d-flex justify-content-between py-2" style="font-size:0.85rem;">
-                        <span style="opacity:.7;">Status</span>
-                        <span class="fw-700" style="color:#6ee7b7;">Active</span>
-                    </div>
-
-                    <a asp-controller="Driver" asp-action="Create"
-                       class="d-flex justify-content-center w-100 mt-3"
-                       style="background:#fff;color:var(--vb-navy);border-radius:6px;font-weight:700;font-size:0.88rem;padding:0.6rem;text-decoration:none;transition:opacity .15s;">
-                        Add Driver
-                    </a>
-                    <p class="text-center mt-2" style="font-size:0.72rem;opacity:.6;">
-                        PRICES INCLUDE ALL TRANSIT TAXES
-                    </p>
                 </div>
 
-                <div class="vb-info-box mt-3">
-                    <i class="bi bi-info-circle"></i>
-                    <div style="font-size:0.78rem;">
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var driver in Model.Drivers)
+                    {
+                        <div class="vb-content-box p-4 border-0 shadow-sm">
+                            <div class="row align-items-center g-3">
+                                <div class="col-auto">
+                                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold h5 mb-0" style="width: 48px; height: 48px;">
+                                        @driver.Name.Substring(0, 1).ToUpper()
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="h6 fw-bold mb-1">@driver.Name</div>
+                                    <div class="d-flex flex-wrap gap-4 align-items-center">
+                                        <div class="small fw-bold opacity-50 mono text-uppercase letter-spacing-1">LIC: @driver.LicenseNumber</div>
+                                        <div class="small text-muted"><i class="bi bi-telephone me-2"></i>@driver.Phone</div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <a asp-controller="Driver" asp-action="Edit" asp-route-id="@driver.DriverId" asp-route-officeId="@driver.OfficeId" class="btn btn-outline-light border text-dark btn-sm rounded-pill px-3 fw-bold small">Edit Staff</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="vb-selection-summary-card p-4 text-white mb-4 shadow-lg sticky-top" style="top: 100px; background: #334155;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h6 class="fw-bold mb-0">Staff Summary</h6>
+                        <i class="bi bi-person-fill-gear h4 mb-0 opacity-50"></i>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="opacity-75 small">Total Drivers</span>
+                        <span class="fw-bold">@Model.Drivers.Count</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="opacity-75 small">Office ID</span>
+                        <span class="fw-bold">#@Model.OfficeId.ToString("D3")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4 pb-4 border-bottom border-white border-opacity-25">
+                        <span class="opacity-75 small">Status</span>
+                        <span class="fw-bold text-success">Active</span>
+                    </div>
+
+                    <a asp-controller="Driver" asp-action="Create" class="btn btn-white-modern w-100 py-3 fw-bold rounded-3 text-center text-decoration-none">Add New Driver</a>
+                    <div class="text-center extra-small opacity-50 mt-4 text-uppercase">VoyaBus Staff Management</div>
+                </div>
+
+                <div class="vb-notice-card p-3 rounded-3 d-flex gap-3 align-items-start border">
+                    <i class="bi bi-info-circle text-muted h5 mb-0"></i>
+                    <div class="small text-muted">
                         Drivers can be reassigned up to 2 hours before departure for a small convenience fee.
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-}
+    }
+</div>
+
+<style>
+    .btn-vb-dark { background: #475569; color: white; border: 0; font-weight: 600; }
+    .btn-vb-dark:hover { background: #334155; color: white; }
+    .btn-white-modern { background: white; color: #334155; border: 0; }
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05rem; }
+    .mono { font-family: 'JetBrains Mono', 'Roboto Mono', monospace; }
+</style>

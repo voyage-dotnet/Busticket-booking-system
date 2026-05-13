@@ -1,58 +1,78 @@
 @{
-    ViewData["Title"] = "Welcome to VoyaBus";
+    ViewData["Title"] = "Journey with Clarity - VoyaBus";
 }
 
-<div class="vb-hero" style="min-height: 550px; align-items: center;">
-    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=2000"
-         class="vb-hero-bg" alt="Bus background">
-    <div class="container text-center vb-hero-content">
-        <h1 class="display-3 fw-bold mb-4">Travel Better with VoyaBus</h1>
-        <p class="h5 mb-5 opacity-75 mx-auto" style="max-width: 600px;">Connecting you to hundreds of destinations with
-            premium comfort, reliable service, and a seamless booking experience.</p>
-        
-            <div class="d-flex justify-content-center gap-3">
-                <a asp-controller="Trips" asp-action="Index" class="vb-btn-primary px-5 py-3 h5 mb-0">
-                    Book a Trip Now <i class="bi bi-arrow-right ms-2"></i>
-                </a>
-                <a href="#" class="vb-btn-secondary px-5 py-3 h5 mb-0"
-                       style="border-color: rgba(255,255,255,0.5); color: #fff;">
-                    Learn More
-                </a>
+<div class="vb-hero-modern">
+    <div class="vb-hero-overlay">
+        <div class="container position-relative h-100 d-flex flex-column justify-content-center">
+            <h1 class="vb-hero-title-modern">Journey with Clarity</h1>
+            <p class="vb-hero-subtitle-modern">Premium transit connections across the continent. Simple, efficient, and always on time.</p>
+            
+            <div class="vb-search-card shadow-lg mt-5">
+                <form asp-controller="Trips" asp-action="Index" method="get" class="row g-0 align-items-center">
+                    <div class="col-lg-3 border-end">
+                        <div class="vb-search-input-group px-4 py-3">
+                            <label class="vb-search-label">ORIGIN</label>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-geo-alt me-2 text-muted"></i>
+                                <input type="text" name="from" class="vb-search-input-clean" placeholder="Where from?" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 border-end">
+                        <div class="vb-search-input-group px-4 py-3">
+                            <label class="vb-search-label">DESTINATION</label>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-geo-alt-fill me-2 text-muted"></i>
+                                <input type="text" name="to" class="vb-search-input-clean" placeholder="Where to?" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 border-end">
+                        <div class="vb-search-input-group px-4 py-3">
+                            <label class="vb-search-label">DATE</label>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-calendar3 me-2 text-muted"></i>
+                                <input type="date" name="date" class="vb-search-input-clean" required value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 border-end">
+                        <div class="vb-search-input-group px-4 py-3">
+                            <label class="vb-search-label">PASSENGERS</label>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-people me-2 text-muted"></i>
+                                <select class="vb-search-input-clean border-0 w-100">
+                                    <option>1 Adult</option>
+                                    <option>2 Adults</option>
+                                    <option>3 Adults</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 p-3">
+                        <button type="submit" class="vb-btn-search-modern w-100 h-100 py-3">Find My Trip</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="container py-5 mt-4">
-        <div class="row g-4 text-center">
-            <div class="col-md-4">
-                <div class="vb-content-box h-100 p-5">
-                    <div class="bg-primary bg-opacity-10 w-auto d-inline-block p-3 rounded-circle text-primary mb-4">
-                        <i class="bi bi-shield-check h2 mb-0"></i>
-                    </div>
-                    <h3 class="h5 fw-bold">Safe Travel</h3>
-                    <p class="vb-muted">Our buses undergo rigorous safety checks and are driven by experienced
-                        professionals.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="vb-content-box h-100 p-5">
-                        <div class="bg-primary bg-opacity-10 w-auto d-inline-block p-3 rounded-circle text-primary mb-4">
-                            <i class="bi bi-wifi h2 mb-0"></i>
-                        </div>
-                        <h3 class="h5 fw-bold">Free Wi-Fi</h3>
-                        <p class="vb-muted">Stay connected throughout your journey with our high-speed onboard Wi-Fi services.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="vb-content-box h-100 p-5">
-                        <div class="bg-primary bg-opacity-10 w-auto d-inline-block p-3 rounded-circle text-primary mb-4">
-                            <i class="bi bi-clock-history h2 mb-0"></i>
-                        </div>
-                        <h3 class="h5 fw-bold">On-Time Always</h3>
-                        <p class="vb-muted">We pride ourselves on our punctuality, ensuring you reach your destination as
-                            scheduled.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<style>
+    .vb-hero-modern { height: 500px; background: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=2000') center/cover; position: relative; }
+    .vb-hero-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.6); }
+    .vb-hero-title-modern { font-size: 3.5rem; font-weight: 700; color: white; margin-bottom: 1rem; }
+    .vb-hero-subtitle-modern { color: rgba(255,255,255,0.8); font-size: 1.1rem; max-width: 600px; }
+    .vb-search-card { background: white; border-radius: 12px; overflow: hidden; }
+    .vb-search-input-group { background: white; transition: background 0.2s; }
+    .vb-search-input-group:hover { background: #f8fafc; }
+    .vb-search-label { font-size: 0.65rem; font-weight: 700; color: #64748b; letter-spacing: 0.05rem; display: block; margin-bottom: 4px; }
+    .vb-search-input-clean { border: 0; padding: 0; font-size: 1rem; font-weight: 500; color: #0f172a; width: 100%; outline: none; background: transparent; }
+    .vb-btn-search-modern { background: #475569; color: white; border: 0; font-weight: 600; transition: background 0.2s; border-radius: 8px; }
+    .vb-btn-search-modern:hover { background: #334155; }
+    .vb-trip-recent-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .vb-live-network-card { background: #e2e8f0; border-radius: 12px; display: flex; flex-direction: column; }
+    .vb-stats-box { background: white; padding: 20px; border-radius: 8px; }
+    .letter-spacing-1 { letter-spacing: 0.1rem; }
+</style>

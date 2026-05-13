@@ -1,79 +1,69 @@
-@model BusTicketSystem.MVC.ViewModels.RouteIndexViewModel
+@model List<BusTicketSystem.MVC.ViewModels.RouteViewModel>
 @{
-    ViewData["Title"] = "Routes Management";
+    ViewData["Title"] = "Routes Management - VoyaBus";
 }
 
 <div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h1 class="h2 fw-bold">Routes Management</h1>
-            <p class="vb-muted">Manage available travel routes and connections.</p>
+            <h1 class="h2 fw-bold">Manage Routes</h1>
+            <p class="vb-muted">Define and manage bus routes between cities.</p>
         </div>
-        <a asp-action="Create" class="vb-btn-primary">
+        <a asp-action="Create" class="btn btn-vb-dark px-4 py-2">
             <i class="bi bi-plus-lg me-2"></i> Add New Route
         </a>
     </div>
 
-
-    <div class="vb-content-box mb-4 p-4">
-        <form method="get" class="row g-3 align-items-end">
-            <div class="col-md-4">
-                <label class="vb-form-label">From City</label>
-                <input type="text" name="from" value="@Model.FromSearch" class="vb-form-control" placeholder="Search source...">
-            </div>
-            <div class="col-md-4">
-                <label class="vb-form-label">To City</label>
-                <input type="text" name="to" value="@Model.ToSearch" class="vb-form-control" placeholder="Search destination...">
-            </div>
-            <div class="col-md-4 d-flex gap-2">
-                <button type="submit" class="vb-btn-secondary flex-grow-1">Search</button>
-                <a asp-action="Index" class="vb-btn-ghost">Reset</a>
-            </div>
-        </form>
-    </div>
-
-
-    <div class="vb-content-box p-0 overflow-hidden">
-        <table class="table table-hover mb-0 align-middle">
-            <thead class="bg-light">
-                <tr>
-                    <th class="ps-4 py-3">Route ID</th>
-                    <th class="py-3">From City</th>
-                    <th class="py-3">To City</th>
-                    <th class="py-3">Duration</th>
-                    <th class="py-3">Status</th>
-                    <th class="pe-4 py-3 text-end">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.Routes != null && Model.Routes.Any())
-                {
-                    foreach (var route in Model.Routes)
+    <div class="vb-content-box p-0 overflow-hidden shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase extra-small fw-bold opacity-50">Route ID</th>
+                        <th class="py-3 text-uppercase extra-small fw-bold opacity-50">From City</th>
+                        <th class="py-3 text-uppercase extra-small fw-bold opacity-50">To City</th>
+                        <th class="py-3 text-uppercase extra-small fw-bold opacity-50">Distance</th>
+                        <th class="py-3 text-uppercase extra-small fw-bold opacity-50">Duration</th>
+                        <th class="pe-4 py-3 text-end text-uppercase extra-small fw-bold opacity-50">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var route in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 text-muted small fw-bold">#@route.RouteId.ToString("D3")</td>
+                                <td class="fw-bold">@route.FromCity</td>
+                                <td class="fw-bold">@route.ToCity</td>
+                                <td><span class="badge bg-light text-dark fw-normal">@route.Distance km</span></td>
+                                <td><span class="badge bg-light text-dark fw-normal">@route.EstimatedDuration hrs</span></td>
+                                <td class="pe-4 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a asp-action="Details" asp-route-id="@route.RouteId" class="btn btn-outline-light border text-dark btn-sm rounded-pill px-3 fw-bold small">View</a>
+                                        <a asp-action="Edit" asp-route-id="@route.RouteId" class="btn btn-vb-dark btn-sm rounded-pill px-3 fw-bold small">Edit</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td class="ps-4"><span class="mono text-muted">#@route.RouteId</span></td>
-                            <td><span class="fw-bold text-primary">@route.FromCity</span></td>
-                            <td><span class="fw-bold text-primary">@route.ToCity</span></td>
-                            <td><i class="bi bi-clock me-1 small"></i> @route.EstimatedDurationMinutes mins</td>
-                            <td>
-                                <span class="vb-badge vb-badge-live">Active</span>
-                            </td>
-                            <td class="pe-4 text-end">
-                                <a asp-action="Details" asp-route-id="@route.RouteId" class="vb-btn-ghost p-1 mx-1 text-primary" title="View Details"><i class="bi bi-eye"></i></a>
-                                <a asp-action="Edit" asp-route-id="@route.RouteId" class="vb-btn-ghost p-1 mx-1 text-primary" title="Edit Route"><i class="bi bi-pencil"></i></a>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="opacity-25 mb-3"><i class="bi bi-map h1"></i></div>
+                                <p class="vb-muted mb-0">No routes found. Start by adding a new one.</p>
                             </td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="6" class="text-center py-5">
-                            <div class="vb-muted">No routes found matching your criteria.</div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+<style>
+    .btn-vb-dark { background: #475569; color: white; border: 0; font-weight: 600; transition: background 0.2s; }
+    .btn-vb-dark:hover { background: #334155; color: white; }
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05rem; }
+</style>

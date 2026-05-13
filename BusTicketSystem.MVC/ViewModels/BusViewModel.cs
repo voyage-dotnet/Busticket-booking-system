@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BusTicketSystem.MVC.Models.ViewModels.Agency
+namespace BusTicketSystem.MVC.ViewModels
 {
-    /// <summary>
-    /// Represents bus data returned from the API for display in views.
-    /// </summary>
+    
+    
+    
     public class BusViewModel
     {
         public int BusId { get; set; }
@@ -22,18 +22,18 @@ namespace BusTicketSystem.MVC.Models.ViewModels.Agency
         public string Type { get; set; } = string.Empty;
     }
 
-    /// <summary>
-    /// Used for GET /api/offices/{officeId}/buses — list all buses for an office.
-    /// </summary>
+    
+    
+    
     public class BusListViewModel
     {
         public int OfficeId { get; set; }
         public List<BusViewModel> Buses { get; set; } = new();
     }
 
-    /// <summary>
-    /// Used for POST /api/buses — register a new bus form.
-    /// </summary>
+    
+    
+    
     public class CreateBusViewModel
     {
         [Required(ErrorMessage = "Office is required.")]
@@ -56,13 +56,13 @@ namespace BusTicketSystem.MVC.Models.ViewModels.Agency
         [Display(Name = "Bus Type")]
         public string Type { get; set; } = string.Empty;
 
-        // For dropdown list of offices
+        
         public List<OfficeViewModel> AvailableOffices { get; set; } = new();
     }
 
-    /// <summary>
-    /// Used for PUT /api/buses/{id} — update bus details form.
-    /// </summary>
+    
+    
+    
     public class UpdateBusViewModel
     {
         [StringLength(20, ErrorMessage = "Registration number cannot exceed 20 characters.")]

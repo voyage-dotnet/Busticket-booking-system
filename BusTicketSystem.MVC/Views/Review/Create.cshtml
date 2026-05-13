@@ -1,0 +1,57 @@
+@model BusTicketSystem.MVC.ViewModels.SubmitReviewViewModel
+@{
+    ViewData["Title"] = "Share Your Experience";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="vb-content-box p-4 p-lg-5">
+                <div class="text-center mb-5">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex p-3 mb-4">
+                        <i class="bi bi-star-fill h3 mb-0"></i>
+                    </div>
+                    <h1 class="h3 fw-bold">Share Your Experience</h1>
+                    <p class="vb-muted">Your feedback helps us improve the journey for everyone.</p>
+                </div>
+
+                <form asp-action="Create" method="post">
+                    <input type="hidden" asp-for="TripId" />
+
+                    <div class="mb-4">
+                        <label asp-for="Rating" class="vb-form-label mb-3">YOUR RATING</label>
+                        <div class="d-flex justify-content-between gap-2">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <div class="flex-grow-1">
+                                    <input type="radio" name="Rating" id="rating_@i" value="@i" class="btn-check" required @(Model.Rating == i ? "checked" : "")>
+                                    <label class="btn btn-outline-light border text-dark w-100 py-3 rounded-3 fw-bold" for="rating_@i">@i</label>
+                                </div>
+                            }
+                        </div>
+                        <span asp-validation-for="Rating" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="mb-5">
+                        <label asp-for="Comment" class="vb-form-label mb-3">DESCRIBE YOUR JOURNEY</label>
+                        <textarea asp-for="Comment" class="vb-form-control" rows="5" placeholder="What did you enjoy? Anything we can improve?"></textarea>
+                        <span asp-validation-for="Comment" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-primary py-3 fw-bold rounded-3">
+                            Submit Experience <i class="bi bi-send ms-2"></i>
+                        </button>
+                        <a asp-controller="Booking" asp-action="MyBookings" class="btn btn-link text-muted text-decoration-none small">
+                            Skip for now
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

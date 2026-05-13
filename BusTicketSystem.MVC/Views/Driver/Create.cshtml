@@ -105,7 +105,7 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
-        // Live preview in sidebar
+        
         document.getElementById('Name').addEventListener('input', function() {
             document.getElementById('previewName').textContent = this.value || '—';
         });

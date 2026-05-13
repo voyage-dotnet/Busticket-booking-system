@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusTicketSystem.MVC.ApiResponseWrapper
 {
-    // You can put this in your DTOs folder
+    
     public class ApiResponse<T>
     {
         public bool Success { get; set; }

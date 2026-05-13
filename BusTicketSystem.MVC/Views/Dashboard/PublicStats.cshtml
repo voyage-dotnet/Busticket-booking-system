@@ -1,0 +1,45 @@
+@model BusTicketSystem.MVC.ViewModels.PublicStatsViewModel
+
+@{
+    ViewData["Title"] = "Platform Stats";
+}
+
+<div class="container mt-4 text-center">
+    <h2 class="mb-4">Voyage Platform Statistics</h2>
+    <p class="lead text-muted mb-5">Connecting cities and making travel easier.</p>
+
+    <div class="row justify-content-center">
+        <div class="col-md-2 mx-2">
+            <div class="card text-dark bg-light mb-3 shadow-sm border-0">
+                <div class="card-body">
+                    <h1 class="display-5 text-primary">@Model.TotalRoutes</h1>
+                    <p class="card-text text-uppercase fw-bold text-muted">Routes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mx-2">
+            <div class="card text-dark bg-light mb-3 shadow-sm border-0">
+                <div class="card-body">
+                    <h1 class="display-5 text-success">@Model.TotalCitiesCovered</h1>
+                    <p class="card-text text-uppercase fw-bold text-muted">Cities</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mx-2">
+            <div class="card text-dark bg-light mb-3 shadow-sm border-0">
+                <div class="card-body">
+                    <h1 class="display-5 text-warning">@Model.ActiveAgencies</h1>
+                    <p class="card-text text-uppercase fw-bold text-muted">Agencies</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mx-2">
+            <div class="card text-dark bg-light mb-3 shadow-sm border-0">
+                <div class="card-body">
+                    <h1 class="display-5 text-info">@Model.TotalTripsAvailable</h1>
+                    <p class="card-text text-uppercase fw-bold text-muted">Trips Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

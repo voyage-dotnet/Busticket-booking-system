@@ -1,0 +1,124 @@
+@model BusTicketSystem.MVC.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard - VoyaBus";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="h2 fw-bold">Platform Overview</h1>
+            <p class="vb-muted">System-wide performance and monitoring dashboard.</p>
+        </div>
+        <div class="text-end">
+            <div class="extra-small text-muted fw-bold text-uppercase mb-1">Last System Update</div>
+            <div class="h6 fw-bold mb-0">@DateTime.Now.ToString("MMM dd, HH:mm")</div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="vb-content-box p-4 border-0 shadow-sm">
+                <div class="extra-small fw-bold opacity-50 mb-1 text-uppercase">TOTAL USERS</div>
+                <div class="h3 fw-bold mb-0">@Model.TotalUsers</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="vb-content-box p-4 border-0 shadow-sm">
+                <div class="extra-small fw-bold opacity-50 mb-1 text-uppercase">ACTIVE AGENCIES</div>
+                <div class="h3 fw-bold mb-0 text-success">@Model.TotalAgencies</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="vb-content-box p-4 border-0 shadow-sm">
+                <div class="extra-small fw-bold opacity-50 mb-1 text-uppercase">TOTAL TRIPS</div>
+                <div class="h3 fw-bold mb-0 text-primary">@Model.TotalTrips</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="vb-content-box p-4 border-0 shadow-sm">
+                <div class="extra-small fw-bold opacity-50 mb-1 text-uppercase">PLATFORM REVENUE</div>
+                <div class="h3 fw-bold mb-0 text-dark">$@Model.TotalRevenue.ToString("N0")</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-lg-7">
+            <h5 class="fw-bold mb-4">Operational Management</h5>
+            <div class="d-flex flex-column gap-3">
+                <a asp-action="Users" class="vb-content-box p-4 border-0 shadow-sm text-decoration-none d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="bg-light p-3 rounded-3"><i class="bi bi-people h4 mb-0 opacity-50"></i></div>
+                        <div>
+                            <div class="h6 fw-bold mb-1 text-dark">User Management</div>
+                            <div class="small text-muted">Update roles and view profiles across the platform.</div>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted h4 mb-0"></i>
+                </a>
+                <a asp-action="Agencies" class="vb-content-box p-4 border-0 shadow-sm text-decoration-none d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="bg-light p-3 rounded-3"><i class="bi bi-shop h4 mb-0 opacity-50"></i></div>
+                        <div>
+                            <div class="h6 fw-bold mb-1 text-dark">Agency Performance</div>
+                            <div class="small text-muted">Monitor operator revenue and fleet statistics.</div>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted h4 mb-0"></i>
+                </a>
+                <a asp-action="Bookings" class="vb-content-box p-4 border-0 shadow-sm text-decoration-none d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="bg-light p-3 rounded-3"><i class="bi bi-ticket-perforated h4 mb-0 opacity-50"></i></div>
+                        <div>
+                            <div class="h6 fw-bold mb-1 text-dark">Global Bookings</div>
+                            <div class="small text-muted">Audit all platform reservations and cancellations.</div>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted h4 mb-0"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="vb-selection-summary-card p-4 p-lg-5 text-white shadow-lg h-100" style="background: #0f172a;">
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <h5 class="fw-bold mb-0">Platform Health</h5>
+                    <div class="bg-success rounded-circle" style="width: 12px; height: 12px;"></div>
+                </div>
+
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between extra-small fw-bold opacity-75 mb-2 text-uppercase">API SERVER STATUS</div>
+                    <div class="d-flex justify-content-between align-items-end mb-2">
+                        <div class="h6 fw-bold mb-0">Operational</div>
+                        <div class="small fw-bold">99.9%</div>
+                    </div>
+                    <div class="progress bg-white bg-opacity-10" style="height: 4px;">
+                        <div class="progress-bar bg-success" style="width: 99.9%"></div>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between extra-small fw-bold opacity-75 mb-2 text-uppercase">DATABASE LATENCY</div>
+                    <div class="d-flex justify-content-between align-items-end mb-2">
+                        <div class="h6 fw-bold mb-0">Optimized</div>
+                        <div class="small fw-bold">12ms</div>
+                    </div>
+                    <div class="progress bg-white bg-opacity-10" style="height: 4px;">
+                        <div class="progress-bar bg-success" style="width: 95%"></div>
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-4">
+                    <button class="btn btn-outline-light w-100 rounded-pill py-3 fw-bold">Generate System Audit</button>
+                    <div class="text-center extra-small opacity-50 mt-4">PRICES INCLUDE ALL TRANSIT TAXES</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05rem; }
+    .vb-content-box { transition: transform 0.2s, box-shadow 0.2s; }
+    .vb-content-box:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important; }
+</style>

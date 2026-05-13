@@ -1,4 +1,4 @@
-@model BusTicketSystem.MVC.ViewModels.Booking.SeatSelectionViewModel
+@model BusTicketSystem.MVC.ViewModels.SeatSelectionViewModel
 @{
     ViewData["Title"] = "Select Your Seat";
 }
@@ -35,7 +35,7 @@
         <input type="hidden" asp-for="SelectedSeat" id="selectedSeatInput" />
 
         <div class="row g-4">
-            <!-- LEFT: Seat Map -->
+            
             <div class="col-lg-7">
                 <div class="vb-card">
                     <div class="vb-seat-legend">
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <!-- RIGHT: Summary -->
+            
             <div class="col-lg-5">
                 <div class="vb-trip-overview mb-3">
                     <div class="vb-trip-overview-title">Trip Overview</div>

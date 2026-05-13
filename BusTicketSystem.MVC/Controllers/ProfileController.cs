@@ -1,4 +1,5 @@
-using BusTicketSystem.MVC.Models;
+using BusTicketSystem.MVC.ViewModels;
+
 using BusTicketSystem.MVC.Services;
 using BusTicketSystem.MVC.Helper;
 using Microsoft.AspNetCore.Mvc;
@@ -7,11 +8,11 @@ namespace BusTicketSystem.MVC.Controllers
 {
     public class ProfileController : Controller
     {
-        private readonly VoyageApiClient _apiClient;
+        private readonly ApiService _apiService;
 
-        public ProfileController(VoyageApiClient apiClient)
+        public ProfileController(ApiService apiService)
         {
-            _apiClient = apiClient;
+            _apiService = apiService;
         }
 
         [HttpGet]
@@ -26,35 +27,30 @@ namespace BusTicketSystem.MVC.Controllers
                 return RedirectToAction("LoginCustomer", "Auth");
             }
 
-            var result = await _apiClient.GetAsync<CustomerProfileViewModel>($"Profile/Get-customer-profile?Email={Uri.EscapeDataString(email)}");
+            var result = await _apiService.GetAsync<CustomerProfileViewModel>($"api/Profile/Get-customer-profile?Email={Uri.EscapeDataString(email)}");
             
-            if (result != null && result.Success)
+            if (result.Success)
             {
                 return View(result.Data);
             }
 
-            if (result?.StatusCode == 401 || result?.StatusCode == 403)
+            if (result.StatusCode == 401 || result.StatusCode == 403)
             {
                 TempData["Error"] = "Session expired or unauthorized. Please log in as a customer.";
                 return RedirectToAction("LoginCustomer", "Auth");
             }
 
-            var errors = result?.GetErrorList();
-            TempData["Error"] = result?.Message ?? (errors != null && errors.Any() ? string.Join(", ", errors) : $"Failed to load profile (Status: {result?.StatusCode}).");
+            TempData["Error"] = result.Message ?? "Failed to load profile.";
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
-        public IActionResult AddAddress()
-        {
-            return View();
-        }
+        public IActionResult AddAddress() => View();
 
         [HttpPost]
         public async Task<IActionResult> AddAddress(CustomerAddressViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            if (!ModelState.IsValid) return View(model);
 
             var token = HttpContext.Session.GetString("JwtToken");
             var email = TokenHelper.GetUserEmail(token);
@@ -62,28 +58,18 @@ namespace BusTicketSystem.MVC.Controllers
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
                 return RedirectToAction("LoginCustomer", "Auth");
 
-            var result = await _apiClient.PostAsync<object>($"Profile/Add-customer-address?Email={Uri.EscapeDataString(email)}", model);
+            var result = await _apiService.PostAsync<object>($"api/Profile/Add-customer-address?Email={Uri.EscapeDataString(email)}", model);
 
-            if (result != null && result.Success)
+            if (result.Success)
             {
                 TempData["Message"] = result.Message;
                 return RedirectToAction("Index");
             }
 
-            if (result?.StatusCode == 401 || result?.StatusCode == 403)
+            TempData["Error"] = result.Message ?? "Failed to add address.";
+            foreach (var error in result.GetErrorList())
             {
-                TempData["Error"] = "You are not authorized to perform this action. Please log in as a customer.";
-                return RedirectToAction("LoginCustomer", "Auth");
-            }
-
-            TempData["Error"] = result?.Message ?? $"Failed to add address (Status: {result?.StatusCode}).";
-            var errors = result?.GetErrorList();
-            if (errors != null && errors.Any())
-            {
-                foreach (var error in errors)
-                {
-                    ModelState.AddModelError("", error);
-                }
+                ModelState.AddModelError("", error);
             }
             return View(model);
         }
@@ -91,8 +77,7 @@ namespace BusTicketSystem.MVC.Controllers
         [HttpGet]
         public IActionResult UpdateEmail()
         {
-            var token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
                 return RedirectToAction("LoginCustomer", "Auth");
 
             return View();
@@ -101,43 +86,31 @@ namespace BusTicketSystem.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateEmail(UpdateEmailViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            if (!ModelState.IsValid) return View(model);
 
-            var token = HttpContext.Session.GetString("JwtToken");
-            if (string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("JwtToken")))
                 return RedirectToAction("LoginCustomer", "Auth");
 
-            // We use model.Email as the 'Current Email' (query param)
-            // and model.NewEmail as the 'New Email' (mapped to DTO)
             if (string.IsNullOrEmpty(model.Email))
             {
                 ModelState.AddModelError("Email", "Current email is required");
                 return View(model);
             }
 
-            var result = await _apiClient.PatchAsync<object>(
-                $"Auth/Update-customer-email?Email={Uri.EscapeDataString(model.Email)}", 
+            var result = await _apiService.PatchAsync<object>(
+                $"api/Auth/Update-customer-email?Email={Uri.EscapeDataString(model.Email)}", 
                 new { Email = model.NewEmail }
             );
 
-            if (result != null && result.Success)
+            if (result.Success)
             {
-                // Clear session because the old token contains the old email
                 HttpContext.Session.Remove("JwtToken");
                 HttpContext.Session.Remove("UserEmail");
-
                 TempData["Message"] = "Email updated successfully. Please log in with your new email.";
                 return RedirectToAction("LoginCustomer", "Auth");
             }
 
-            if (result?.StatusCode == 401 || result?.StatusCode == 403)
-            {
-                TempData["Error"] = "You are not authorized to perform this action.";
-                return RedirectToAction("LoginCustomer", "Auth");
-            }
-
-            TempData["Error"] = result?.Message ?? $"Failed to update email (Status: {result?.StatusCode}).";
+            TempData["Error"] = result.Message ?? "Failed to update email.";
             return View(model);
         }
     }

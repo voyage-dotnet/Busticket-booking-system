@@ -1,6 +1,7 @@
+using BusTicketSystem.MVC.ViewModels;
+
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using BusTicketSystem.MVC.Models;
 
 namespace BusTicketSystem.MVC.Controllers;
 

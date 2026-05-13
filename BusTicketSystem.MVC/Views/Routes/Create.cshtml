@@ -5,40 +5,48 @@
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="vb-content-box p-4">
-                <div class="mb-4">
-                    <h1 class="h3 fw-bold mb-1">Create New Route</h1>
-                    <p class="vb-muted">Define a new connection between two cities.</p>
+                <div class="mb-4 d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                        <i class="bi bi-map h4 mb-0"></i>
+                    </div>
+                    <div>
+                        <h1 class="h3 fw-bold mb-1">Define New Route</h1>
+                        <p class="vb-muted mb-0">Create a new travel path between two cities.</p>
+                    </div>
                 </div>
 
                 <form asp-action="Create" method="post">
-                    <div class="vb-form-group mb-3">
-                        <label class="vb-form-label">Source City</label>
-                        <input asp-for="Request.FromCity" class="vb-form-control" placeholder="e.g. New York">
-                        <span asp-validation-for="Request.FromCity" class="text-danger extra-small"></span>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="vb-form-label">Source City</label>
+                            <input asp-for="FromCity" class="vb-form-control" placeholder="City name">
+                            <span asp-validation-for="FromCity" class="text-danger extra-small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="vb-form-label">Destination City</label>
+                            <input asp-for="ToCity" class="vb-form-control" placeholder="City name">
+                            <span asp-validation-for="ToCity" class="text-danger extra-small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="vb-form-label">Distance (km)</label>
+                            <input asp-for="Distance" type="number" step="0.1" class="vb-form-control" placeholder="0.0">
+                            <span asp-validation-for="Distance" class="text-danger extra-small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="vb-form-label">Estimated Duration (Hours)</label>
+                            <input asp-for="EstimatedDuration" type="number" step="0.1" class="vb-form-control" placeholder="0.0">
+                            <span asp-validation-for="EstimatedDuration" class="text-danger extra-small"></span>
+                        </div>
                     </div>
 
-                    <div class="vb-form-group mb-3">
-                        <label class="vb-form-label">Destination City</label>
-                        <input asp-for="Request.ToCity" class="vb-form-control" placeholder="e.g. Boston">
-                        <span asp-validation-for="Request.ToCity" class="text-danger extra-small"></span>
-                    </div>
-
-                    <div class="vb-form-group mb-3">
-                        <label class="vb-form-label">Break Points</label>
-                        <input asp-for="Request.BreakPoints" class="vb-form-control" placeholder="City A, City B (Optional)">
-                    </div>
-
-                    <div class="vb-form-group mb-4">
-                        <label class="vb-form-label">Estimated Duration (Minutes)</label>
-                        <input asp-for="Request.EstimatedDurationMinutes" type="number" class="vb-form-control" placeholder="0">
-                        <span asp-validation-for="Request.EstimatedDurationMinutes" class="text-danger extra-small"></span>
-                    </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="vb-btn-primary justify-content-center">Create Route</button>
-                        <a asp-action="Index" class="vb-btn-ghost text-center">Cancel</a>
+                    <div class="d-flex gap-3 mt-5">
+                        <button type="submit" class="vb-btn-primary px-5">Create Route</button>
+                        <a asp-action="Index" class="vb-btn-ghost">Cancel</a>
                     </div>
                 </form>
             </div>

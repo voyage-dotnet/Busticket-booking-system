@@ -1,4 +1,4 @@
-namespace BusTicketSystem.MVC.Models;
+namespace BusTicketSystem.MVC.ViewModels;
 
 public class ErrorViewModel
 {

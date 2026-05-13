@@ -6,7 +6,7 @@
 
 <div class="row g-4">
 
-    <!-- ── LEFT: Form (Passenger Information style) ── -->
+    
     <div class="col-lg-8">
 
         <div class="vb-page-title mb-1">
@@ -65,7 +65,7 @@
         </form>
     </div>
 
-    <!-- ── RIGHT: Summary ── -->
+    
     <div class="col-lg-4">
         <div style="position:sticky;top:72px;">
             <div class="vb-card mb-3">
@@ -86,7 +86,7 @@
                     Confirm &amp; Save &nbsp;<i class="bi bi-arrow-right"></i>
                 </button>
                 <p class="text-center text-muted-vb" style="font-size:0.72rem;">
-                    By saving, you agree to our <a href="#" class="btn-vb-ghost" style="font-size:0.72rem;">Terms of Service</a>.
+                    By saving, you agree to our Terms of Service.
                 </p>
             </div>
 
@@ -111,7 +111,7 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
-        // Count filled fields for the sidebar counter
+        
         const inputs = document.querySelectorAll('#editForm input');
         const counter = document.getElementById('fieldsCount');
         function countFields() {

@@ -1,62 +1,31 @@
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 using BusTicketSystem.MVC.ViewModels;
-using BusTicketSystem.MVC.ViewModels.Booking;
+
+using BusTicketSystem.MVC.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BusTicketSystem.MVC.Controllers;
 
 public class PaymentController : Controller
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ApiService _apiService;
 
-    private static readonly JsonSerializerOptions _json = new()
+    public PaymentController(ApiService apiService)
     {
-        PropertyNameCaseInsensitive = true
-    };
-
-    public PaymentController(IHttpClientFactory httpClientFactory)
-    {
-        _httpClientFactory = httpClientFactory;
+        _apiService = apiService;
     }
 
-    // ── Helpers (same pattern as BookingController) ───────────────────────────
-
-    private HttpClient CreateApiClient()
-    {
-        var client = _httpClientFactory.CreateClient("BusTicketApi");
-        var token  = HttpContext.Session.GetString("JwtToken");
-        if (!string.IsNullOrEmpty(token))
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-        return client;
-    }
-
-    private static async Task<T?> Unwrap<T>(HttpResponseMessage response)
-    {
-        var json     = await response.Content.ReadAsStringAsync();
-        var envelope = JsonSerializer.Deserialize<ApiEnvelopeDto<T>>(json, _json);
-        return envelope is { Data: not null } ? envelope.Data : default;
-    }
-
-    // ── STEP 1: Show the payment page ─────────────────────────────────────────
-    // GET /Payment/Pay?bookingId=5
     [HttpGet]
     public async Task<IActionResult> Pay(int bookingId)
     {
-        var client   = CreateApiClient();
-        var response = await client.GetAsync($"api/bookings/{bookingId}");
+        var response = await _apiService.GetAsync<BookingDto>($"api/bookings/{bookingId}");
 
-        if (!response.IsSuccessStatusCode)
+        if (!response.Success || response.Data == null)
         {
-            TempData["Error"] = "Booking not found.";
+            TempData["Error"] = response.Message ?? "Booking not found.";
             return RedirectToAction("MyBookings", "Booking");
         }
 
-        var dto = await Unwrap<BookingDto>(response);
-        if (dto is null) return RedirectToAction("MyBookings", "Booking");
-
+        var dto = response.Data;
         var vm = new PayViewModel
         {
             BookingId     = dto.BookingId,
@@ -69,13 +38,10 @@ public class PaymentController : Controller
         return View(vm);
     }
 
-    // ── STEP 2a: Process CARD payment ─────────────────────────────────────────
-    // POST /Payment/ProcessCard
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ProcessCard(PayViewModel form)
     {
-        // Basic card field validation
         if (string.IsNullOrWhiteSpace(form.CardHolderName) ||
             string.IsNullOrWhiteSpace(form.CardNumber)     ||
             string.IsNullOrWhiteSpace(form.Expiry)         ||
@@ -85,36 +51,26 @@ public class PaymentController : Controller
             return View("Pay", form);
         }
 
-        var payload = JsonSerializer.Serialize(new
-{
-    bookingId     = form.BookingId,
-    amount        = form.TotalAmount,  // ✅ API also needs Amount
-    paymentMethod = "CARD",
-    cardHolderName = form.CardHolderName,  // ✅ flat, no wrapper
-    cardNumber     = form.CardNumber,
-    expiry         = form.Expiry,
-    cvv            = form.CVV
-});
-
-        var client   = CreateApiClient();
-        var response = await client.PostAsync("api/payments",
-            new StringContent(payload, Encoding.UTF8, "application/json"));
-
-        if (!response.IsSuccessStatusCode)
+        var payload = new
         {
-            var err = await response.Content.ReadAsStringAsync();
-            var errEnv = JsonSerializer.Deserialize<ApiEnvelopeDto<object>>(err, _json);
-            ModelState.AddModelError("", errEnv?.Message ?? "Payment failed. Please try again.");
+            bookingId     = form.BookingId,
+            amount        = form.TotalAmount,  
+            paymentMethod = "CARD",
+            cardHolderName = form.CardHolderName,  
+            cardNumber     = form.CardNumber,
+            expiry         = form.Expiry,
+            cvv            = form.CVV
+        };
+
+        var response = await _apiService.PostAsync<PaymentResponseDto>("api/payments", payload);
+
+        if (!response.Success || response.Data == null)
+        {
+            ModelState.AddModelError("", response.Message ?? "Payment failed. Please try again.");
             return View("Pay", form);
         }
 
-        var result = await Unwrap<PaymentResponseDto>(response);
-        if (result is null)
-        {
-            ModelState.AddModelError("", "Unexpected response from payment service.");
-            return View("Pay", form);
-        }
-
+        var result = response.Data;
         return RedirectToAction(nameof(Success), new
         {
             bookingId  = form.BookingId,
@@ -127,36 +83,25 @@ public class PaymentController : Controller
         });
     }
 
-    // ── STEP 2b: Process UPI payment ──────────────────────────────────────────
-    // POST /Payment/ProcessUpi
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ProcessUpi(PayViewModel form)
     {
-        var payload = JsonSerializer.Serialize(new
+        var payload = new
         {
             bookingId     = form.BookingId,
             paymentMethod = "UPI"
-        });
+        };
 
-        var client   = CreateApiClient();
-        var response = await client.PostAsync("api/payments",
-            new StringContent(payload, Encoding.UTF8, "application/json"));
+        var response = await _apiService.PostAsync<PaymentResponseDto>("api/payments", payload);
 
-        if (!response.IsSuccessStatusCode)
+        if (!response.Success || response.Data == null)
         {
-            ModelState.AddModelError("", "UPI payment initiation failed.");
+            ModelState.AddModelError("", response.Message ?? "UPI payment initiation failed.");
             return View("Pay", form);
         }
 
-        var result = await Unwrap<PaymentResponseDto>(response);
-        if (result is null)
-        {
-            ModelState.AddModelError("", "No QR code returned from server.");
-            return View("Pay", form);
-        }
-
-        // Store QR in TempData so the Pay view can show it
+        var result = response.Data;
         TempData["UpiQR"]      = result.QRCode;
         TempData["UpiUrl"]     = result.UpiUrl;
         TempData["UpiPayId"]   = result.PaymentId;
@@ -165,8 +110,6 @@ public class PaymentController : Controller
         return RedirectToAction(nameof(Pay), new { bookingId = form.BookingId });
     }
 
-    // ── STEP 3: Success page ──────────────────────────────────────────────────
-    // GET /Payment/Success
     [HttpGet]
     public IActionResult Success(int bookingId, int paymentId, string routeName,
         DateTime departure, int seatNumber, decimal amount, string method)

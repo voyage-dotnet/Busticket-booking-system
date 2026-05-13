@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BusTicketSystem.MVC.DTO
+namespace BusTicketSystem.MVC.ViewModels
 {
-    public class LoginResponseDTO
+    public class LoginResponseViewModel
     {
         public string Token { get; set; } = null!;
     }

@@ -1,4 +1,4 @@
-@model BusTicketSystem.MVC.ViewModels.RouteDetailsViewModel
+@model BusTicketSystem.MVC.ViewModels.RouteViewModel
 @{
     ViewData["Title"] = "Route Details";
 }
@@ -16,8 +16,8 @@
                 <div class="vb-card-dark p-4 rounded-0">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="vb-badge vb-badge-route mb-2">ROUTE ID: #@Model.Route.RouteId</div>
-                            <h2 class="h3 mb-0 fw-bold">@Model.Route.FromCity <i class="bi bi-arrow-right mx-2 text-white-50"></i> @Model.Route.ToCity</h2>
+                            <div class="vb-badge vb-badge-route mb-2">ROUTE ID: #@Model.RouteId</div>
+                            <h2 class="h3 mb-0 fw-bold">@Model.FromCity <i class="bi bi-arrow-right mx-2 text-white-50"></i> @Model.ToCity</h2>
                         </div>
                         <i class="bi bi-map h1 mb-0 opacity-25"></i>
                     </div>
@@ -28,31 +28,31 @@
                         <div class="col-md-6">
                             <div class="vb-form-group">
                                 <label class="vb-form-label">Source City</label>
-                                <div class="h5 fw-bold">@Model.Route.FromCity</div>
+                                <div class="h5 fw-bold">@Model.FromCity</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="vb-form-group">
                                 <label class="vb-form-label">Destination City</label>
-                                <div class="h5 fw-bold">@Model.Route.ToCity</div>
+                                <div class="h5 fw-bold">@Model.ToCity</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label class="vb-form-label">Distance</label>
+                                <div class="h5 fw-bold">@Model.Distance km</div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="vb-form-group">
                                 <label class="vb-form-label">Estimated Duration</label>
-                                <div class="h5 fw-bold">@Model.Route.EstimatedDurationMinutes Minutes</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="vb-form-group">
-                                <label class="vb-form-label">Break Points</label>
-                                <div class="h5 fw-bold">@(string.IsNullOrEmpty(Model.Route.BreakPoints) ? "Direct Route" : Model.Route.BreakPoints)</div>
+                                <div class="h5 fw-bold">@Model.EstimatedDuration Hours</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="d-flex gap-3 pt-3 border-top">
-                        <a asp-action="Edit" asp-route-id="@Model.Route.RouteId" class="vb-btn-primary px-5">Edit Route</a>
+                        <a asp-action="Edit" asp-route-id="@Model.RouteId" class="vb-btn-primary px-5">Edit Route</a>
                         <a asp-action="Index" class="vb-btn-ghost">Back to List</a>
                     </div>
                 </div>
