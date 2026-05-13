@@ -1,0 +1,102 @@
+@model OfficeViewModel
+@{
+    ViewData["Title"] = "Office Details";
+    ViewData["Breadcrumb"] = $@"<a href='/Office'>My Offices</a><span class='sep'>›</span><span class='active'>Office #{Model.OfficeId}</span>";
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+
+        <div class="vb-page-title mb-1">
+            <i class="bi bi-building-fill"></i> Office #@Model.OfficeId
+        </div>
+        <p class="vb-page-subtitle">Full details for this branch office.</p>
+
+        <div class="vb-card mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <span class="vb-tag vb-tag-navy me-2">OFFICE #@Model.OfficeId</span>
+                    <span class="vb-tag vb-tag-navy">AGENCY #@Model.AgencyId</span>
+                </div>
+                <a asp-controller="Office" asp-action="Edit" asp-route-id="@Model.OfficeId"
+                   class="btn-vb-ghost fs-sm">Edit Office</a>
+            </div>
+
+            <div class="vb-route-line">
+                <div class="vb-route-stop">
+                    <div class="vb-route-stop-dot filled"></div>
+                    <div>
+                        <div class="text-muted-vb" style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Contact Person</div>
+                        <div class="fw-700" style="font-size:1.1rem;color:var(--vb-navy);">@Model.OfficeContactPersonName</div>
+                        <div class="text-muted-vb fs-sm">@Model.OfficeContactNumber</div>
+                    </div>
+                </div>
+                <div class="vb-route-connector" style="height:24px;"></div>
+                <div class="vb-route-stop">
+                    <div class="vb-route-stop-dot"></div>
+                    <div>
+                        <div class="text-muted-vb" style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Office Email</div>
+                        <div class="fw-600" style="font-size:1rem;">@Model.OfficeMail</div>
+                        @if (!string.IsNullOrWhiteSpace(Model.FullAddress))
+                        {
+                            <div class="text-muted-vb fs-sm">@Model.FullAddress</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="vb-section-title">Quick Actions</div>
+        <div class="d-flex gap-3 flex-wrap">
+            <a asp-controller="Bus" asp-action="Index" asp-route-officeId="@Model.OfficeId"
+               class="vb-card text-decoration-none" style="flex:1;min-width:140px;border:2px solid var(--vb-navy);">
+                <i class="bi bi-bus-front-fill" style="font-size:1.2rem;color:var(--vb-navy);"></i>
+                <div class="fw-600 mt-2" style="font-size:0.88rem;color:var(--vb-navy);">View Buses</div>
+                <div class="text-muted-vb fs-xs">Fleet for this office</div>
+            </a>
+            <a asp-controller="Driver" asp-action="Index" asp-route-officeId="@Model.OfficeId"
+               class="vb-card text-decoration-none" style="flex:1;min-width:140px;">
+                <i class="bi bi-person-workspace" style="font-size:1.2rem;color:var(--vb-accent);"></i>
+                <div class="fw-600 mt-2" style="font-size:0.88rem;">View Drivers</div>
+                <div class="text-muted-vb fs-xs">Staff at this office</div>
+            </a>
+            <a asp-controller="Office" asp-action="Edit" asp-route-id="@Model.OfficeId"
+               class="vb-card text-decoration-none" style="flex:1;min-width:140px;border-style:dashed;">
+                <i class="bi bi-pencil-square" style="font-size:1.2rem;color:var(--vb-text-muted);"></i>
+                <div class="fw-600 mt-2" style="font-size:0.88rem;">Edit Office</div>
+                <div class="text-muted-vb fs-xs">Update information</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div style="position:sticky;top:72px;">
+            <div class="vb-card mb-3">
+                <div class="fw-700 mb-3">Office Summary</div>
+                <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--vb-card-border);font-size:0.85rem;">
+                    <span class="text-muted-vb">Office ID</span>
+                    <span class="fw-600">#@Model.OfficeId</span>
+                </div>
+                <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--vb-card-border);font-size:0.85rem;">
+                    <span class="text-muted-vb">Agency ID</span>
+                    <span class="fw-600">#@Model.AgencyId</span>
+                </div>
+                <div class="d-flex justify-content-between py-2" style="font-size:0.85rem;">
+                    <span class="text-muted-vb">Address ID</span>
+                    <span class="fw-600">#@Model.OfficeAddressId</span>
+                </div>
+                <hr class="vb-divider">
+                <a asp-controller="Office" asp-action="Edit" asp-route-id="@Model.OfficeId"
+                   class="btn-vb-primary d-flex justify-content-center w-100">
+                    Edit This Office <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+            <div class="vb-info-box">
+                <i class="bi bi-info-circle"></i>
+                <div style="font-size:0.78rem;">
+                    Buses and drivers assigned to this office will appear in trip schedules.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,115 @@
+@model AgencyViewModel
+@{
+    ViewData["Title"] = Model.Name + " — Agency Profile";
+    ViewData["Breadcrumb"] = $"<a href='/Agency'>Agencies</a><span class='sep'>›</span><span class='active'>{Model.Name}</span>";
+}
+
+<div class="row g-4">
+
+    <!-- ── LEFT: Agency Detail (like "Review Your Journey" card) ── -->
+    <div class="col-lg-8">
+
+        <div class="vb-page-title mb-1">
+            <i class="bi bi-building-fill"></i>
+            @Model.Name
+        </div>
+        <p class="vb-page-subtitle">Public agency profile on the VoyaBus platform.</p>
+
+        <!-- Journey-style route card -->
+        <div class="vb-card mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <span class="vb-tag vb-tag-navy me-2">AGENCY #@Model.AgencyId</span>
+                    <span class="vb-tag vb-tag-green">Verified Operator</span>
+                </div>
+                <a asp-controller="Agency" asp-action="Index" class="btn-vb-ghost fs-sm">
+                    All Agencies
+                </a>
+            </div>
+
+            <!-- Route-style contact display -->
+            <div class="vb-route-line">
+                <div class="vb-route-stop">
+                    <div class="vb-route-stop-dot filled"></div>
+                    <div>
+                        <div class="fw-600" style="font-size:0.95rem;">@Model.ContactPersonName</div>
+                        <div class="text-muted-vb fs-sm">Contact Person</div>
+                    </div>
+                </div>
+                <div class="vb-route-connector"></div>
+                <div class="vb-route-stop">
+                    <div class="vb-route-stop-dot"></div>
+                    <div>
+                        <div class="fw-600" style="font-size:0.95rem;">@Model.Email</div>
+                        <div class="text-muted-vb fs-sm">Email Address</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Info grid -->
+        <div class="vb-section-title">Agency Contact Information</div>
+        <div class="vb-card mb-3">
+            <div class="row g-0">
+                <div class="col-sm-6" style="padding:1rem;border-right:1px solid var(--vb-card-border);">
+                    <div class="vb-label">Full Name</div>
+                    <div class="fw-600" style="font-size:0.95rem;">@Model.Name</div>
+                </div>
+                <div class="col-sm-6" style="padding:1rem;">
+                    <div class="vb-label">Phone Number</div>
+                    <div class="fw-600" style="font-size:0.95rem;">
+                        <i class="bi bi-telephone me-1 text-muted-vb"></i>@Model.Phone
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info boxes -->
+        <div class="vb-info-box mb-2">
+            <i class="bi bi-shield-lock-fill"></i>
+            <div>
+                <div class="fw-600" style="font-size:0.82rem;color:var(--vb-navy);">Verified Agency</div>
+                <div>This agency has been verified by VoyaBus. All operator details are confirmed.</div>
+            </div>
+        </div>
+
+        <div class="vb-info-box">
+            <i class="bi bi-info-circle-fill"></i>
+            <div>
+                <div class="fw-600" style="font-size:0.82rem;color:var(--vb-navy);">Booking Policy</div>
+                <div>Full refund if cancelled at least 24 hours before departure time.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── RIGHT: Action Panel (like "Fare Breakdown") ── -->
+    <div class="col-lg-4">
+        <div class="vb-card mb-3" style="position:sticky;top:72px;">
+            <div class="fw-700 mb-3" style="font-size:1rem;">Agency Summary</div>
+
+            <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid var(--vb-card-border);">
+                <span class="text-muted-vb fs-sm">Agency ID</span>
+                <span class="fw-600">#@Model.AgencyId</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid var(--vb-card-border);">
+                <span class="text-muted-vb fs-sm">Contact Person</span>
+                <span class="fw-600">@Model.ContactPersonName</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2">
+                <span class="text-muted-vb fs-sm">Phone</span>
+                <span class="fw-600">@Model.Phone</span>
+            </div>
+
+            <hr class="vb-divider">
+
+            <a asp-controller="Agency" asp-action="Index"
+               class="btn-vb-primary d-flex justify-content-center w-100 mb-2">
+                <i class="bi bi-arrow-left me-2"></i> All Agencies
+            </a>
+
+            <p class="text-center text-muted-vb" style="font-size:0.75rem;margin-top:0.5rem;">
+                By contacting, you agree to our <a href="#" class="btn-vb-ghost" style="font-size:0.75rem;">Terms of Service</a>.
+            </p>
+        </div>
+    </div>
+</div>

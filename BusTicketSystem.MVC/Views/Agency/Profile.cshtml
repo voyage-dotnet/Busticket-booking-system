@@ -1,0 +1,165 @@
+@model AgencyViewModel
+@{
+    ViewData["Title"] = "My Agency Profile";
+    ViewData["Breadcrumb"] = @"<a href='/Agency'>Agencies</a><span class='sep'>›</span><span class='active'>My Profile</span>";
+}
+
+<div class="row g-4">
+
+    <!-- ── LEFT: Profile Detail ── -->
+    <div class="col-lg-8">
+
+        <div class="d-flex align-items-start justify-content-between mb-1">
+            <div>
+                <div class="vb-page-title">
+                    <i class="bi bi-person-badge-fill"></i>
+                    Review Your Agency
+                </div>
+                <p class="vb-page-subtitle">Your full agency profile on the VoyaBus platform.</p>
+            </div>
+            <a asp-controller="Agency" asp-action="EditProfile" class="btn-vb-ghost fs-sm mt-1">
+                Change Profile
+            </a>
+        </div>
+
+        <!-- BUS-CARD style header (like the BUS 402 • EXPRESS row) -->
+        <div class="vb-card mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <span class="vb-tag vb-tag-navy me-2">AGENCY #@Model.AgencyId</span>
+                    <span class="vb-tag vb-tag-express">OPERATOR</span>
+                </div>
+                <a asp-controller="Agency" asp-action="EditProfile" class="btn-vb-ghost fs-sm">
+                    Edit Info
+                </a>
+            </div>
+
+            <!-- Route-style: departure = contact, arrival = email -->
+            <div class="vb-route-line">
+                <div class="vb-route-stop">
+                    <div class="vb-route-stop-dot filled"></div>
+                    <div>
+                        <div style="font-size:0.78rem;font-weight:600;color:var(--vb-text-muted);text-transform:uppercase;letter-spacing:0.05em;">Agency Name</div>
+                        <div class="fw-700" style="font-size:1.25rem;color:var(--vb-navy);">@Model.Name</div>
+                        <div class="text-muted-vb fs-sm">@Model.ContactPersonName • Contact Person</div>
+                    </div>
+                </div>
+                <div class="vb-route-connector" style="height:28px;"></div>
+                <div class="vb-route-stop">
+                    <div class="vb-route-stop-dot"></div>
+                    <div>
+                        <div style="font-size:0.78rem;font-weight:600;color:var(--vb-text-muted);text-transform:uppercase;letter-spacing:0.05em;">Email Address</div>
+                        <div class="fw-600" style="font-size:1rem;">@Model.Email</div>
+                        <div class="text-muted-vb fs-sm">Primary contact email</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Passenger Info style section -->
+        <div class="vb-section-title">Agency Information</div>
+        <div class="vb-card mb-3">
+            <div class="row g-0">
+                <div class="col-sm-6" style="padding:1rem;border-right:1px solid var(--vb-card-border);">
+                    <div class="vb-label">Agency Name</div>
+                    <div style="font-size:0.95rem;font-weight:500;">@Model.Name</div>
+                </div>
+                <div class="col-sm-6" style="padding:1rem;">
+                    <div class="vb-label">Phone Number</div>
+                    <div style="font-size:0.95rem;font-weight:500;">
+                        <i class="bi bi-telephone me-1 text-muted-vb"></i>@Model.Phone
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Method style: Quick Actions -->
+        <div class="vb-section-title">Operations</div>
+        <div class="d-flex gap-3 flex-wrap">
+            <!-- Card-style option (like "Card ending in 4242") -->
+            <a asp-controller="Office" asp-action="Index"
+               class="vb-card text-decoration-none"
+               style="flex:1;min-width:160px;border:2px solid var(--vb-navy);cursor:pointer;transition:all 0.15s;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <i class="bi bi-diagram-3-fill" style="font-size:1.1rem;color:var(--vb-navy);"></i>
+                    <i class="bi bi-check-circle-fill" style="color:var(--vb-navy);font-size:0.9rem;"></i>
+                </div>
+                <div class="fw-600" style="font-size:0.88rem;color:var(--vb-navy);">My Offices</div>
+                <div class="text-muted-vb fs-sm">Manage branches</div>
+            </a>
+
+            <a asp-controller="Bus" asp-action="Create"
+               class="vb-card text-decoration-none"
+               style="flex:1;min-width:160px;cursor:pointer;transition:all 0.15s;"
+               onmouseenter="this.style.borderColor='var(--vb-navy)'"
+               onmouseleave="this.style.borderColor='var(--vb-card-border)'">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <i class="bi bi-bus-front" style="font-size:1.1rem;color:var(--vb-accent);"></i>
+                    <i class="bi bi-circle" style="color:var(--vb-card-border);font-size:0.9rem;"></i>
+                </div>
+                <div class="fw-600" style="font-size:0.88rem;">Add Bus</div>
+                <div class="text-muted-vb fs-sm">Register fleet</div>
+            </a>
+
+            <a asp-controller="Driver" asp-action="Create"
+               class="vb-card text-decoration-none"
+               style="flex:1;min-width:160px;cursor:pointer;transition:all 0.15s;border-style:dashed;"
+               onmouseenter="this.style.borderColor='var(--vb-navy)'"
+               onmouseleave="this.style.borderColor='var(--vb-card-border)'">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span style="font-size:1.2rem;color:var(--vb-text-muted);">+</span>
+                </div>
+                <div class="fw-600" style="font-size:0.88rem;">Add Driver</div>
+                <div class="text-muted-vb fs-sm">Register staff</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- ── RIGHT: Summary Panel ── -->
+    <div class="col-lg-4">
+        <div style="position:sticky;top:72px;">
+            <div class="vb-card mb-3">
+                <div class="fw-700 mb-3" style="font-size:1rem;">Agency Summary</div>
+
+                <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--vb-card-border);font-size:0.85rem;">
+                    <span class="text-muted-vb">Agency ID</span>
+                    <span class="fw-600">#@Model.AgencyId</span>
+                </div>
+                <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--vb-card-border);font-size:0.85rem;">
+                    <span class="text-muted-vb">Contact Person</span>
+                    <span class="fw-600">@Model.ContactPersonName</span>
+                </div>
+                <div class="d-flex justify-content-between py-2" style="font-size:0.85rem;">
+                    <span class="text-muted-vb">Phone</span>
+                    <span class="fw-600">@Model.Phone</span>
+                </div>
+
+                <hr class="vb-divider">
+
+                <a asp-controller="Agency" asp-action="EditProfile"
+                   class="btn-vb-primary d-flex justify-content-center w-100 mb-2">
+                    Edit Profile &nbsp;<i class="bi bi-arrow-right"></i>
+                </a>
+                <p class="text-center text-muted-vb" style="font-size:0.72rem;">
+                    By updating, you agree to our <a href="#" class="btn-vb-ghost" style="font-size:0.72rem;">Terms of Service</a>.
+                </p>
+            </div>
+
+            <div class="vb-info-box mb-2">
+                <i class="bi bi-shield-lock-fill"></i>
+                <div>
+                    <div class="fw-600" style="font-size:0.8rem;color:var(--vb-navy);">Secure Agency Portal</div>
+                    <div style="font-size:0.78rem;">256-bit encryption active</div>
+                </div>
+            </div>
+
+            <div class="vb-info-box">
+                <i class="bi bi-info-circle"></i>
+                <div style="font-size:0.78rem;">
+                    <div class="fw-600" style="color:var(--vb-navy);">Data Policy</div>
+                    Agency data is only visible to verified VoyaBus partners.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
