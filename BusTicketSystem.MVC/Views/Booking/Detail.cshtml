@@ -1,0 +1,193 @@
+@model BusTicketSystem.MVC.Models.Booking.BookingConfirmationViewModel
+@{
+    ViewData["Title"] = "Review Your Journey";
+}
+
+<div class="vb-page">
+    <h1 style="font-size:var(--vb-font-size-xl); font-weight:700; color:var(--vb-text-primary); margin-bottom:2rem;">
+        🚌 Review Your Journey
+    </h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div style="background:#dcfce7; border:1px solid #86efac; color:#166534;
+                    border-radius:var(--vb-radius-sm); padding:0.75rem 1rem;
+                    margin-bottom:1rem; font-size:var(--vb-font-size-sm);">
+            ✓ @TempData["Success"]
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- LEFT -->
+        <div class="col-lg-8">
+
+            <!-- Trip Summary Card -->
+            <div class="vb-card mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <span class="vb-badge vb-badge-route mb-1">
+                            BUS @Model.BookingId.ToString("D3") • EXPRESS
+                        </span>
+                        <div class="vb-muted" style="font-size:var(--vb-font-size-sm);">
+                            @Model.DepartureTime.ToString("dddd, MMM dd, yyyy")
+                        </div>
+                    </div>
+                    <a asp-controller="Home" asp-action="Index"
+                       style="font-size:var(--vb-font-size-sm); color:var(--vb-primary);">
+                        Change Trip
+                    </a>
+                </div>
+
+                <div class="vb-journey">
+                    <!-- Departure -->
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon"></div>
+                        <div class="vb-journey-line"></div>
+                        <div>
+                            <div class="vb-journey-time">@Model.DepartureTime.ToString("hh:mm tt")</div>
+                            <div class="vb-journey-place">
+                                @(Model.RouteName.Contains("->") ? Model.RouteName.Split("->")[0].Trim() : Model.RouteName)
+                            </div>
+                            <div class="vb-journey-sub">Seat @Model.SeatNumber • Main Level</div>
+                        </div>
+                    </div>
+                    <div class="vb-journey-gap"></div>
+                    <!-- Arrival -->
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon destination"></div>
+                        <div>
+                            <div class="vb-journey-place">
+                                @(Model.RouteName.Contains("->") ? Model.RouteName.Split("->")[1].Trim() : "—")
+                            </div>
+                            <div class="vb-journey-sub">Main Entrance</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passenger Information -->
+            <div class="vb-card mb-4">
+                <div class="vb-section-title">Passenger Information</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="vb-form-group">
+                            <label class="vb-form-label">Full Name</label>
+                            <input type="text" class="vb-form-control"
+                                   value="@User.Identity?.Name" readonly />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="vb-form-group">
+                            <label class="vb-form-label">Seat Preference</label>
+                            <div class="vb-select-wrapper">
+                                <input type="text" class="vb-form-control"
+                                       value="@(Model.SeatNumber > 0 ? $"Window ({Model.SeatNumber}A)" : "—")"
+                                       readonly />
+                                <span class="vb-select-icon">🪑</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="vb-card mb-4">
+                <div class="vb-section-title">Payment Method</div>
+                <div class="vb-payment-tiles">
+                    <div class="vb-payment-tile selected">
+                        <input type="radio" class="vb-payment-radio" name="payment" checked />
+                        <div class="vb-payment-icon">💳</div>
+                        <div class="vb-payment-name">Card ending in 4242</div>
+                        <div class="vb-payment-detail">Exp: 12/26</div>
+                    </div>
+                    <div class="vb-payment-tile">
+                        <input type="radio" class="vb-payment-radio" name="payment" />
+                        <div class="vb-payment-icon">🏦</div>
+                        <div class="vb-payment-name">Apple Pay</div>
+                    </div>
+                    <div class="vb-payment-tile-add">
+                        <span style="font-size:1.5rem;">+</span>
+                        <div class="vb-payment-detail">Add New</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cancel Button -->
+            @if (Model.Status == "Booked")
+            {
+                <form asp-action="Cancel" asp-route-id="@Model.BookingId" method="post"
+                      onsubmit="return confirm('Are you sure you want to cancel?')">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="vb-btn-secondary">Cancel Booking</button>
+                </form>
+            }
+        </div>
+
+        <!-- RIGHT: Fare Breakdown -->
+        <div class="col-lg-4">
+            <div class="vb-card mb-3">
+                <div class="vb-section-title">Fare Breakdown</div>
+                <div class="vb-summary-row">
+                    <span class="label">Base Fare (x1)</span>
+                    <span class="value">₹@((Model.Fare - 7.50m).ToString("F2"))</span>
+                </div>
+                <div class="vb-summary-row">
+                    <span class="label">Seat Selection</span>
+                    <span class="value">₹5.50</span>
+                </div>
+                <div class="vb-summary-row">
+                    <span class="label">Booking Fee</span>
+                    <span class="value">₹2.00</span>
+                </div>
+                <div class="vb-summary-total">
+                    <span>Total Amount</span>
+                    <span class="total-amount">₹@Model.Fare.ToString("F2")</span>
+                </div>
+
+                @if (Model.Status == "Booked")
+                {
+                    <a asp-controller="Payment" asp-action="Pay"
+                       asp-route-bookingId="@Model.BookingId"
+                       asp-route-amount="@Model.Fare"
+                       class="vb-btn-primary w-100 justify-content-center mt-3">
+                        Confirm &amp; Pay →
+                    </a>
+                    <p class="vb-muted text-center mt-2" style="font-size:var(--vb-font-size-xs);">
+                        By clicking pay, you agree to our
+                        <a href="#">Terms of Service</a>.
+                    </p>
+                }
+                else
+                {
+                    <div class="mt-3 text-center" style="background:#f0fdf4; border-radius:var(--vb-radius-sm);
+                         padding:0.75rem; font-size:var(--vb-font-size-sm); color:#166534;">
+                        ✓ Payment Completed
+                    </div>
+                }
+            </div>
+
+            <div class="vb-secure-badge mb-3">
+                <span>🔒</span>
+                <div>
+                    <strong>SSL Secured</strong>
+                    256-bit encryption active
+                </div>
+            </div>
+
+            <div class="vb-card-notice mb-3">
+                <span class="vb-notice-icon">ℹ</span>
+                <div>
+                    <strong>Cancellation Policy</strong><br />
+                    Full refund if cancelled at least 24 hours before departure.
+                </div>
+            </div>
+
+            <div>
+                <a asp-action="MyBookings"
+                   style="font-size:var(--vb-font-size-sm); color:var(--vb-text-secondary);">
+                    ← All Bookings
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

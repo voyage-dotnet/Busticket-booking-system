@@ -1,8 +1,127 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Find Trips";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<div class="vb-hero">
+    <img class="vb-hero-bg"
+         src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1400"
+         alt="" />
+    <div class="vb-hero-content" style="width:100%;">
+        <h1 class="vb-hero-title">Your Journey Starts Here</h1>
+        <p class="vb-hero-subtitle">
+            Reliable, comfortable, and efficient transit connecting major cities.
+            Book your next voyage with ease.
+        </p>
+
+        <!-- Search Bar -->
+        <form asp-controller="Trip" asp-action="Search" method="get"
+              class="vb-search-bar mt-4" style="max-width:860px;">
+
+            <div class="vb-search-field">
+                <label class="vb-form-label">From</label>
+                <input type="text" name="from" class="vb-search-input"
+                       placeholder="Departure City" required />
+            </div>
+
+            <div class="vb-search-field">
+                <label class="vb-form-label">To</label>
+                <input type="text" name="to" class="vb-search-input"
+                       placeholder="Arrival City" required />
+            </div>
+
+            <div class="vb-search-field">
+                <label class="vb-form-label">Departure Date</label>
+                <input type="date" name="date" class="vb-search-input"
+                       min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+            </div>
+
+            <div style="flex-shrink:0;">
+                <button type="submit" class="vb-btn-primary" style="height:42px; white-space:nowrap;">
+                    Find Tickets
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Featured Routes -->
+<div class="vb-page">
+    <h2 class="vb-section-title">Featured Routes</h2>
+
+    <div class="row g-4 mb-5">
+        @foreach (var route in new[] {
+            new { From="Boston", To="New York", Price="₹35", Duration="2h 15m", Feature="Wi-Fi" },
+            new { From="Los Angeles", To="San Francisco", Price="₹45", Duration="6h 30m", Feature="Outlets" },
+            new { From="Detroit", To="Chicago", Price="₹30", Duration="4h 45m", Feature="Extra Legroom" }
+        })
+        {
+            <div class="col-md-4">
+                <div class="vb-trip-card h-100 d-flex flex-column">
+                    <div style="height:140px; background:var(--vb-bg-panel);
+                                display:flex; align-items:center; justify-content:center;
+                                border-radius:var(--vb-radius-md); font-size:3rem; margin-bottom:1rem;">
+                        🚌
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-semibold">@route.From → @route.To</span>
+                        <span class="vb-trip-price-amount">@route.Price</span>
+                    </div>
+                    <div class="vb-muted mb-3">
+                        <span class="vb-icon-text">⏱ @route.Duration</span>
+                        &nbsp;&nbsp;
+                        <span class="vb-icon-text">📶 @route.Feature</span>
+                    </div>
+                    <div class="mt-auto">
+                        <a asp-controller="Trip" asp-action="Search"
+                           asp-route-from="@route.From" asp-route-to="@route.To"
+                           class="vb-btn-secondary w-100 justify-content-center">
+                            Select Route
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Why Choose Voyage -->
+    <div class="text-center mb-5">
+        <h2 class="vb-section-title justify-content-center mb-1">Why Choose Voyage</h2>
+        <p class="vb-muted mb-4 d-block" style="font-size:var(--vb-font-size-base);">
+            Experience a higher standard of transit with features designed for your comfort.
+        </p>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="vb-card text-center h-100">
+                    <div style="font-size:2rem; margin-bottom:0.75rem;">📍</div>
+                    <div class="fw-semibold mb-2">Real-time Tracking</div>
+                    <p class="vb-muted" style="font-size:var(--vb-font-size-sm);">
+                        Track your bus's exact location and receive accurate
+                        arrival times directly to your device.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="vb-card text-center h-100">
+                    <div style="font-size:2rem; margin-bottom:0.75rem;">🔒</div>
+                    <div class="fw-semibold mb-2">Secure Payments</div>
+                    <p class="vb-muted" style="font-size:var(--vb-font-size-sm);">
+                        Book with confidence using our encrypted payment gateway,
+                        supporting all major credit cards.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="vb-card text-center h-100">
+                    <div style="font-size:2rem; margin-bottom:0.75rem;">🎧</div>
+                    <div class="fw-semibold mb-2">24/7 Support</div>
+                    <p class="vb-muted" style="font-size:var(--vb-font-size-sm);">
+                        Our dedicated customer service team is always available
+                        to assist you with any travel inquiries.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
