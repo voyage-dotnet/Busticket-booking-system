@@ -56,7 +56,7 @@ builder.Services.AddHttpClient<ApiService>(client =>
         new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -68,9 +68,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseSession();          // ← required for JWT token storage used by BookingController
 
-// Session must come before Authorization
-app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(

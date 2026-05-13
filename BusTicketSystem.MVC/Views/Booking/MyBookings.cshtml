@@ -1,0 +1,189 @@
+@model BusTicketSystem.MVC.ViewModels.Booking.BookingListViewModel
+@{
+    ViewData["Title"] = "Manage Booking";
+}
+
+<div class="vb-page">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h1 style="font-size:var(--vb-font-size-xl); font-weight:700; color:var(--vb-text-primary); margin-bottom:0.2rem;">
+                My Bookings
+            </h1>
+            <p class="vb-muted">View and manage your trip reservations.</p>
+        </div>
+        <a asp-controller="Home" asp-action="Index" class="vb-btn-primary">+ New Booking</a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div style="background:#dcfce7; border:1px solid #86efac; color:#166534;
+                    border-radius:var(--vb-radius-sm); padding:0.75rem 1rem;
+                    margin-bottom:1rem; font-size:var(--vb-font-size-sm);">
+            ✓ @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div style="background:#fee2e2; border:1px solid #fecaca; color:#b91c1c;
+                    border-radius:var(--vb-radius-sm); padding:0.75rem 1rem;
+                    margin-bottom:1rem; font-size:var(--vb-font-size-sm);">
+            ✕ @TempData["Error"]
+        </div>
+    }
+
+    <!-- Metrics -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="vb-stat-card">
+                <div class="vb-stat-label">Total Bookings</div>
+                <div class="vb-stat-value">@Model.Bookings.Count</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="vb-stat-card">
+                <div class="vb-stat-label">Booked</div>
+                <div class="vb-stat-value" style="color:#166534;">
+                    @Model.Bookings.Count(b => b.Status == "Booked")
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="vb-stat-card">
+                <div class="vb-stat-label">Available</div>
+                <div class="vb-stat-value" style="color:#854d0e;">
+                    @Model.Bookings.Count(b => b.Status == "Available")
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="vb-stat-card">
+                <div class="vb-stat-label">Other</div>
+                <div class="vb-stat-value" style="color:#b91c1c;">
+                    @Model.Bookings.Count(b => b.Status != "Booked" && b.Status != "Available")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookings Table -->
+    <div class="vb-card" style="padding:0; overflow:hidden;">
+        <div class="d-flex justify-content-between align-items-center px-4 py-3"
+             style="border-bottom:1px solid var(--vb-border);">
+            <span style="font-size:var(--vb-font-size-base); font-weight:600; color:var(--vb-text-primary);">
+                Recent Bookings
+            </span>
+            <span class="vb-muted">Your past 30 days of travel</span>
+        </div>
+
+        @if (!Model.Bookings.Any())
+        {
+            <div class="text-center py-5">
+                <p class="vb-muted">You have no bookings yet.</p>
+                <a asp-controller="Home" asp-action="Index" class="vb-btn-primary">Find a Trip</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table mb-0" style="font-size:var(--vb-font-size-sm);">
+                    <thead style="background:var(--vb-bg-panel);">
+                        <tr>
+                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
+                                       color:var(--vb-text-muted); font-weight:700;
+                                       text-transform:uppercase; letter-spacing:0.05em;
+                                       border-bottom:1px solid var(--vb-border);">Date &amp; Time</th>
+                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
+                                       color:var(--vb-text-muted); font-weight:700;
+                                       text-transform:uppercase; letter-spacing:0.05em;
+                                       border-bottom:1px solid var(--vb-border);">Reference</th>
+                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
+                                       color:var(--vb-text-muted); font-weight:700;
+                                       text-transform:uppercase; letter-spacing:0.05em;
+                                       border-bottom:1px solid var(--vb-border);">Journey</th>
+                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
+                                       color:var(--vb-text-muted); font-weight:700;
+                                       text-transform:uppercase; letter-spacing:0.05em;
+                                       border-bottom:1px solid var(--vb-border);">Seat</th>
+                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
+                                       color:var(--vb-text-muted); font-weight:700;
+                                       text-transform:uppercase; letter-spacing:0.05em;
+                                       border-bottom:1px solid var(--vb-border);">Total Fare</th>
+                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
+                                       color:var(--vb-text-muted); font-weight:700;
+                                       text-transform:uppercase; letter-spacing:0.05em;
+                                       border-bottom:1px solid var(--vb-border);">Status</th>
+                            <th style="padding:0.75rem 1.25rem; font-size:var(--vb-font-size-xs);
+                                       color:var(--vb-text-muted); font-weight:700;
+                                       text-transform:uppercase; letter-spacing:0.05em;
+                                       border-bottom:1px solid var(--vb-border);">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model.Bookings)
+                        {
+                            <tr style="border-bottom:1px solid var(--vb-bg-page);">
+                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
+                                    <div style="font-weight:600; color:var(--vb-text-primary);">
+                                        @booking.DepartureTime.ToString("MMM dd, yyyy")
+                                    </div>
+                                    <div class="vb-muted">@booking.DepartureTime.ToString("HH:mm")</div>
+                                </td>
+                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
+                                    <span class="vb-badge vb-badge-verified">
+                                        VYG-@booking.BookingId.ToString("D4")-XC
+                                    </span>
+                                </td>
+                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
+                                    <strong>@booking.RouteName</strong>
+                                </td>
+                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
+                                    @booking.SeatNumber
+                                </td>
+                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
+                                    <strong>₹@booking.Fare.ToString("F2")</strong>
+                                </td>
+                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
+                                    @{
+                                        string badgeStyle = booking.Status switch {
+                                            "Booked"    => "background:#dcfce7; color:#166534;",
+                                            "Available" => "background:#fef9c3; color:#854d0e;",
+                                            "Cancelled" => "background:#fee2e2; color:#b91c1c;",
+                                            _           => "background:var(--vb-bg-panel); color:var(--vb-text-secondary);"
+                                        };
+                                    }
+                                    <span class="vb-badge" style="@badgeStyle">@booking.Status</span>
+                                </td>
+                                <td style="padding:0.9rem 1.25rem; vertical-align:middle;">
+                                    <a asp-action="Detail" asp-route-id="@booking.BookingId"
+                                       class="vb-btn-ghost" style="font-size:var(--vb-font-size-xs);">
+                                        View
+                                    </a>
+                                    @if (booking.Status == "Booked")
+                                    {
+                                        <a asp-controller="Payment" asp-action="Pay"
+                                           asp-route-bookingId="@booking.BookingId"
+                                           asp-route-amount="@booking.Fare"
+                                           class="vb-btn-primary" style="font-size:var(--vb-font-size-xs); padding:6px 12px;">
+                                            Pay
+                                        </a>
+                                    }
+                                    @if (booking.IsCancellable)
+                                    {
+                                        <form asp-action="Cancel" asp-route-id="@booking.BookingId" method="post"
+                                              class="d-inline" onsubmit="return confirm('Cancel this booking?')">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="vb-btn-ghost"
+                                                    style="color:#b91c1c; font-size:var(--vb-font-size-xs);">
+                                                Cancel
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

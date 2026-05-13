@@ -22,7 +22,7 @@ namespace BusTicketSystem.MVC.ViewModels
         public IEnumerable<TripSearchResultDTO> Trips { get; set; } = new List<TripSearchResultDTO>();
     }
 
-    public class SeatSelectionViewModel
+    public class TripSeatSelectionViewModel
     {
         public TripDetailDTO Trip { get; set; }
         public SeatLayoutDTO SeatLayout { get; set; }

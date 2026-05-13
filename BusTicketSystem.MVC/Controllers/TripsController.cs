@@ -36,7 +36,7 @@ namespace BusTicketSystem.MVC.Controllers
 
             var seatResponse = await _client.GetFromJsonAsync<ApiResponse<SeatLayoutDTO>>($"Trip/{id}/seats");
             
-            var viewModel = new SeatSelectionViewModel
+            var viewModel = new TripSeatSelectionViewModel
             {
                 Trip = tripResponse.Data,
                 SeatLayout = seatResponse?.Data
