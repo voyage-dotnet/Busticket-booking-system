@@ -26,7 +26,7 @@ public class BookingController : Controller
     private HttpClient CreateApiClient()
     {
         var client = _httpClientFactory.CreateClient("BusTicketApi");
-        var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiU2hhemlhIEFmcmVlbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InNoYXppeWEwMjA1QGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMTczIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ3VzdG9tZXIiLCJleHAiOjE3Nzg4MzQwOTUsImlzcyI6Ik15U2VydmVyIiwiYXVkIjoiTXlDbGllbnQifQ.RWUe4p27_Uwh1Sj3ye5zEYRtwcW5sVIwI5Y5mc-qJ2o";
+        var token = HttpContext.Session.GetString("JwtToken");
         if (!string.IsNullOrEmpty(token))
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
