@@ -1,0 +1,118 @@
+@model AgencyListViewModel
+@{
+    ViewData["Title"] = "Find Trips";
+    ViewData["Breadcrumb"] = @"<span>Home</span><span class='sep'>›</span><span class='active'>Agencies</span>";
+}
+
+<div class="row g-0" style="min-height:580px;">
+
+    <!-- ── LEFT SIDEBAR (Filters) ─────────────────────────────── -->
+    <div class="col-lg-3 pe-lg-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="fw-600" style="font-size:0.9rem;">Filters</span>
+            <a href="@Url.Action("Index","Agency")" class="btn-vb-ghost fs-sm">Reset all</a>
+        </div>
+
+        <div class="vb-card vb-card-sm mb-3">
+            <p class="fw-600 mb-2" style="font-size:0.82rem;">Agency Type</p>
+            <div class="d-flex flex-column gap-2">
+                @foreach (var type in new[]{"All Types","Express Operator","Regional Carrier","Intercity"})
+                {
+                    <label class="d-flex align-items-center gap-2" style="cursor:pointer;font-size:0.83rem;color:var(--vb-text-mid);">
+                        <input type="checkbox" style="accent-color:var(--vb-navy);" @(type=="All Types"?"checked":string.Empty) />
+                        @type
+                    </label>
+                }
+            </div>
+        </div>
+
+        <div class="vb-card vb-card-sm mb-3">
+            <p class="fw-600 mb-2" style="font-size:0.82rem;">Amenities</p>
+            <div class="d-flex flex-column gap-2">
+                @foreach (var item in new[]{"Free Wi-Fi","Power Outlets","Extra Legroom","Onboard Meals"})
+                {
+                    <label class="d-flex align-items-center gap-2" style="cursor:pointer;font-size:0.83rem;color:var(--vb-text-mid);">
+                        <input type="checkbox" style="accent-color:var(--vb-navy);" /> @item
+                    </label>
+                }
+            </div>
+        </div>
+
+        <div class="vb-info-box">
+            <i class="bi bi-info-circle fs-sm mt-0"></i>
+            <div>
+                <div class="fw-600" style="font-size:0.8rem;color:var(--vb-navy);">Need Help?</div>
+                <div style="font-size:0.78rem;">Our transit concierges are available 24/7 to assist you.</div>
+                <a href="#" class="btn-vb-primary mt-2 d-inline-flex" style="font-size:0.78rem;padding:0.35rem 0.85rem;">Chat Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── RIGHT CONTENT ──────────────────────────────────────── -->
+    <div class="col-lg-9">
+
+        @if (!Model.Agencies.Any())
+        {
+            <div class="vb-card vb-empty">
+                <div class="vb-empty-icon"><i class="bi bi-building-x"></i></div>
+                <div class="vb-empty-title">No agencies found</div>
+                <div class="vb-empty-text">No bus operators are registered on the platform yet.</div>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <p class="mb-0 text-muted-vb" style="font-size:0.85rem;">
+                    Showing <strong style="color:var(--vb-text);">@Model.Agencies.Count</strong> registered agencies
+                </p>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted-vb fs-sm">Sort by:</span>
+                    <select class="vb-input" style="width:auto;font-size:0.82rem;padding:0.35rem 0.7rem;">
+                        <option>Name (A–Z)</option>
+                        <option>Newest First</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+                @foreach (var agency in Model.Agencies)
+                {
+                    <div class="vb-card" style="padding:1.25rem 1.5rem;">
+                        <div class="row align-items-center g-3">
+                            <div class="col">
+                                <!-- Agency header -->
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <div class="vb-avatar" style="width:40px;height:40px;font-size:0.95rem;border-radius:10px;background:var(--vb-tag-bg);">
+                                        @agency.Name.Substring(0,1).ToUpper()
+                                    </div>
+                                    <div>
+                                        <div class="fw-700" style="font-size:0.95rem;">@agency.Name</div>
+                                        <div class="text-muted-vb fs-sm">@agency.ContactPersonName</div>
+                                    </div>
+                                    <span class="vb-tag vb-tag-navy ms-1">Verified</span>
+                                </div>
+
+                                <!-- Agency meta -->
+                                <div class="d-flex flex-wrap gap-3" style="font-size:0.82rem;color:var(--vb-text-mid);">
+                                    <span><i class="bi bi-envelope me-1"></i>@agency.Email</span>
+                                    <span><i class="bi bi-telephone me-1"></i>@agency.Phone</span>
+                                    <span class="text-green fw-600"><i class="bi bi-patch-check-fill me-1"></i>Live Tracking Available</span>
+                                </div>
+                            </div>
+                            <div class="col-auto d-flex flex-column align-items-end gap-2">
+                                <a asp-controller="Agency" asp-action="Details"
+                                   asp-route-id="@agency.AgencyId" class="btn-vb-primary">
+                                    Select
+                                </a>
+                                <a asp-controller="Agency" asp-action="Details"
+                                   asp-route-id="@agency.AgencyId" class="btn-vb-ghost fs-sm">
+                                    View details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
