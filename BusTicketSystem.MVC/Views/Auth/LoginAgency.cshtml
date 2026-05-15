@@ -1,0 +1,66 @@
+@model BusTicketSystem.MVC.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Agency Portal Login";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="vb-card p-4 p-lg-5 shadow-lg border-0">
+                <div class="text-center mb-5">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block text-primary mb-3">
+                        <i class="bi bi-building h3 mb-0"></i>
+                    </div>
+                    <h2 class="fw-bold mb-1">Agency Portal</h2>
+                    <p class="vb-text-muted">Manage your fleet and bookings</p>
+                </div>
+
+                <form asp-action="LoginAgency" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger vb-radius-md border-0 small mb-4"></div>
+
+                    <div class="vb-form-group mb-4">
+                        <label asp-for="Email" class="vb-form-label">Agency Email</label>
+                        <div class="position-relative">
+                            <i class="bi bi-envelope position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
+                            <input asp-for="Email" class="vb-form-control ps-5" placeholder="agency@vovabus.com" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="vb-form-group mb-4">
+                        <label asp-for="Password" class="vb-form-label">Password</label>
+                        <div class="position-relative">
+                            <i class="bi bi-shield-lock position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
+                            <input asp-for="Password" type="password" class="vb-form-control ps-5" placeholder="••••••••" />
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <div class="vb-check">
+                            <input asp-for="RememberMe" />
+                            <label asp-for="RememberMe">Keep me logged in</label>
+                        </div>
+                        <a href="#" class="text-primary small text-decoration-none fw-bold">Forgot Access?</a>
+                    </div>
+
+                    <button type="submit" class="vb-btn-primary w-100 py-3 mb-4 shadow-sm">
+                        Sign In to Portal <i class="bi bi-arrow-right-circle ms-2"></i>
+                    </button>
+
+                    <div class="text-center small">
+                        <p class="text-center vb-text-secondary small">
+                            Want to partner with us? <a asp-action="RegisterAgency" class="fw-bold">Sign up as Agency</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="text-center mt-5">
+                <a asp-action="LoginCustomer" class="vb-btn-ghost text-muted small">
+                    <i class="bi bi-person me-2"></i> Switch to Customer Login
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,100 @@
+@model BusTicketSystem.MVC.ViewModels.RazorpayCheckoutViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Secure Checkout";
+    Layout = null; 
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Processing Payment... | VoyaBus</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <style>
+        body { background: #f0f2f5; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
+        .payment-loader { text-align: center; background: white; padding: 50px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); max-width: 400px; width: 90%; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3d5166; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 24px; }
+        @@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn-retry { display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="payment-loader">
+        <div id="loader-icon" class="spinner"></div>
+        <h4 class="fw-bold mb-2">Processing Payment</h4>
+        <p class="text-muted small mb-0">Booking ID: #@Model.BookingId</p>
+        <p class="text-muted small mb-4">Amount: ₹@(Model.AmountInPaise / 100.0)</p>
+        
+        <p id="status-msg" class="extra-small text-muted">Securing your connection to Razorpay...</p>
+        
+        <button id="retryBtn" class="btn btn-primary btn-retry w-100" onclick="location.reload()">Retry Connection</button>
+    </div>
+
+    <form id="verifyForm" asp-action="VerifyPayment" method="post">
+        <input type="hidden" name="BookingId" value="@Model.BookingId" />
+        <input type="hidden" name="RazorpayOrderId" value="@Model.RazorpayOrderId" />
+        <input type="hidden" name="RazorpayPaymentId" id="rzp_paymentid" />
+        <input type="hidden" name="RazorpaySignature" id="rzp_signature" />
+    </form>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        window.onload = function() {
+            if (!"@Model.RazorpayOrderId") {
+                document.getElementById('status-msg').innerText = "Error: Order ID missing.";
+                document.getElementById('status-msg').classList.add('text-danger');
+                document.getElementById('retryBtn').style.display = 'block';
+                return;
+            }
+
+            var options = {
+                "key": "@Model.RazorpayKey",
+                "amount": "@Model.AmountInPaise", 
+                "currency": "@Model.Currency",
+                "name": "VoyaBus",
+                "description": "Bus Ticket Booking #@Model.BookingId",
+                "order_id": "@Model.RazorpayOrderId",
+                "handler": function (response){
+                    document.getElementById('status-msg').innerText = "Payment Successful! Verifying...";
+                    document.getElementById('rzp_paymentid').value = response.razorpay_payment_id;
+                    document.getElementById('rzp_signature').value = response.razorpay_signature || "";
+                    if (!response.razorpay_payment_id || !response.razorpay_signature) {
+                        document.getElementById('status-msg').innerText = "Payment response was incomplete. Please check My Bookings before retrying.";
+                        document.getElementById('status-msg').classList.add('text-danger');
+                        document.getElementById('retryBtn').style.display = 'block';
+                        return;
+                    }
+                    document.getElementById('verifyForm').submit();
+                },
+                "prefill": {
+                    "name": "@Model.CustomerName",
+                    "email": "@Model.CustomerEmail",
+                    "contact": "@Model.CustomerPhone"
+                },
+                "theme": {
+                    "color": "#3d5166"
+                },
+                "modal": {
+                    "ondismiss": function(){
+                        window.location.href = "/TicketBooking/MyBookings";
+                    }
+                }
+            };
+            
+            try {
+                var rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed', function (response){
+                    alert("Payment Failed: " + response.error.description);
+                    window.location.href = "/TicketBooking/MyBookings";
+                });
+                rzp1.open();
+                document.getElementById('status-msg').innerText = "Checkout window opened.";
+            } catch (e) {
+                document.getElementById('status-msg').innerText = "Failed to load Razorpay interface.";
+                document.getElementById('retryBtn').style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>

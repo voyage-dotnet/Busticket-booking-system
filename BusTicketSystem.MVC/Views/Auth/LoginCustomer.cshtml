@@ -1,0 +1,53 @@
+@model BusTicketSystem.MVC.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Customer Login";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="vb-card p-4 p-lg-5">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold">Welcome Back</h2>
+                    <p class="vb-text-secondary">Log in to your VoyaBus account</p>
+                </div>
+
+                <form asp-action="LoginCustomer" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="vb-form-group mb-4">
+                        <label asp-for="Email" class="vb-form-label">Email Address</label>
+                        <input asp-for="Email" class="vb-form-control" placeholder="name@example.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="vb-form-group mb-4">
+                        <label asp-for="Password" class="vb-form-label">Password</label>
+                        <input asp-for="Password" class="vb-form-control" placeholder="••••••••" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="vb-check">
+                            <input asp-for="RememberMe" />
+                            <label asp-for="RememberMe">Remember me</label>
+                        </div>
+                        <a href="#" class="vb-btn-ghost p-0 h-auto small">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="vb-btn-primary w-100 py-3 mb-4">
+                        Sign In <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+
+                    <p class="text-center vb-text-secondary small">
+                        Don't have an account? <a asp-action="RegisterCustomer" class="fw-bold">Sign up</a>
+                    </p>
+                    <hr class="my-4 opacity-10">
+                    <p class="text-center mb-0 small">
+                        Are you an agency? <a asp-action="LoginAgency" class="text-primary">Agency Portal</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,70 @@
+@model List<BusTicketSystem.MVC.ViewModels.BusViewModel>
+@{
+    ViewData["Title"] = "Manage Fleet";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="h2 fw-bold mb-1">Fleet Management</h1>
+            <p class="vb-text-muted mb-0">Manage your vehicles and monitor their status.</p>
+        </div>
+        <a asp-action="Create" class="vb-btn-primary">
+            <i class="bi bi-plus-lg"></i> Add New Bus
+        </a>
+    </div>
+
+    <div class="vb-card p-0 overflow-hidden shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 vb-text-muted small text-uppercase">Registration No</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Type</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Total Seats</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Status</th>
+                        <th class="pe-4 py-3 text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="opacity-25 mb-3"><i class="bi bi-bus-front h1"></i></div>
+                                <h6 class="fw-bold">No buses found</h6>
+                                <p class="vb-text-muted small">Start by adding your first vehicle to the fleet.</p>
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var bus in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold">@bus.RegistrationNumber</td>
+                            <td>@bus.BusType</td>
+                            <td>@bus.TotalCapacity Seats</td>
+                            <td>
+                                <span class="vb-badge @(bus.Status == "Active" ? "vb-badge-live" : "vb-badge-verified")">
+                                    @bus.Status
+                                </span>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light border dropdown-toggle" data-bs-toggle="dropdown">
+                                        Options
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg vb-radius-md">
+                                        <li><a class="dropdown-item small" href="#"><i class="bi bi-pencil me-2"></i> Edit</a></li>
+                                        <li><a class="dropdown-item small" href="#"><i class="bi bi-calendar-check me-2"></i> Schedule</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item small text-danger" href="#"><i class="bi bi-trash me-2"></i> Retire</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,76 @@
+@{
+    ViewData["Title"] = "Travel Alerts";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="fw-bold">Travel Alerts</h1>
+            <p class="vb-text-muted">Real-time updates on routes and service disruptions.</p>
+        </div>
+        <span class="vb-badge vb-badge-live px-3 py-2">
+            <span class="spinner-grow spinner-grow-sm me-2" role="status"></span>
+            System Live
+        </span>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="vb-card border-start border-4 border-warning shadow-sm">
+                <div class="d-flex gap-3">
+                    <div class="text-warning h3 mb-0">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <h5 class="fw-bold mb-0">Weather Advisory: North-East Routes</h5>
+                            <span class="vb-badge vb-badge-verified py-0">Minor Delay</span>
+                        </div>
+                        <p class="vb-text-secondary small mb-2">Heavy rainfall may cause slight delays on routes passing through the North-East corridor. Drivers are advised to maintain safe speeds.</p>
+                        <div class="extra-small text-muted">Posted 2 hours ago · Affects 12 trips</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="vb-card border-start border-4 border-info shadow-sm">
+                <div class="d-flex gap-3">
+                    <div class="text-info h3 mb-0">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <h5 class="fw-bold mb-0">New Terminal Opening: Mumbai Central</h5>
+                            <span class="vb-badge vb-badge-verified py-0">Update</span>
+                        </div>
+                        <p class="vb-text-secondary small mb-2">All VoyaBus services in Mumbai will now depart from the newly renovated Mumbai Central Terminal B. Please check your ticket for updated bay numbers.</p>
+                        <div class="extra-small text-muted">Posted Yesterday · System-wide</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="vb-card border-start border-4 border-success shadow-sm opacity-75">
+                <div class="d-flex gap-3">
+                    <div class="text-success h3 mb-0">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <h5 class="fw-bold mb-0">Maintenance Resolved: Booking Portal</h5>
+                            <span class="vb-badge vb-badge-verified py-0">Resolved</span>
+                        </div>
+                        <p class="vb-text-secondary small mb-2">Scheduled maintenance for the seat selection module has been completed. Full booking services are restored.</p>
+                        <div class="extra-small text-muted">Posted 1 day ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+</style>

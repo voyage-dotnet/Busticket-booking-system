@@ -1,0 +1,162 @@
+@model BusTicketSystem.MVC.ViewModels.ReviewJourneyViewModel
+@{
+    ViewData["Title"] = "Review Your Journey";
+}
+
+<div class="container py-4">
+    <div class="vb-breadcrumb mb-5">
+        <span class="vb-breadcrumb-item">Select Trip</span>
+        <span class="vb-breadcrumb-sep"><i class="bi bi-chevron-right"></i></span>
+        <span class="vb-breadcrumb-item">Choose Seats</span>
+        <span class="vb-breadcrumb-sep"><i class="bi bi-chevron-right"></i></span>
+        <span class="vb-breadcrumb-item active">Payment</span>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <h2 class="h3 fw-bold mb-4"><i class="bi bi-geo-alt me-2"></i>Review Your Journey</h2>
+            
+            <div class="vb-card p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <span class="vb-badge vb-badge-route mb-2">@(string.IsNullOrEmpty(Model.Trip.BusType) ? "EXPRESS" : Model.Trip.BusType.ToUpper()) • EXPRESS</span>
+                        <div class="fw-bold">@Model.Trip.DepartureTime.ToString("dddd, MMM dd, yyyy")</div>
+                    </div>
+                    <a asp-action="Index" class="vb-btn-ghost p-0 small">Change Trip</a>
+                </div>
+
+                <div class="vb-journey">
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon"></div>
+                        <div class="vb-journey-line"></div>
+                        <div>
+                            <div class="vb-journey-time">@Model.Trip.DepartureTime.ToString("hh:mm tt")</div>
+                            <div class="vb-journey-place">@Model.Trip.BoardingPoint</div>
+                            <div class="vb-journey-sub">Check-in Bay 14</div>
+                        </div>
+                    </div>
+                    <div class="vb-journey-gap"></div>
+                    <div class="vb-journey-stop">
+                        <div class="vb-journey-icon destination"></div>
+                        <div>
+                            <div class="vb-journey-time">@Model.Trip.ArrivalTime.ToString("hh:mm tt")</div>
+                            <div class="vb-journey-place">@Model.Trip.ToCity Terminal</div>
+                            <div class="vb-journey-sub">Main Entrance</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-3 mt-5">Passenger Information</h5>
+            <div class="vb-card p-4 mb-4">
+                <div class="row g-3">
+                    <div class="col-md-7">
+                        <div class="vb-form-group">
+                            <label class="vb-form-label">Full Name</label>
+                            <input type="text" class="vb-form-control" value="@(Context.Session.GetString("UserName") ?? Context.Session.GetString("UserEmail")?.Split('@')[0] ?? string.Empty)" />
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="vb-form-group">
+                            <label class="vb-form-label">Seat Preference</label>
+                            <div class="vb-form-control d-flex justify-content-between align-items-center bg-light">
+                                <span>Window (@Model.SeatNumber)</span>
+                                <i class="bi bi-person-wheelchair small"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-3 mt-5">Payment Method</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="vb-card p-4 border-primary border-2 h-100 position-relative">
+                        <div class="d-flex justify-content-between mb-4">
+                            <i class="bi bi-credit-card h4 mb-0 text-primary"></i>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payMethod" checked>
+                            </div>
+                        </div>
+                        <div class="fw-bold small mb-1">Card ending in 4242</div>
+                        <div class="vb-text-muted extra-small">Exp: 12/26</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="vb-card p-4 h-100 opacity-75">
+                        <div class="d-flex justify-content-between mb-4">
+                            <i class="bi bi-bank h4 mb-0"></i>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payMethod">
+                            </div>
+                        </div>
+                        <div class="fw-bold small">Apple Pay</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="vb-card p-4 h-100 border-dashed text-center d-flex flex-column justify-content-center align-items-center opacity-50">
+                        <i class="bi bi-plus-lg h4 mb-2"></i>
+                        <div class="small fw-bold">Add New</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="vb-card p-4 mb-4">
+                <h6 class="vb-filter-title mb-4">Fare Breakdown</h6>
+                
+                <div class="vb-summary-row border-0">
+                    <span class="label">Base Fare (x1)</span>
+                    <span class="value">₹@Model.BaseFare.ToString("F2")</span>
+                </div>
+                <div class="vb-summary-row border-0">
+                    <span class="label">Seat Selection</span>
+                    <span class="value">₹@Model.SeatSelectionFee.ToString("F2")</span>
+                </div>
+                <div class="vb-summary-row border-0 mb-3">
+                    <span class="label">Booking Fee</span>
+                    <span class="value">₹@Model.BookingFee.ToString("F2")</span>
+                </div>
+                
+                <div class="vb-summary-total py-3">
+                    <span>Total Amount</span>
+                    <span class="total-amount text-primary h4 mb-0">₹@Model.TotalAmount.ToString("F2")</span>
+                </div>
+
+                <form asp-controller="TicketBooking" asp-action="Confirm" method="post" class="mt-4">
+                    <input type="hidden" name="tripId" value="@Model.Trip.TripId" />
+                    <input type="hidden" name="seatNumber" value="@Model.SeatNumber" />
+                    <button type="submit" class="vb-btn-primary w-100 py-3 shadow">
+                        Confirm & Pay <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </form>
+                
+                <p class="text-center mt-3 extra-small vb-text-muted">
+                    By clicking pay, you agree to our <a href="#" class="text-decoration-underline">Terms of Service</a>.
+                </p>
+            </div>
+
+            <div class="vb-card-notice bg-light border-0 mb-4">
+                <i class="bi bi-shield-lock-fill text-muted"></i>
+                <div class="extra-small">
+                    <div class="fw-bold text-dark">Secure SSL Payment</div>
+                    256-bit encryption active
+                </div>
+            </div>
+
+            <div class="vb-card-notice bg-light border-0">
+                <i class="bi bi-info-circle-fill text-muted"></i>
+                <div class="extra-small">
+                    <div class="fw-bold text-dark">Cancellation Policy</div>
+                    Full refund if cancelled at least 24 hours before departure time.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-dashed { border: 2px dashed var(--vb-border) !important; background: transparent !important; }
+    .extra-small { font-size: 0.75rem; }
+</style>

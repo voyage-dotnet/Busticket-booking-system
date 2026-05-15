@@ -1,0 +1,76 @@
+@model BusTicketSystem.MVC.ViewModels.CreateRouteViewModel
+@{
+    ViewData["Title"] = "Edit Route";
+    var routeId = ViewBag.RouteId;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="vb-card p-4 p-lg-5 shadow-lg border-0">
+                <div class="mb-4">
+                    <a asp-action="Index" class="vb-btn-ghost py-1 px-0 mb-3 d-inline-flex align-items-center gap-1 small">
+                        <i class="bi bi-arrow-left"></i> Back to Routes
+                    </a>
+                    <h2 class="fw-bold mb-1">Edit Route #@routeId</h2>
+                    <p class="vb-text-muted small">Update the break points and estimated duration. Origin and destination cannot be changed.</p>
+                </div>
+
+                <form asp-action="Edit" asp-route-id="@routeId" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger vb-radius-md border-0 small mb-4"></div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label asp-for="FromCity" class="vb-form-label"></label>
+                                <input asp-for="FromCity" class="vb-form-control" readonly disabled />
+                                <div class="text-muted extra-small mt-1">Cannot be changed</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label asp-for="ToCity" class="vb-form-label"></label>
+                                <input asp-for="ToCity" class="vb-form-control" readonly disabled />
+                                <div class="text-muted extra-small mt-1">Cannot be changed</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vb-form-group mb-4">
+                        <label asp-for="BreakPoints" class="vb-form-label"></label>
+                        <div class="position-relative">
+                            <i class="bi bi-pin-map position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
+                            <input asp-for="BreakPoints" class="vb-form-control ps-5" placeholder="e.g. Nashik, Lonavala" />
+                        </div>
+                        <span asp-validation-for="BreakPoints" class="text-danger small"></span>
+                    </div>
+
+                    <div class="vb-form-group mb-5">
+                        <label asp-for="EstimatedDurationMinutes" class="vb-form-label"></label>
+                        <div class="position-relative">
+                            <i class="bi bi-clock position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
+                            <input asp-for="EstimatedDurationMinutes" type="number" min="1" max="10000" class="vb-form-control ps-5" />
+                        </div>
+                        <span asp-validation-for="EstimatedDurationMinutes" class="text-danger small"></span>
+                        <div class="text-muted extra-small mt-1">Total travel time in minutes</div>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="vb-btn-primary flex-grow-1 py-3">
+                            <i class="bi bi-check-circle me-2"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="vb-btn-ghost py-3 px-4">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.72rem; }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,63 @@
+@model BusTicketSystem.MVC.ViewModels.AgencyReviewSummaryViewModel
+@{
+    ViewData["Title"] = "Customer Feedback";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="h2 fw-bold mb-1">Customer Reviews</h1>
+            <p class="vb-text-muted mb-0">What passengers are saying about your service.</p>
+        </div>
+        <div class="vb-card p-3 d-flex align-items-center gap-3 shadow-sm border-0">
+            <div class="text-warning h3 mb-0"><i class="bi bi-star-fill"></i></div>
+            <div>
+                <div class="fw-bold h4 mb-0">@Model.AverageRating.ToString("F1")</div>
+                <div class="extra-small text-muted text-uppercase fw-bold">Avg Rating (@Model.TotalReviews reviews)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        @if (Model.Reviews.Count == 0)
+        {
+            <div class="col-12 text-center py-5">
+                <div class="vb-card p-5 border-0 shadow-sm">
+                    <i class="bi bi-chat-left-dots h1 text-muted opacity-25 mb-3 d-block"></i>
+                    <h5 class="fw-bold">No reviews yet</h5>
+                    <p class="vb-text-muted small">Feedback from your passengers will appear here.</p>
+                </div>
+            </div>
+        }
+        @foreach (var review in Model.Reviews)
+        {
+            <div class="col-md-6">
+                <div class="vb-card h-100 shadow-sm border-0">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="bg-light rounded-circle p-2">
+                                <i class="bi bi-person text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold small">@review.CustomerName</div>
+                                <div class="extra-small text-muted">@review.TripName • @review.ReviewDate.ToString("MMM dd, yyyy")</div>
+                            </div>
+                        </div>
+                        <div class="text-warning">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="bi @(i <= review.Rating ? "bi-star-fill" : "bi-star")"></i>
+                            }
+                        </div>
+                    </div>
+                    <p class="vb-text-secondary small italic mb-0">"@review.Comment"</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05em; }
+    .italic { font-style: italic; }
+</style>

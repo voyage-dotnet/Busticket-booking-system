@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" role="img" aria-labelledby="title desc">
+  <title id="title">Agency network illustration</title>
+  <desc id="desc">Bus agency control desk with fleet and route graphics.</desc>
+  <rect width="720" height="420" rx="32" fill="#f3f7fb"/>
+  <rect x="70" y="250" width="580" height="62" rx="24" fill="#dbeafe"/>
+  <path d="M120 281h480" stroke="#b8cce0" stroke-width="8" stroke-linecap="round" stroke-dasharray="18 20"/>
+  <rect x="118" y="108" width="238" height="128" rx="28" fill="#ffffff" stroke="#d6e0ea" stroke-width="8"/>
+  <rect x="148" y="138" width="76" height="50" rx="12" fill="#e9f6f0"/>
+  <rect x="240" y="138" width="76" height="50" rx="12" fill="#e9f6f0"/>
+  <path d="M155 211h156" stroke="#3d5166" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="174" cy="252" r="26" fill="#3d5166"/>
+  <circle cx="304" cy="252" r="26" fill="#3d5166"/>
+  <circle cx="174" cy="252" r="10" fill="#f3f7fb"/>
+  <circle cx="304" cy="252" r="10" fill="#f3f7fb"/>
+  <rect x="424" y="84" width="152" height="190" rx="22" fill="#ffffff" stroke="#d6e0ea" stroke-width="8"/>
+  <rect x="452" y="116" width="96" height="18" rx="9" fill="#3d5166"/>
+  <rect x="452" y="154" width="68" height="14" rx="7" fill="#b8cce0"/>
+  <rect x="452" y="184" width="96" height="14" rx="7" fill="#b8cce0"/>
+  <rect x="452" y="214" width="76" height="14" rx="7" fill="#b8cce0"/>
+  <path d="M388 292c44-58 94-58 150 0" fill="none" stroke="#2e7d5e" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="388" cy="292" r="14" fill="#2e7d5e"/>
+  <circle cx="462" cy="255" r="14" fill="#2e7d5e"/>
+  <circle cx="538" cy="292" r="14" fill="#2e7d5e"/>
+  <text x="360" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#3d5166">Fleet operations</text>
+</svg>

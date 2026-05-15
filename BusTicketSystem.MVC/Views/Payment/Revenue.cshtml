@@ -1,0 +1,106 @@
+@model BusTicketSystem.MVC.ViewModels.AgencyRevenueViewModel
+@{
+    ViewData["Title"] = "Revenue Insights";
+    var maxTrend = Model.RevenueTrend.Count == 0 ? 0 : Model.RevenueTrend.Max(p => p.Amount);
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="h2 fw-bold mb-1">Financial Overview</h1>
+            <p class="vb-text-muted mb-0">Track your earnings and booking performance.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="vb-btn-ghost border py-2 px-3 small"><i class="bi bi-download me-2"></i> Export Report</button>
+            <button class="vb-btn-primary">Settlement Status</button>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="vb-card-dark p-4 shadow-lg border-0">
+                <div class="vb-text-muted extra-small text-uppercase fw-bold mb-2 opacity-50">Total Lifetime Revenue</div>
+                <h2 class="fw-bold mb-3">₹@Model.TotalRevenue.ToString("N2")</h2>
+                <div class="d-flex align-items-center gap-2 text-success small">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <span>From successful payments</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="vb-card p-4 border-0 shadow-sm">
+                <div class="vb-text-muted extra-small text-uppercase fw-bold mb-2">Monthly Earnings</div>
+                <h2 class="fw-bold mb-3">₹@Model.ThisMonthRevenue.ToString("N2")</h2>
+                <div class="progress mb-3" style="height: 6px;">
+                    <div class="progress-bar bg-primary" style="width: @(Model.TotalRevenue == 0 ? 0 : Math.Min(100, (int)(Model.ThisMonthRevenue / Model.TotalRevenue * 100)))%"></div>
+                </div>
+                <div class="vb-text-muted extra-small">Target: ₹@((Model.ThisMonthRevenue * 1.5m).ToString("N0"))</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="vb-card p-4 border-0 shadow-sm">
+                <div class="vb-text-muted extra-small text-uppercase fw-bold mb-2">Successful Bookings</div>
+                <h2 class="fw-bold mb-3">@Model.TotalBookings</h2>
+                <div class="d-flex gap-1">
+                    @for (int i = 0; i < Math.Min(8, Math.Max(1, Model.TotalBookings)); i++)
+                    {
+                        <div class="bg-primary rounded-1" style="height: @(18 + (i % 4) * 4)px; width: 10px;"></div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="vb-card p-4 border-0 shadow-sm h-100">
+                <h6 class="fw-bold mb-4">Revenue Trend</h6>
+                <div class="bg-light vb-radius-md p-4 d-flex align-items-end gap-3" style="height: 300px;">
+                    @if (Model.RevenueTrend.Count == 0 || maxTrend == 0)
+                    {
+                        <div class="text-center opacity-25 m-auto">
+                            <i class="bi bi-bar-chart-line h1 d-block mb-2"></i>
+                            <span class="small fw-bold">Revenue appears after successful bookings.</span>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var point in Model.RevenueTrend)
+                        {
+                            var height = Math.Max(12, (int)(point.Amount / maxTrend * 220));
+                            <div class="flex-fill text-center">
+                                <div class="bg-primary rounded-top mx-auto" style="height: @(height)px; max-width: 44px;"></div>
+                                <div class="extra-small mt-2 text-muted">@point.Label</div>
+                                <div class="extra-small fw-bold">₹@point.Amount.ToString("N0")</div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="vb-card p-4 border-0 shadow-sm h-100">
+                <h6 class="fw-bold mb-4">Top Routes by Revenue</h6>
+                @if (Model.TopRoutes.Count == 0)
+                {
+                    <div class="text-center py-5 vb-text-muted small">No route revenue yet.</div>
+                }
+                @foreach (var route in Model.TopRoutes)
+                {
+                    <div class="vb-summary-row border-0 py-2">
+                        <span class="label small">@route.DisplayName</span>
+                        <span class="value small fw-bold">₹@route.TotalRevenue.ToString("N0")</span>
+                    </div>
+                }
+                <div class="vb-card-notice bg-info bg-opacity-10 border-0 mt-4">
+                    <i class="bi bi-lightning-charge-fill text-info"></i>
+                    <div class="extra-small">Revenue is calculated from successful paid bookings.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05em; }
+</style>

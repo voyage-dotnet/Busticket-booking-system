@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Modern Bus Travel";
+}
+
+<section class="vb-hero">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-lg-7 vb-hero-content">
+                <h1 class="vb-hero-title">Experience the Future of Bus Travel</h1>
+                <p class="vb-hero-subtitle mb-5">Premium comfort, real-time tracking, and effortless booking for your next journey.</p>
+                
+                <form asp-controller="Trips" asp-action="Index" method="get" class="vb-search-bar">
+                    <div class="vb-search-field">
+                        <label>From</label>
+                        <input type="text" name="from" class="vb-search-input" placeholder="Origin City" required />
+                    </div>
+                    <div class="vb-search-field">
+                        <label>To</label>
+                        <input type="text" name="to" class="vb-search-input" placeholder="Destination" required />
+                    </div>
+                    <div class="vb-search-field">
+                        <label>Date</label>
+                        <input type="date" name="date" class="vb-search-input" required value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <button type="submit" class="vb-btn-primary py-3 px-4">
+                        <i class="bi bi-search"></i> Find Trips
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5 mt-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="vb-card text-center h-100">
+                <i class="bi bi-shield-check text-primary h1 mb-4 d-block"></i>
+                <h5 class="fw-bold mb-3">Safe & Verified</h5>
+                <p class="vb-text-secondary small">All our buses and drivers are strictly verified for your safety and comfort.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="vb-card text-center h-100">
+                <i class="bi bi-lightning-charge text-primary h1 mb-4 d-block"></i>
+                <h5 class="fw-bold mb-3">Instant Booking</h5>
+                <p class="vb-text-secondary small">Get your tickets instantly with our paperless and secure booking system.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="vb-card text-center h-100">
+                <i class="bi bi-headset text-primary h1 mb-4 d-block"></i>
+                <h5 class="fw-bold mb-3">24/7 Support</h5>
+                <p class="vb-text-secondary small">Our dedicated support team is always here to help you with your journey.</p>
+            </div>
+        </div>
+    </div>
+</section>

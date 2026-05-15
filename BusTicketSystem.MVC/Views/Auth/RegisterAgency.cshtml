@@ -1,0 +1,96 @@
+@model BusTicketSystem.MVC.ViewModels.RegisterAgencyViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Register New Agency";
+    var UserRole = HttpContextAccessor.HttpContext?.Session.GetString("UserRole");
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="vb-card p-4 p-lg-5 shadow-lg">
+                <div class="d-flex align-items-center gap-3 mb-5">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                        <i class="bi bi-building-add h3 mb-0"></i>
+                    </div>
+                    <div>
+                        <h2 class="fw-bold mb-1">Partner with VoyaBus</h2>
+                        <p class="vb-text-muted mb-0">Join our growing network of reliable travel agencies.</p>
+                    </div>
+                </div>
+
+                <form asp-action="RegisterAgency" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger vb-radius-md border-0 small mb-4"></div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label asp-for="Name" class="vb-form-label">Agency Name</label>
+                                <input asp-for="Name" class="vb-form-control" placeholder="e.g. Royal Travels" />
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label asp-for="Email" class="vb-form-label">Official Email</label>
+                                <input asp-for="Email" class="vb-form-control" placeholder="agency@vovabus.com" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label asp-for="Phone" class="vb-form-label">Phone Number</label>
+                                <input asp-for="Phone" class="vb-form-control" placeholder="+91 98765 43210" />
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label asp-for="ContactPersonName" class="vb-form-label">Contact Person Name</label>
+                                <input asp-for="ContactPersonName" class="vb-form-control" placeholder="e.g. Rajesh Kumar" />
+                                <span asp-validation-for="ContactPersonName" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="vb-form-group">
+                                <label asp-for="Password" class="vb-form-label">Temporary Password</label>
+                                <input asp-for="Password" type="password" class="vb-form-control" placeholder="••••••••" />
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-5 opacity-10">
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        @if (UserRole == "Agency")
+                        {
+                            <a asp-controller="Dashboard" asp-action="Agency" class="vb-btn-ghost">
+                                <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="LoginAgency" class="vb-btn-ghost">
+                                <i class="bi bi-arrow-left me-2"></i> Back to Login
+                            </a>
+                        }
+                        <button type="submit" class="vb-btn-primary py-3 px-5">
+                            Onboard Agency <i class="bi bi-check-circle ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="vb-card-notice bg-light border-0 p-4 mt-4">
+                <i class="bi bi-info-circle vb-notice-icon"></i>
+                <div class="small">
+                    <strong>Security Notice:</strong> The registered agency will receive an onboarding email with their credentials. You are responsible for ensuring the accuracy of partner data.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

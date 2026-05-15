@@ -1,0 +1,63 @@
+@model List<BusTicketSystem.MVC.ViewModels.PaymentHistoryViewModel>
+@{
+    ViewData["Title"] = "Payment History";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="h2 fw-bold mb-1">Transaction History</h1>
+            <p class="vb-text-muted mb-0">Review all your past payments and booking receipts.</p>
+        </div>
+    </div>
+
+    <div class="vb-card p-0 overflow-hidden shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 vb-text-muted small text-uppercase">Payment ID</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Date</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Amount</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Method</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Status</th>
+                        <th class="pe-4 py-3 text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="opacity-25 mb-3"><i class="bi bi-credit-card-2-back h1"></i></div>
+                                <h6 class="fw-bold">No transactions found</h6>
+                                <p class="vb-text-muted small">Once you book a trip, your payment history will appear here.</p>
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var payment in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold small text-primary">#@payment.PaymentId</td>
+                            <td class="small">@payment.PaymentDate.ToString("MMM dd, yyyy · HH:mm")</td>
+                            <td class="fw-bold">₹@payment.Amount.ToString("F2")</td>
+                            <td>
+                                <span class="small vb-text-secondary">
+                                    <i class="bi bi-credit-card me-1"></i> Razorpay
+                                </span>
+                            </td>
+                            <td>
+                                <span class="vb-badge vb-badge-verified">Success</span>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <a asp-controller="TicketBooking" asp-action="Ticket" asp-route-id="@payment.BookingId" class="vb-btn-ghost py-1 px-2 small">
+                                    View Ticket
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

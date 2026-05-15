@@ -1,0 +1,77 @@
+@model List<BusTicketSystem.MVC.ViewModels.PublicAgencyViewModel>
+@{
+    ViewData["Title"] = "Our Partners";
+}
+
+<div class="container py-5">
+    <div class="row align-items-center g-4 mb-5">
+        <div class="col-lg-7">
+            <div class="vb-badge vb-badge-verified mb-3">Partner Network</div>
+            <h1 class="fw-bold">Trusted Travel Partners</h1>
+            <p class="vb-text-muted mb-0">Explore reliable bus agencies with verified fleet, regional offices, and passenger support.</p>
+        </div>
+        <div class="col-lg-5 text-center">
+            <img src="~/images/agency-network.svg" alt="Agency operations" class="img-fluid" style="max-height: 260px;" />
+        </div>
+    </div>
+
+    <div class="row g-4">
+        @if (Model.Count == 0)
+        {
+            <div class="col-12">
+                <div class="vb-card p-5 text-center border-0 shadow-sm">
+                    <i class="bi bi-building h1 text-muted opacity-25 mb-3 d-block"></i>
+                    <h5 class="fw-bold">No partner agencies found</h5>
+                    <p class="vb-text-muted small mb-0">Registered agencies will appear here once the API returns them.</p>
+                </div>
+            </div>
+        }
+        @foreach (var agency in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="vb-card h-100 shadow-sm border-0 d-flex flex-column">
+                    <div class="p-4 flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+                                <i class="bi bi-building h3 mb-0"></i>
+                            </div>
+                            <div class="text-warning small fw-bold">
+                                @if (agency.Rating > 0)
+                                {
+                                    <i class="bi bi-star-fill"></i> @agency.Rating.ToString("F1")
+                                }
+                                else
+                                {
+                                    <span class="vb-text-muted opacity-50"><i class="bi bi-star"></i> New</span>
+                                }
+                            </div>
+                        </div>
+                        
+                        <h4 class="fw-bold mb-2">@agency.Name</h4>
+                        <p class="vb-text-secondary small mb-4">@(string.IsNullOrEmpty(agency.Description) ? "Professional bus transit service providing comfortable and safe journeys." : agency.Description)</p>
+                        
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <div class="vb-text-muted extra-small text-uppercase fw-bold">Fleet Size</div>
+                                <div class="fw-bold">@agency.TotalBuses Buses</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="vb-text-muted extra-small text-uppercase fw-bold">Coverage</div>
+                                <div class="fw-bold">Pan India</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 border-top bg-light">
+                        <a asp-action="AgencyProfile" asp-route-id="@agency.AgencyId" class="vb-btn-secondary w-100 py-2">
+                            View Agency Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05em; }
+</style>

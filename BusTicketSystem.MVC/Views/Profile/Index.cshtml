@@ -1,0 +1,89 @@
+@model BusTicketSystem.MVC.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container py-5">
+    <div class="row g-4 justify-content-center">
+        <!-- Sidebar: Stats -->
+        <div class="col-lg-4">
+            <div class="vb-card text-center p-5 shadow-sm border-0">
+                <div class="position-relative d-inline-block mb-4">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-4">
+                        <i class="bi bi-person h1 text-primary mb-0"></i>
+                    </div>
+                    <span class="position-absolute bottom-0 end-0 bg-success border border-white border-2 rounded-circle p-2"></span>
+                </div>
+                <h4 class="fw-bold mb-1">@Model.Name</h4>
+                <p class="vb-text-secondary small mb-4">@Model.Email</p>
+                
+                <div class="row g-2 mt-4">
+                    <div class="col-6">
+                        <div class="bg-light p-3 vb-radius-md">
+                            <div class="fw-bold h4 mb-0">@Model.TotalTrips</div>
+                            <div class="vb-text-muted extra-small text-uppercase">Total Trips</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-light p-3 vb-radius-md">
+                            <div class="fw-bold h4 mb-0">Gold</div>
+                            <div class="vb-text-muted extra-small text-uppercase">Status</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-5 opacity-10">
+                <div class="vb-text-muted small">Member since @Model.MemberSince.ToString("MMMM yyyy")</div>
+            </div>
+        </div>
+
+        <!-- Main Content: Edit Profile -->
+        <div class="col-lg-7">
+            <div class="vb-card p-4 p-lg-5 shadow-sm border-0 h-100">
+                <h5 class="fw-bold mb-4">Personal Settings</h5>
+                
+                <form asp-action="Update" method="post">
+                    <div class="row g-4">
+                        <div class="col-md-12">
+                            <div class="vb-form-group">
+                                <label class="vb-form-label">Full Name</label>
+                                <input type="text" name="Name" class="vb-form-control" value="@Model.Name" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label class="vb-form-label">Email (Read Only)</label>
+                                <input type="email" class="vb-form-control bg-light" value="@Model.Email" readonly />
+                                <div class="extra-small text-muted mt-2">Email can be changed via Support.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label class="vb-form-label">Phone Number</label>
+                                <input type="text" name="PhoneNumber" class="vb-form-control" value="@Model.PhoneNumber" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold mb-4 mt-5">Security</h5>
+                    <div class="vb-card-notice bg-light border-0 mb-5">
+                        <i class="bi bi-shield-lock-fill text-muted"></i>
+                        <div class="small">
+                            Change your password regularly to keep your account safe.
+                            <a href="#" class="ms-2 fw-bold text-primary">Update Password</a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-4 border-top">
+                        <button type="button" class="vb-btn-ghost">Discard Changes</button>
+                        <button type="submit" class="vb-btn-primary px-5 py-3">Save Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05em; }
+</style>

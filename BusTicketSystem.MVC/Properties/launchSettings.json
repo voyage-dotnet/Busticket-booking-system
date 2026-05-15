@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "BusTicketSystem.MVC": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:57596;http://localhost:57597"
+    }
+  }
+}

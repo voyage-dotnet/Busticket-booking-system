@@ -1,0 +1,57 @@
+@model BusTicketSystem.MVC.ViewModels.CreateBusViewModel
+@{
+    ViewData["Title"] = "Edit Bus Details";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="vb-card p-4 p-lg-5 shadow-lg border-0">
+                <div class="d-flex align-items-center gap-3 mb-5">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+                        <i class="bi bi-pencil-square h3 mb-0"></i>
+                    </div>
+                    <div>
+                        <h2 class="fw-bold mb-1">Edit Vehicle</h2>
+                        <p class="vb-text-muted mb-0">Update information for @Model.RegistrationNumber</p>
+                    </div>
+                </div>
+
+                <form asp-action="Edit" method="post">
+                    <div class="vb-form-group">
+                        <label asp-for="RegistrationNumber" class="vb-form-label">Registration Number</label>
+                        <input asp-for="RegistrationNumber" class="vb-form-control" />
+                        <span asp-validation-for="RegistrationNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3">
+                    <div class="col-6">
+                        <div class="vb-form-group">
+                            <label asp-for="TotalCapacity" class="vb-form-label">Seating Capacity</label>
+                            <input asp-for="TotalCapacity" type="number" class="vb-form-control" />
+                            <span asp-validation-for="TotalCapacity" class="text-danger small"></span>
+                        </div>
+                    </div>
+                        <div class="col-6">
+                            <div class="vb-form-group">
+                                <label asp-for="BusType" class="vb-form-label">Vehicle Type</label>
+                                <select asp-for="BusType" class="vb-form-control">
+                                    <option value="AC Sleeper">AC Sleeper</option>
+                                    <option value="Non-AC Sleeper">Non-AC Sleeper</option>
+                                    <option value="AC Seater">AC Seater</option>
+                                    <option value="Luxury Coach">Luxury Coach</option>
+                                </select>
+                                <span asp-validation-for="BusType" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-5">
+                        <button type="submit" class="vb-btn-primary py-3">Update Details</button>
+                        <a asp-action="Index" class="vb-btn-ghost text-center">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

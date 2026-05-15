@@ -1,0 +1,92 @@
+@model List<BusTicketSystem.MVC.ViewModels.BookingViewModel>
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="h2 fw-bold mb-1">My Journeys</h1>
+            <p class="vb-text-muted mb-0">View your active tickets and travel history.</p>
+        </div>
+        <a asp-controller="Trips" asp-action="Index" class="vb-btn-primary">
+            <i class="bi bi-plus-lg"></i> Book New Trip
+        </a>
+    </div>
+
+    <div class="row g-4">
+        @if (Model.Count == 0)
+        {
+            <div class="col-12 text-center py-5">
+                <div class="vb-card p-5">
+                    <i class="bi bi-ticket-detailed h1 text-muted opacity-25 mb-3 d-block"></i>
+                    <h5 class="fw-bold">No bookings yet</h5>
+                    <p class="vb-text-muted small">Your future adventures will appear here!</p>
+                </div>
+            </div>
+        }
+        
+        @foreach (var booking in Model)
+        {
+            <div class="col-lg-6">
+                <div class="vb-card p-0 overflow-hidden shadow-sm border-0 d-flex flex-column flex-md-row">
+                    <!-- Left: Status Indicator -->
+                    <div class="p-4 bg-primary text-white d-flex flex-md-column justify-content-between align-items-center" style="width: 100px;">
+                        <i class="bi bi-qr-code h2 mb-md-0"></i>
+                        <div class="fw-bold extra-small text-uppercase vertical-text d-none d-md-block" style="writing-mode: vertical-rl;">
+                            @booking.Status
+                        </div>
+                    </div>
+
+                    <!-- Right: Ticket Info -->
+                    <div class="p-4 flex-grow-1 position-relative">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="vb-badge vb-badge-verified">ID: #@booking.BookingId</span>
+                            <div class="fw-bold text-primary">₹@booking.Fare.ToString("F2")</div>
+                        </div>
+
+                        <h5 class="fw-bold mb-1">@booking.RouteName</h5>
+                        <p class="vb-text-muted small mb-4">
+                            <i class="bi bi-calendar3 me-1"></i> @booking.DepartureTime.ToString("MMM dd, yyyy · HH:mm tt")
+                        </p>
+
+                        <div class="row g-3 py-3 border-top border-bottom border-light mb-4">
+                            <div class="col-6 border-end">
+                                <div class="vb-text-muted extra-small text-uppercase fw-bold">Seat Number</div>
+                                <div class="fw-bold">@booking.SeatNumber</div>
+                            </div>
+                            <div class="col-6 ps-4">
+                                <div class="vb-text-muted extra-small text-uppercase fw-bold">Boarding Pt</div>
+                                <div class="fw-bold">Main Terminal</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <a asp-action="Ticket" asp-route-id="@booking.BookingId" class="vb-btn-ghost p-0 h-auto small fw-bold text-decoration-none">View Ticket</a>
+                            @if (booking.Status != "Cancelled")
+                            {
+                                <span class="opacity-10">|</span>
+                                <a asp-controller="Review" asp-action="Submit" asp-route-bookingId="@booking.BookingId" class="vb-btn-ghost p-0 h-auto small fw-bold text-primary">Rate Journey</a>
+                            }
+                            @if (booking.Status != "Cancelled")
+                            {
+                                <span class="opacity-10">|</span>
+                                <form asp-action="Cancel" asp-route-id="@booking.BookingId" method="post" class="d-inline">
+                                    <button type="submit" class="vb-btn-ghost p-0 h-auto small fw-bold text-danger bg-transparent border-0">Cancel</button>
+                                </form>
+                            }
+                        </div>
+                        
+                        <!-- Perforated Line Decoration -->
+                        <div class="d-none d-md-block position-absolute start-0 top-0 bottom-0 border-start border-2 border-white border-opacity-50" style="left: -1px !important;"></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05em; }
+    .vertical-text { letter-spacing: 0.2em; transform: rotate(180deg); }
+</style>

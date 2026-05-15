@@ -1,0 +1,246 @@
+@model BusTicketSystem.MVC.ViewModels.AgencyDashboardViewModel
+@{
+    ViewData["Title"] = "Agency Dashboard";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="h2 fw-bold mb-1">Agency Command Center</h1>
+            <p class="vb-text-muted mb-0">Welcome back! Here's what's happening with your fleet today.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Auth" asp-action="RegisterAgency" class="vb-btn-secondary">
+                <i class="bi bi-plus-circle"></i> Register New Agency
+            </a>
+            <a asp-controller="Trips" asp-action="Create" class="vb-btn-primary">
+                <i class="bi bi-lightning"></i> Quick Trip Setup
+            </a>
+        </div>
+    </div>
+
+    @if (Model.TotalBuses == 0 || Model.TotalRoutes == 0 || Model.TotalDrivers == 0)
+    {
+        <!-- Onboarding Wizard -->
+        <div class="vb-card p-4 p-lg-5 mb-5 border-primary border-opacity-25 shadow-lg position-relative overflow-hidden">
+            <div class="row align-items-center position-relative" style="z-index: 1;">
+                <div class="col-lg-7">
+                    <h4 class="fw-bold mb-2">Complete your Agency Setup</h4>
+                    <p class="vb-text-muted mb-4">Follow these steps to start scheduling trips and receiving bookings.</p>
+                    
+                    <div class="d-flex flex-wrap gap-4 mb-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi @(Model.TotalBuses > 0 ? "bi-check-circle-fill text-success" : "bi-circle text-muted")"></i>
+                            <span class="small fw-bold @(Model.TotalBuses == 0 ? "text-primary" : "")">Add Fleet</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi @(Model.TotalDrivers > 0 ? "bi-check-circle-fill text-success" : "bi-circle text-muted")"></i>
+                            <span class="small fw-bold @(Model.TotalBuses > 0 && Model.TotalDrivers == 0 ? "text-primary" : "")">Assign Drivers</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi @(Model.TotalRoutes > 0 ? "bi-check-circle-fill text-success" : "bi-circle text-muted")"></i>
+                            <span class="small fw-bold @(Model.TotalDrivers > 0 && Model.TotalRoutes == 0 ? "text-primary" : "")">Map Routes</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-circle text-muted"></i>
+                            <span class="small fw-bold @(Model.TotalRoutes > 0 ? "text-primary" : "")">Schedule Trip</span>
+                        </div>
+                    </div>
+
+                    @if (Model.TotalBuses == 0)
+                    {
+                        <a asp-controller="Bus" asp-action="Index" class="vb-btn-primary px-4">Start by Adding a Bus <i class="bi bi-arrow-right ms-2"></i></a>
+                    }
+                    else if (Model.TotalDrivers == 0)
+                    {
+                        <a asp-controller="Driver" asp-action="Index" class="vb-btn-primary px-4">Add your First Driver <i class="bi bi-arrow-right ms-2"></i></a>
+                    }
+                    else if (Model.TotalRoutes == 0)
+                    {
+                        <a asp-controller="Routes" asp-action="Index" class="vb-btn-primary px-4">Define your First Route <i class="bi bi-arrow-right ms-2"></i></a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Trips" asp-action="Create" class="vb-btn-primary px-4">Schedule your First Trip <i class="bi bi-arrow-right ms-2"></i></a>
+                    }
+                </div>
+                <div class="col-lg-5 d-none d-lg-block text-end">
+                    <img src="~/images/agency-network.svg" alt="Agency setup" class="img-fluid" style="max-height: 220px;" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Stats Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="vb-card p-4 border-0 shadow-sm">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary">
+                        <i class="bi bi-bus-front h4 mb-0"></i>
+                    </div>
+                    <span class="vb-text-muted small fw-bold text-uppercase">Total Fleet</span>
+                </div>
+                <h2 class="fw-bold mb-0">@Model.TotalBuses</h2>
+                <div class="text-success small mt-2"><i class="bi bi-arrow-up"></i> 2 new buses this month</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="vb-card p-4 border-0 shadow-sm">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-success bg-opacity-10 p-2 rounded-3 text-success">
+                        <i class="bi bi-calendar-event h4 mb-0"></i>
+                    </div>
+                    <span class="vb-text-muted small fw-bold text-uppercase">Active Trips</span>
+                </div>
+                <h2 class="fw-bold mb-0">@Model.ActiveTrips</h2>
+                <div class="vb-text-muted small mt-2">Currently on road</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="vb-card p-4 border-0 shadow-sm">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-warning bg-opacity-10 p-2 rounded-3 text-warning">
+                        <i class="bi bi-ticket-perforated h4 mb-0"></i>
+                    </div>
+                    <span class="vb-text-muted small fw-bold text-uppercase">Total Bookings</span>
+                </div>
+                <h2 class="fw-bold mb-0">@Model.TodayBookings</h2>
+                <div class="vb-text-muted small mt-2">Across all agency trips</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="vb-card p-4 border-0 shadow-sm">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-info bg-opacity-10 p-2 rounded-3 text-info">
+                        <i class="bi bi-currency-dollar h4 mb-0"></i>
+                    </div>
+                    <span class="vb-text-muted small fw-bold text-uppercase">Total Revenue</span>
+                </div>
+                <h2 class="fw-bold mb-0">₹@Model.TotalRevenue.ToString("N0")</h2>
+                <div class="vb-text-muted small mt-2">Lifetime earnings</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Trips Table -->
+        <div class="col-lg-8">
+            <div class="vb-card p-0 overflow-hidden">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Recent Trips Activity</h5>
+                    <a asp-controller="Trips" asp-action="Agency" class="vb-btn-ghost py-1 px-2 small">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3 vb-text-muted small text-uppercase">Trip ID</th>
+                                <th class="py-3 vb-text-muted small text-uppercase">Route Info</th>
+                                <th class="py-3 vb-text-muted small text-uppercase">Departure</th>
+                                <th class="py-3 vb-text-muted small text-uppercase">Status</th>
+                                <th class="py-3 vb-text-muted small text-uppercase">Occupancy</th>
+                                <th class="pe-4 py-3"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentTrips.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 vb-text-muted small">No recent trip activity yet.</td>
+                                </tr>
+                            }
+                            @foreach (var trip in Model.RecentTrips)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold">#@trip.TripId</td>
+                                    <td>@trip.Route</td>
+                                    <td>@trip.Departure.ToString("hh:mm tt")</td>
+                                    <td>
+                                        <span class="vb-badge @(trip.Status == "Boarding" ? "vb-badge-live" : "vb-badge-verified")">
+                                            @trip.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress flex-grow-1" style="height: 6px; width: 60px;">
+                                                <div class="progress-bar bg-primary" style="width: @trip.Occupancy%"></div>
+                                            </div>
+                                            <span class="small">@trip.Occupancy%</span>
+                                        </div>
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <button class="btn btn-sm btn-light border"><i class="bi bi-three-dots"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Sidebar -->
+        <div class="col-lg-4">
+            <div class="vb-card p-4 mb-4">
+                <h6 class="fw-bold mb-4">Quick Management</h6>
+                <div class="d-grid gap-2">
+                    <a asp-controller="Bus" asp-action="Index" class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center text-decoration-none">
+                        <div>
+                            <div class="fw-bold small">Manage Fleet</div>
+                            <div class="vb-text-muted extra-small">Buses, Maintenance</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                    <a asp-controller="Routes" asp-action="Index" class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center text-decoration-none">
+                        <div>
+                            <div class="fw-bold small">Route Optimization</div>
+                            <div class="vb-text-muted extra-small">Efficiency & Coverage</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                    <a asp-controller="Trips" asp-action="Agency" class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center text-decoration-none">
+                        <div>
+                            <div class="fw-bold small">Trip Management</div>
+                            <div class="vb-text-muted extra-small">Schedules & Fares</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                    <a asp-controller="Driver" asp-action="Index" class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center text-decoration-none">
+                        <div>
+                            <div class="fw-bold small">Driver Roster</div>
+                            <div class="vb-text-muted extra-small">Staffing & Performance</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                    <a asp-controller="Offices" asp-action="Index" class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center text-decoration-none">
+                        <div>
+                            <div class="fw-bold small">Branch Offices</div>
+                            <div class="vb-text-muted extra-small">Regional Operations</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                    <a asp-controller="Review" asp-action="Agency" class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center text-decoration-none">
+                        <div>
+                            <div class="fw-bold small">Customer Feedback</div>
+                            <div class="vb-text-muted extra-small">Ratings & Reviews</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="vb-card-notice bg-primary bg-opacity-10 border-0 p-4">
+                <i class="bi bi-stars text-primary h4 mb-2 d-block"></i>
+                <h6 class="fw-bold text-primary mb-2">Pro Tip: Admin Access</h6>
+                <p class="vb-text-secondary small mb-0">As an agency admin, you can now register new partner agencies directly from the top menu.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.75rem; }
+    .vb-badge-live { background: #e6f4ef; color: #2e7d5e; border: 1px solid #b8ddd0; }
+    .vb-badge-verified { background: #edf2f8; color: #3d5166; border: 1px solid #e2e8ef; }
+</style>

@@ -1,0 +1,81 @@
+@model List<BusTicketSystem.MVC.ViewModels.DriverViewModel>
+@{
+    ViewData["Title"] = "Manage Drivers";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="h2 fw-bold mb-1">Driver Roster</h1>
+            <p class="vb-text-muted mb-0">Manage your driving staff and monitor their performance.</p>
+        </div>
+        <a asp-action="Create" class="vb-btn-primary">
+            <i class="bi bi-person-plus"></i> Register New Driver
+        </a>
+    </div>
+
+    <div class="row g-4">
+        @if (Model.Count == 0)
+        {
+            <div class="col-12 text-center py-5">
+                <div class="vb-card p-5 border-0 shadow-sm">
+                    <i class="bi bi-people h1 text-muted opacity-25 mb-3 d-block"></i>
+                    <h5 class="fw-bold">No drivers registered</h5>
+                    <p class="vb-text-muted small">Onboard your first driver to start assigning trips.</p>
+                </div>
+            </div>
+        }
+        @foreach (var driver in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="vb-card h-100 shadow-sm border-0">
+                    <div class="p-4">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="bg-light rounded-circle p-3">
+                                <i class="bi bi-person-vcard h3 mb-0 text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0">@driver.Name</h5>
+                                <div class="vb-text-muted extra-small text-uppercase fw-bold">ID: #DRV-@driver.DriverId</div>
+                            </div>
+                        </div>
+
+                        <div class="vb-summary-row border-0 py-1">
+                            <span class="label small">License No</span>
+                            <span class="value small fw-bold">@driver.LicenseNumber</span>
+                        </div>
+                        <div class="vb-summary-row border-0 py-1">
+                            <span class="label small">Contact</span>
+                            <span class="value small fw-bold">@driver.PhoneNumber</span>
+                        </div>
+                        <div class="vb-summary-row border-0 py-1 mb-3">
+                            <span class="label small">Status</span>
+                            <span class="value">
+                                <span class="vb-badge @(driver.Status == "Available" ? "vb-badge-live" : "vb-badge-verified")">@driver.Status</span>
+                            </span>
+                        </div>
+
+                        <div class="bg-light p-3 vb-radius-md d-flex justify-content-between align-items-center">
+                            <div class="small fw-bold">Performance</div>
+                            <div class="text-warning">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="bi @(i <= driver.Rating ? "bi-star-fill" : "bi-star")"></i>
+                                }
+                                <span class="ms-1 text-dark">@driver.Rating.ToString("F1")</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 border-top d-flex gap-2 justify-content-end">
+                        <button class="vb-btn-ghost py-1 px-3 small border">Edit</button>
+                        <button class="vb-btn-ghost py-1 px-3 small border text-danger">Deactivate</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05em; }
+</style>

@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Server Error";
+}
+
+<div class="container py-5">
+    <div class="row align-items-center justify-content-center g-5 min-vh-75">
+        <div class="col-lg-5 text-center">
+            <img src="~/images/error-500.svg" alt="Server error" class="img-fluid mb-4" style="max-height: 320px;" />
+        </div>
+        <div class="col-lg-5">
+            <div class="vb-badge vb-badge-live mb-3">500</div>
+            <h1 class="fw-bold mb-3">Something went wrong</h1>
+            <p class="vb-text-muted mb-4">The request reached VoyaBus, but the server could not complete it right now.</p>
+            <div class="d-flex flex-wrap gap-3">
+                <a asp-controller="Home" asp-action="Index" class="vb-btn-primary">Go Home</a>
+                <a asp-controller="Home" asp-action="Support" class="vb-btn-secondary">Get Support</a>
+            </div>
+        </div>
+    </div>
+</div>

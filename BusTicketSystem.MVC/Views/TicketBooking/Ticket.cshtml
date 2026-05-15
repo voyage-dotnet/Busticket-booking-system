@@ -1,0 +1,99 @@
+@model BusTicketSystem.MVC.ViewModels.BookingViewModel
+@{
+    ViewData["Title"] = "Your E-Ticket";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a asp-action="MyBookings" class="vb-btn-ghost py-1 px-0 small d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-arrow-left"></i> Back to My Bookings
+                </a>
+                <button onclick="window.print()" class="vb-btn-secondary py-2 px-3 small">
+                    <i class="bi bi-printer me-1"></i> Print Ticket
+                </button>
+            </div>
+
+            <!-- Ticket Card -->
+            <div class="vb-card p-0 shadow-lg border-0 overflow-hidden" id="printableTicket">
+                <div class="bg-primary p-4 text-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="h3 fw-bold mb-0">VoyaBus E-Ticket</div>
+                        <div class="extra-small text-uppercase opacity-75">Boarding Pass #@Model.BookingId</div>
+                    </div>
+                    <i class="bi bi-bus-front h1 mb-0"></i>
+                </div>
+
+                <div class="p-4 p-lg-5">
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <div class="vb-text-muted extra-small text-uppercase fw-bold mb-2">Journey</div>
+                            <div class="h4 fw-bold mb-0">@Model.RouteName</div>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <div class="vb-text-muted extra-small text-uppercase fw-bold mb-2">Status</div>
+                            <span class="vb-badge vb-badge-live px-3 py-1">@Model.Status</span>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 py-4 border-top border-bottom border-light mb-5">
+                        <div class="col-6 col-md-3">
+                            <div class="vb-text-muted extra-small text-uppercase fw-bold mb-1">Departure</div>
+                            <div class="fw-bold">@Model.DepartureTime.ToString("HH:mm")</div>
+                            <div class="small text-muted">@Model.DepartureTime.ToString("MMM dd, yyyy")</div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="vb-text-muted extra-small text-uppercase fw-bold mb-1">Arrival</div>
+                            <div class="fw-bold">@Model.ArrivalTime.ToString("HH:mm")</div>
+                            <div class="small text-muted">@Model.ArrivalTime.ToString("MMM dd, yyyy")</div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="vb-text-muted extra-small text-uppercase fw-bold mb-1">Seat</div>
+                            <div class="fw-bold h4 text-primary mb-0">@Model.SeatNumber</div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="vb-text-muted extra-small text-uppercase fw-bold mb-1">Fare</div>
+                            <div class="fw-bold">₹@Model.Fare.ToString("F2")</div>
+                            <div class="small text-success">Paid via Razorpay</div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h6 class="fw-bold mb-3">Important Instructions</h6>
+                            <ul class="small vb-text-secondary ps-3 mb-0">
+                                <li>Please carry a valid ID proof during boarding.</li>
+                                <li>Report at <strong>@Model.BoardingPoint</strong> 15 minutes before departure.</li>
+                                <li>This is a computer-generated e-ticket and does not require a physical signature.</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 text-center mt-4 mt-md-0">
+                            <div class="bg-light p-3 rounded-3 d-inline-block shadow-sm">
+                                <i class="bi bi-qr-code h1 mb-0 text-dark" style="font-size: 5rem;"></i>
+                            </div>
+                            <div class="extra-small text-muted mt-2">Scan at Boarding</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Perforated Line -->
+                <div class="border-top border-2 border-dashed border-light mx-4 my-2"></div>
+                
+                <div class="p-4 bg-light text-center">
+                    <p class="vb-text-muted small mb-0">Wish you a safe and pleasant journey with @Model.AgencyName Transit Systems.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .border-dashed { border-style: dashed !important; }
+    @@media print {
+        .navbar, .footer, .vb-btn-ghost, .vb-btn-secondary { display: none !important; }
+        .container { width: 100% !important; max-width: none !important; padding: 0 !important; }
+        .vb-card { border: 1px solid #eee !important; box-shadow: none !important; }
+    }
+</style>

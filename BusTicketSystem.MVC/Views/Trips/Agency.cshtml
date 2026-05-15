@@ -1,0 +1,92 @@
+@model List<BusTicketSystem.MVC.ViewModels.TripSummaryViewModel>
+@{
+    ViewData["Title"] = "Scheduled Trips";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="h2 fw-bold mb-1">Trip Schedules</h1>
+            <p class="vb-text-muted mb-0">Monitor and manage all active and upcoming journeys.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Driver" asp-action="Index" class="vb-btn-secondary">
+                <i class="bi bi-people"></i> Manage Drivers
+            </a>
+            <a asp-controller="Trips" asp-action="Create" class="vb-btn-primary">
+                <i class="bi bi-clock-history"></i> Schedule New Trip
+            </a>
+        </div>
+    </div>
+
+    <div class="vb-card p-0 overflow-hidden shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 vb-text-muted small text-uppercase">Trip Details</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Route</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Departure / Arrival</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Occupancy</th>
+                        <th class="py-3 vb-text-muted small text-uppercase">Fare</th>
+                        <th class="pe-4 py-3 text-end"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="opacity-25 mb-3"><i class="bi bi-calendar-x h1"></i></div>
+                                <h6 class="fw-bold">No trips scheduled</h6>
+                                <p class="vb-text-muted small">Time to put your fleet on the road!</p>
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var trip in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">#TRP-@trip.TripId</div>
+                                <div class="extra-small">
+                                    <span class="vb-badge @(trip.Status == "Active" || trip.Status == "Boarding" ? "vb-badge-live" : "vb-badge-verified")">
+                                        @(string.IsNullOrEmpty(trip.Status) ? "Scheduled" : trip.Status)
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="small fw-bold">@trip.FromCity → @trip.ToCity</div>
+                            </td>
+                            <td>
+                                <div class="small fw-bold">@trip.DepartureTime.ToString("hh:mm tt")</div>
+                                <div class="extra-small text-muted text-uppercase">@trip.DepartureTime.ToString("MMM dd")</div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 6px; width: 80px;">
+                                        @{
+                                            var percent = (double)(trip.TotalCapacity - trip.AvailableSeats) / trip.TotalCapacity * 100;
+                                        }
+                                        <div class="progress-bar bg-primary" style="width: @percent%"></div>
+                                    </div>
+                                    <span class="small fw-bold">@(trip.TotalCapacity - trip.AvailableSeats)/@trip.TotalCapacity</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold">₹@trip.Fare.ToString("F2")</div>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <a asp-action="Edit" asp-route-id="@trip.TripId" class="vb-btn-ghost p-1"><i class="bi bi-pencil-square"></i></a>
+                                <a asp-action="SelectSeat" asp-route-tripId="@trip.TripId" class="vb-btn-ghost p-1 text-primary"><i class="bi bi-eye"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+</style>

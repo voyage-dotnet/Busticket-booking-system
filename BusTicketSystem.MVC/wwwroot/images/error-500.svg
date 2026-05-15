@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">500 server error illustration</title>
+  <desc id="desc">A bus dashboard warning light with a server error code.</desc>
+  <rect width="640" height="420" rx="32" fill="#f3f7fb"/>
+  <rect x="112" y="100" width="416" height="210" rx="34" fill="#ffffff" stroke="#d6e0ea" stroke-width="8"/>
+  <rect x="150" y="138" width="340" height="94" rx="20" fill="#243447"/>
+  <circle cx="198" cy="264" r="24" fill="#3d5166"/>
+  <circle cx="442" cy="264" r="24" fill="#3d5166"/>
+  <path d="M240 267h160" stroke="#d6e0ea" stroke-width="12" stroke-linecap="round"/>
+  <path d="M320 153l54 94H266l54-94z" fill="#ffe6e6" stroke="#d94a4a" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M320 181v31" stroke="#d94a4a" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="320" cy="229" r="6" fill="#d94a4a"/>
+  <text x="320" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#3d5166">500</text>
+</svg>

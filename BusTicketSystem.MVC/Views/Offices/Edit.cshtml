@@ -1,0 +1,77 @@
+@model BusTicketSystem.MVC.ViewModels.CreateOfficeViewModel
+@{
+    ViewData["Title"] = "Edit Office";
+    var officeId = ViewBag.OfficeId;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="vb-card p-4 p-lg-5 shadow-lg border-0">
+                <div class="mb-4">
+                    <a asp-action="Index" class="vb-btn-ghost py-1 px-0 mb-3 d-inline-flex align-items-center gap-1 small">
+                        <i class="bi bi-arrow-left"></i> Back to Offices
+                    </a>
+                    <h2 class="fw-bold mb-1">Update Branch Details</h2>
+                    <p class="vb-text-muted small">Update information for Office #@officeId</p>
+                </div>
+
+                <form asp-action="Edit" asp-route-id="@officeId" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger vb-radius-md border-0 small mb-4"></div>
+
+                    <div class="vb-form-group mb-4">
+                        <label asp-for="OfficeContactPersonName" class="vb-form-label">Contact Person Name</label>
+                        <div class="position-relative">
+                            <i class="bi bi-person position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
+                            <input asp-for="OfficeContactPersonName" class="vb-form-control ps-5" />
+                        </div>
+                        <span asp-validation-for="OfficeContactPersonName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label asp-for="OfficeMail" class="vb-form-label">Office Email</label>
+                                <div class="position-relative">
+                                    <i class="bi bi-envelope position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
+                                    <input asp-for="OfficeMail" class="vb-form-control ps-5" />
+                                </div>
+                                <span asp-validation-for="OfficeMail" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="vb-form-group">
+                                <label asp-for="OfficeContactNumber" class="vb-form-label">Contact Number</label>
+                                <div class="position-relative">
+                                    <i class="bi bi-telephone position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
+                                    <input asp-for="OfficeContactNumber" class="vb-form-control ps-5" />
+                                </div>
+                                <span asp-validation-for="OfficeContactNumber" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vb-form-group mb-5">
+                        <label asp-for="Address" class="vb-form-label">Office Address</label>
+                        <div class="position-relative">
+                            <i class="bi bi-map position-absolute start-0 top-50 translate-middle-y ms-3 text-muted"></i>
+                            <textarea asp-for="Address" class="vb-form-control ps-5" rows="3"></textarea>
+                        </div>
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="vb-btn-primary flex-grow-1 py-3">
+                            <i class="bi bi-check-circle me-2"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="vb-btn-ghost py-3 px-4">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

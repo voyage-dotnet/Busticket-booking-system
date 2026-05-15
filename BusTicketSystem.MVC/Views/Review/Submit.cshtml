@@ -1,0 +1,115 @@
+@model BusTicketSystem.MVC.ViewModels.ReviewViewModel
+@{
+    ViewData["Title"] = "Rate Your Journey";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="vb-card p-4 p-lg-5 shadow-lg border-0 text-center">
+                <div class="bg-warning bg-opacity-10 p-4 rounded-circle d-inline-block mb-4 text-warning">
+                    <i class="bi bi-star-half h1 mb-0"></i>
+                </div>
+                <h2 class="fw-bold mb-1">How was your trip?</h2>
+                <p class="vb-text-muted mb-5">Your feedback helps us improve @Model.TripRoute experience.</p>
+
+                <form asp-action="Submit" method="post">
+                    <input type="hidden" asp-for="BookingId" />
+                    <input type="hidden" asp-for="TripId" />
+                    <input type="hidden" asp-for="TripRoute" />
+                    <input type="hidden" asp-for="Rating" id="Rating" value="5" />
+                    
+                    <div class="vb-rating-group mb-5">
+                        <label class="vb-form-label d-block mb-3">Overall Rating</label>
+                        <div class="d-flex justify-content-center gap-3" id="ratingStars">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <button type="button" class="vb-star-btn active" data-rating="@i" aria-label="@i star rating">
+                                    <i class="bi bi-star-fill h3"></i>
+                                </button>
+                            }
+                        </div>
+                        <span asp-validation-for="Rating" class="text-danger small"></span>
+                    </div>
+
+                    <div class="vb-form-group text-start mb-4">
+                        <label asp-for="Comment" class="vb-form-label">Tell us more about your experience</label>
+                        <textarea asp-for="Comment" class="vb-form-control" rows="4" placeholder="Comfort, punctuality, driver behavior..."></textarea>
+                        <span asp-validation-for="Comment" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="vb-btn-primary py-3">
+                            Submit Review <i class="bi bi-send ms-2"></i>
+                        </button>
+                        <a asp-controller="TicketBooking" asp-action="MyBookings" class="vb-btn-ghost">Maybe later</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .vb-star-btn {
+        appearance: none;
+        background: transparent;
+        border: 0;
+        color: #e2e8ef;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .vb-star-btn.active,
+    .vb-star-btn.preview {
+        color: #f59e0b;
+    }
+
+    .vb-star-btn:hover,
+    .vb-star-btn:focus-visible {
+        color: #fbbf24;
+        outline: none;
+        transform: scale(1.12);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ratingInput = document.getElementById('Rating');
+            const stars = Array.from(document.querySelectorAll('#ratingStars .vb-star-btn'));
+
+            function paint(rating, previewOnly) {
+                stars.forEach(star => {
+                    const value = Number(star.dataset.rating);
+                    star.classList.toggle(previewOnly ? 'preview' : 'active', value <= rating);
+                    if (!previewOnly) {
+                        star.classList.remove('preview');
+                    }
+                });
+            }
+
+            stars.forEach(star => {
+                star.addEventListener('click', function () {
+                    const rating = Number(this.dataset.rating);
+                    ratingInput.value = rating;
+                    paint(rating, false);
+                });
+
+                star.addEventListener('mouseenter', function () {
+                    stars.forEach(s => s.classList.remove('preview'));
+                    paint(Number(this.dataset.rating), true);
+                });
+            });
+
+            document.getElementById('ratingStars').addEventListener('mouseleave', function () {
+                stars.forEach(s => s.classList.remove('preview'));
+                paint(Number(ratingInput.value || 5), false);
+            });
+
+            paint(Number(ratingInput.value || 5), false);
+        });
+    </script>
+}

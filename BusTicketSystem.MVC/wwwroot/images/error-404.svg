@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">404 route not found illustration</title>
+  <desc id="desc">A bus stop sign with a missing route marker.</desc>
+  <rect width="640" height="420" rx="32" fill="#f3f7fb"/>
+  <path d="M90 322h460" stroke="#d6e0ea" stroke-width="10" stroke-linecap="round"/>
+  <rect x="132" y="118" width="232" height="150" rx="28" fill="#ffffff" stroke="#d6e0ea" stroke-width="8"/>
+  <rect x="160" y="145" width="70" height="54" rx="12" fill="#dbeafe"/>
+  <rect x="246" y="145" width="70" height="54" rx="12" fill="#dbeafe"/>
+  <path d="M167 236h151" stroke="#3d5166" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="184" cy="281" r="28" fill="#3d5166"/>
+  <circle cx="310" cy="281" r="28" fill="#3d5166"/>
+  <circle cx="184" cy="281" r="11" fill="#f3f7fb"/>
+  <circle cx="310" cy="281" r="11" fill="#f3f7fb"/>
+  <path d="M442 100v220" stroke="#3d5166" stroke-width="12" stroke-linecap="round"/>
+  <rect x="390" y="72" width="104" height="76" rx="18" fill="#ffefd6" stroke="#f0b35a" stroke-width="8"/>
+  <text x="442" y="123" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="700" fill="#9b5b00">404</text>
+  <path d="M404 184l76 76M480 184l-76 76" stroke="#d94a4a" stroke-width="14" stroke-linecap="round"/>
+</svg>

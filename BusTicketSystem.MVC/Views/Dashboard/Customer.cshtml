@@ -1,0 +1,111 @@
+@model BusTicketSystem.MVC.ViewModels.CustomerOverviewApiViewModel
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "My Dashboard";
+    var email = Context.Session.GetString("UserEmail") ?? "Traveller";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="h2 fw-bold mb-1">Welcome back! 👋</h1>
+            <p class="vb-text-muted mb-0">@email — here's your travel summary.</p>
+        </div>
+        <a asp-controller="Trips" asp-action="Index" class="vb-btn-primary">
+            <i class="bi bi-search me-2"></i> Find a Trip
+        </a>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-sm-6 col-lg-3">
+            <div class="vb-card p-4 border-0 shadow-sm text-center">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block text-primary mb-3">
+                    <i class="bi bi-ticket-perforated h3 mb-0"></i>
+                </div>
+                <h2 class="fw-bold mb-1">@Model.TotalBookings</h2>
+                <p class="vb-text-muted small mb-0">Total Bookings</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="vb-card p-4 border-0 shadow-sm text-center">
+                <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-block text-success mb-3">
+                    <i class="bi bi-calendar-check h3 mb-0"></i>
+                </div>
+                <h2 class="fw-bold mb-1">@Model.UpcomingTrips</h2>
+                <p class="vb-text-muted small mb-0">Upcoming Trips</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="vb-card p-4 border-0 shadow-sm text-center">
+                <div class="bg-info bg-opacity-10 p-3 rounded-circle d-inline-block text-info mb-3">
+                    <i class="bi bi-check2-circle h3 mb-0"></i>
+                </div>
+                <h2 class="fw-bold mb-1">@Model.CompletedTrips</h2>
+                <p class="vb-text-muted small mb-0">Completed Trips</p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="vb-card p-4 border-0 shadow-sm text-center">
+                <div class="bg-warning bg-opacity-10 p-3 rounded-circle d-inline-block text-warning mb-3">
+                    <i class="bi bi-currency-rupee h3 mb-0"></i>
+                </div>
+                <h2 class="fw-bold mb-1">₹@Model.TotalSpent.ToString("N0")</h2>
+                <p class="vb-text-muted small mb-0">Total Spent</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="vb-card p-4">
+                <h6 class="fw-bold mb-4">Quick Actions</h6>
+                <div class="d-grid gap-2">
+                    <a asp-controller="TicketBooking" asp-action="MyBookings"
+                       class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold small">My Bookings</div>
+                            <div class="text-muted" style="font-size:0.75rem">View & manage all reservations</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                    <a asp-controller="Trips" asp-action="Index"
+                       class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold small">Search Trips</div>
+                            <div class="text-muted" style="font-size:0.75rem">Find & book your next journey</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                    <a asp-controller="Payment" asp-action="History"
+                       class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold small">Payment History</div>
+                            <div class="text-muted" style="font-size:0.75rem">Track your travel expenses</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                    <a asp-controller="Profile" asp-action="Index"
+                       class="btn btn-light text-start py-3 px-3 vb-radius-md border d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold small">My Profile</div>
+                            <div class="text-muted" style="font-size:0.75rem">Update personal information</div>
+                        </div>
+                        <i class="bi bi-chevron-right opacity-50"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="vb-card-notice bg-primary bg-opacity-10 border-0 p-4 h-100">
+                <i class="bi bi-shield-check text-primary h4 mb-2 d-block"></i>
+                <h6 class="fw-bold text-primary mb-2">Safe & Secure Travel</h6>
+                <p class="vb-text-secondary small mb-0">
+                    All your bookings are secured and protected. 
+                    Need help? Contact our support team 24/7.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

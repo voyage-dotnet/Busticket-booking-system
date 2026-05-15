@@ -1,0 +1,81 @@
+@model BusTicketSystem.MVC.ViewModels.TripSearchPageViewModel
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Results List -->
+        <div class="col-lg-10 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">@Model.Trips.Count Trips Found</h5>
+                <div class="dropdown">
+                    <button class="vb-btn-ghost py-1 border small" data-bs-toggle="dropdown">Sort By: Recommended</button>
+                    <ul class="dropdown-menu border-0 shadow-lg">
+                        <li><a class="dropdown-item small" href="#">Cheapest First</a></li>
+                        <li><a class="dropdown-item small" href="#">Earliest Departure</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            @if (Model.Trips.Count == 0)
+            {
+                <div class="vb-card p-5 text-center border-0 shadow-sm">
+                    <i class="bi bi-search h1 text-muted opacity-25 mb-3 d-block"></i>
+                    <h5 class="fw-bold">No trips available for this route</h5>
+                    <p class="vb-text-muted small">Try different cities or dates.</p>
+                </div>
+            }
+
+            @foreach (var trip in Model.Trips)
+            {
+                <div class="vb-trip-card shadow-sm border-0 mb-4 p-0 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-9 p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-4">
+                                <div>
+                                    <span class="vb-badge vb-badge-route mb-2">@trip.AgencyName • @(string.IsNullOrEmpty(trip.BusType) ? "Bus" : trip.BusType)</span>
+                                    <div class="small text-success fw-bold"><i class="bi bi-star-fill me-1"></i> 4.5 Rated</div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="h4 fw-bold mb-0 text-primary">₹@trip.Fare.ToString("F2")</div>
+                                    <div class="extra-small text-muted">Incl. taxes</div>
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center">
+                                <div class="col-4">
+                                    <div class="h5 fw-bold mb-1">@trip.DepartureTime.ToString("HH:mm")</div>
+                                    <div class="vb-text-muted small">@trip.FromCity</div>
+                                </div>
+                                <div class="col-4 text-center position-relative">
+                                    <div class="extra-small text-muted mb-2">6h 30m</div>
+                                    <div class="border-top w-100 position-absolute start-0 top-50" style="z-index: 1;"></div>
+                                    <i class="bi bi-bus-front bg-white px-2 position-relative h5 text-primary" style="z-index: 2;"></i>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <div class="h5 fw-bold mb-1">@trip.ArrivalTime.ToString("HH:mm")</div>
+                                    <div class="vb-text-muted small">@trip.ToCity</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 bg-light border-start p-4 d-flex flex-column justify-content-center text-center">
+                            <div class="mb-3">
+                                <div class="fw-bold h4 mb-0 text-primary">@trip.AvailableSeats</div>
+                                <div class="extra-small text-uppercase text-muted fw-bold">Seats Left</div>
+                            </div>
+                            <a asp-action="SelectSeat" asp-route-tripId="@trip.TripId" class="vb-btn-primary w-100 py-2">Select Seats</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; letter-spacing: 0.05em; }
+    .vb-trip-card { transition: all 0.3s ease; border-radius: 12px; background: white; }
+    .vb-trip-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1) !important; }
+</style>

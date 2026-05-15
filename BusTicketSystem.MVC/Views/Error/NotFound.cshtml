@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Page Not Found";
+}
+
+<div class="container py-5">
+    <div class="row align-items-center justify-content-center g-5 min-vh-75">
+        <div class="col-lg-5 text-center">
+            <img src="~/images/error-404.svg" alt="Page not found" class="img-fluid mb-4" style="max-height: 320px;" />
+        </div>
+        <div class="col-lg-5">
+            <div class="vb-badge vb-badge-verified mb-3">404</div>
+            <h1 class="fw-bold mb-3">This route does not exist</h1>
+            <p class="vb-text-muted mb-4">The page URL is incorrect or the destination has moved.</p>
+            <div class="d-flex flex-wrap gap-3">
+                <a asp-controller="Home" asp-action="Index" class="vb-btn-primary">Go Home</a>
+                <a asp-controller="Trips" asp-action="Index" class="vb-btn-secondary">Search Trips</a>
+            </div>
+        </div>
+    </div>
+</div>
